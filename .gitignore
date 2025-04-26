@@ -8,6 +8,10 @@ __pycache__/
 env/
 venv/
 
+# Tests
+tests/
+
+
 # Flask specific
 instance/
 *.sqlite3
