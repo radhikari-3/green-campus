@@ -1,0 +1,38 @@
+# Python
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.env
+.venv/
+env/
+venv/
+
+# Flask specific
+instance/
+*.sqlite3
+
+# VSCode
+.vscode/
+
+# PyCharm
+.idea/
+
+# Migrations
+migrations/
+
+# Logs
+*.log
+
+# Database
+*.db
+
+# Other
+*.bak
+*.swp
+
+# Node modules (if any frontend work)
+node_modules/
+
+# Docker
+*.pid
