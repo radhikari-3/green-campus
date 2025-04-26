@@ -11,6 +11,6 @@ def test_homepage(client):
     response = client.get('/')
     assert response.status_code == 200
 
-def test_dashboard(client):
+def test_login(client):
     response = client.get('/login')
     assert response.status_code == 200
