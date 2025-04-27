@@ -1,4 +1,5 @@
 from dataclasses import dataclass
+from datetime import datetime
 from typing import Optional
 
 import sqlalchemy as sa
@@ -33,3 +34,18 @@ class User(UserMixin, db.Model):
 @login.user_loader
 def load_user(id):
     return db.session.get(User, int(id))
+
+class EnergyReading(db.Model):
+    __tablename__ = 'energy_readings'
+
+    id: so.Mapped[int] = so.mapped_column(primary_key=True)
+    timestamp: so.Mapped[datetime] = so.mapped_column(sa.DateTime)
+    building: so.Mapped[str] = so.mapped_column(sa.String(100))
+    building_code: so.Mapped[str] = so.mapped_column(sa.String(10))
+    zone: so.Mapped[str] = so.mapped_column(sa.String(50))
+    value: so.Mapped[float] = so.mapped_column(sa.Float)
+    category: so.Mapped[str] = so.mapped_column(sa.String(50))  # Category: gas or electricity
+
+    def __repr__(self):
+        return f'EnergyReading(id={self.id}, timestamp={self.timestamp}, building={self.building}, ' \
+               f'building_code={self.building_code}, zone={self.zone}, value={self.value}, category={self.category})'
