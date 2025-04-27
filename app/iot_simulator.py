@@ -1,3 +1,5 @@
+import os
+
 from flask import Flask
 import threading
 import time
@@ -16,21 +18,12 @@ TOPIC_ELECTRICITY = 'uob/electricity'
 TOPIC_GAS = 'uob/gas'
 PUBLISH_INTERVAL = 300  # 5 minutes in seconds
 # Set a batch size limit to avoid memory overflow
-BATCH_SIZE = 1000
+BATCH_SIZE = 200
 
 # Global variable to hold readings temporarily
 readings_to_add = []
 
-# Buildings: Name, Code, Zone
-buildings = [
-    {"building": "Muirhead Tower", "building_code": "R21", "zone": "Red"},
-    {"building": "Physics West", "building_code": "R8", "zone": "Red"},
-    {"building": "Medical School", "building_code": "B1", "zone": "Blue"},
-    {"building": "University House", "building_code": "O3", "zone": "Orange"},
-    {"building": "32 Pritchatts Road", "building_code": "G1", "zone": "Green"},
-    {"building": "Computer Science", "building_code": "Y9", "zone": "Yellow"},
-    # Add the rest...
-]
+basedir = os.path.abspath(os.path.dirname(__file__))
 
 # Connect to MQTT Broker
 def connect_mqtt():
@@ -63,6 +56,15 @@ def generate_reading(building_name, sensor_type):
 
 # Publish data
 def publish_sensor_data(client):
+    file_path = os.path.join(basedir, 'static', 'building_data.json')
+    try:
+        with open(file_path, 'r') as file:
+            data = json.load(file)
+            buildings = data.get('buildings', [])
+    except FileNotFoundError:
+        print(f"File not found: {file_path}")
+        buildings = []
+
     for b in buildings:
         timestamp = datetime.utcnow().isoformat()
 
