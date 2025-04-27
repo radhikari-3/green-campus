@@ -7,6 +7,7 @@ from flask_login import LoginManager
 from flask_sqlalchemy import SQLAlchemy
 from jinja2 import StrictUndefined
 
+from app.logger import logger
 from config import Config
 
 app = Flask(__name__)
@@ -36,5 +37,3 @@ def activate_simulator():
         thread = threading.Thread(target=simulator_thread)
         thread.daemon = True
         thread.start()
-
-

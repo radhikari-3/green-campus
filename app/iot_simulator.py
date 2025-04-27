@@ -1,14 +1,12 @@
-import os
-
-from flask import Flask
-import threading
-import time
-import random
 import json
+import os
+import random
+import time
 from datetime import datetime
+
 import paho.mqtt.client as mqtt
 
-from app import db, app
+from app import db, app, logger
 from app.models import EnergyReading
 
 # MQTT Setup
@@ -62,7 +60,7 @@ def publish_sensor_data(client):
             data = json.load(file)
             buildings = data.get('buildings', [])
     except FileNotFoundError:
-        print(f"File not found: {file_path}")
+        logger.error(f"File not found: {file_path}")
         buildings = []
 
     for b in buildings:
@@ -78,7 +76,7 @@ def publish_sensor_data(client):
             "value": elec_value
         }
         client.publish(TOPIC_ELECTRICITY, json.dumps(elec_payload))
-        print(f"Published electricity data for {b['building']}.")
+        logger.debug(f"Published electricity data for {b['building']}.")
 
         # Gas
         gas_value = generate_reading(b['building'], 'gas')
@@ -90,12 +88,12 @@ def publish_sensor_data(client):
             "value": gas_value
         }
         client.publish(TOPIC_GAS, json.dumps(gas_payload))
-        print(f"Published gas data for {b['building']}.")
+        logger.info(f"Published gas data for {b['building']}.")
 
 
 # Callback when the client connects to the broker
 def on_connect(client, userdata, flags, rc):
-    print(f"Connected to MQTT broker with result code {rc}")
+    logger.info(f"Connected to MQTT broker with result code {rc}")
     client.subscribe(TOPIC_ELECTRICITY)
     client.subscribe(TOPIC_GAS)
 
@@ -129,7 +127,7 @@ def on_message(client, userdata, msg):
         with app.app_context():
             db.session.add_all(readings_to_add)
             db.session.commit()
-            print(f"Committed {BATCH_SIZE} readings to the database.")
+            logger.debug(f"Committed {BATCH_SIZE} readings to the database.")
             readings_to_add.clear()  # Clear the list after committing
 
 #Commit any remaining readings after processing all messages
@@ -138,12 +136,12 @@ def commit_remaining_readings():
         if readings_to_add:
             db.session.add_all(readings_to_add)
             db.session.commit()
-            print(f"Committed remaining {len(readings_to_add)} readings to the database.")
+            logger.debug(f"Committed remaining {len(readings_to_add)} readings to the database.")
             readings_to_add.clear()
 
 # Background thread to run the simulator and consume messages
 def simulator_thread():
-    print("Background thread started.")
+    logger.info("Background thread started.")
     client = connect_mqtt()
 
     # Assign callbacks
@@ -156,5 +154,5 @@ def simulator_thread():
     # Publish sensor data every PUBLISH_INTERVAL seconds
     while True:
         publish_sensor_data(client)
-        print(f"Waiting {PUBLISH_INTERVAL} seconds for next publish...")
+        logger.info(f"Waiting {PUBLISH_INTERVAL} seconds for next publish...")
         time.sleep(PUBLISH_INTERVAL)
