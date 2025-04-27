@@ -1,4 +1,4 @@
-{ "buildings" : [
+{ "university_buildings" : [
     {"building": "Muirhead Tower", "building_code": "R21", "zone": "Red"},
     {"building": "Physics West", "building_code": "R8", "zone": "Red"},
     {"building": "Medical School", "building_code": "B1", "zone": "Blue"},
@@ -105,5 +105,20 @@
     {"building": "Civil Engineering Laboratories", "building_code": "Y15", "zone": "Yellow"},
     {"building": "Public Health", "building_code": "Y16", "zone": "Yellow"},
     {"building": "Bournbrook Sports Pavilion", "building_code": "Y18", "zone": "Yellow"}
-  ]
+],
+    "accommodation_buildings" : [
+        { "building": "Mason Hall", "village_name": "The Vale", "total_flats": 159, "is_accommodation": true },
+        { "building": "Shackleton", "village_name": "The Vale", "total_flats": 72, "is_accommodation": true },
+        { "building": "Maple Bank", "village_name": "The Vale", "total_flats": 87, "is_accommodation": true },
+        { "building": "Elgar Court", "village_name": "The Vale", "total_flats": 40, "is_accommodation": true },
+        { "building": "Tennis Court", "village_name": "The Vale", "total_flats": 138, "is_accommodation": true },
+        { "building": "Aitken", "village_name": "The Vale", "total_flats": 23, "is_accommodation": true },
+        { "building": "Chamberlain", "village_name": "The Vale", "total_flats": 725, "is_accommodation": true },
+        { "building": "Oakley Court", "village_name": "Pritchatts Park", "total_flats": 21, "is_accommodation": true },
+        { "building": "Ashcroft", "village_name": "Pritchatts Park", "total_flats": 4, "is_accommodation": true },
+        { "building": "Pritchatts House", "village_name": "Pritchatts Park", "total_flats": 24, "is_accommodation": true },
+        { "building": "The Spinney", "village_name": "Pritchatts Park", "total_flats": 6, "is_accommodation": true },
+        { "building": "Bournbrook", "village_name": "Selly Oak", "total_flats": 34, "is_accommodation": true },
+        { "building": "Jarratt Hall", "village_name": "Selly Oak", "total_flats": 154, "is_accommodation": true }
+    ]
 }

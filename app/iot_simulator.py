@@ -30,7 +30,7 @@ def connect_mqtt():
     return client
 
 # Generate realistic reading
-def generate_reading(building_name, sensor_type):
+def generate_reading(sensor_type):
     now = datetime.now()
     hour = now.hour
     weekday = now.weekday()  # 0 = Monday, 6 = Sunday
@@ -54,43 +54,57 @@ def generate_reading(building_name, sensor_type):
 
 # Publish data
 def publish_sensor_data(client):
-    file_path = os.path.join(basedir, 'static', 'building_data.json')
+    file_path = os.path.join(basedir, 'static', 'buildings_data.json')
     try:
         with open(file_path, 'r') as file:
             data = json.load(file)
-            buildings = data.get('buildings', [])
+            university_buildings = data.get('university_buildings', [])
+            accommodation_buildings = data.get('accommodation_buildings', [])
     except FileNotFoundError:
         logger.error(f"File not found: {file_path}")
-        buildings = []
+        university_buildings = []
+        accommodation_buildings = []
 
-    for b in buildings:
-        timestamp = datetime.utcnow().isoformat()
+    # Publish data for university buildings
+    for building in university_buildings:
+        publish_data(client, building, 'electricity', None)
+        publish_data(client, building, 'gas', None)
 
-        # Electricity
-        elec_value = generate_reading(b['building'], 'electricity')
-        elec_payload = {
-            "timestamp": timestamp,
-            "building": b['building'],
-            "building_code": b['building_code'],
-            "zone": b['zone'],
-            "value": elec_value
-        }
-        client.publish(TOPIC_ELECTRICITY, json.dumps(elec_payload))
-        logger.debug(f"Published electricity data for {b['building']}.")
+    # Publish data for accommodation buildings (iterate over flats)
+    for building in accommodation_buildings:
+        total_flats = building.get('total_flats', 0)
+        for flat_number in range(1, total_flats + 1):
+            flat_building_name = f"{building['building']} Flat {flat_number}"
+            publish_data(client, building, 'electricity', flat_building_name)
+            publish_data(client, building, 'gas', flat_building_name)
 
-        # Gas
-        gas_value = generate_reading(b['building'], 'gas')
-        gas_payload = {
-            "timestamp": timestamp,
-            "building": b['building'],
-            "building_code": b['building_code'],
-            "zone": b['zone'],
-            "value": gas_value
-        }
-        client.publish(TOPIC_GAS, json.dumps(gas_payload))
-        logger.info(f"Published gas data for {b['building']}.")
+# Publish data for a building or flat
+def publish_data(client, building, sensor_type, flat_number):
+    timestamp = datetime.utcnow().isoformat()
+    value = generate_reading(sensor_type)
+    if building.get('is_accommodation') == True:
+        zone = ''
+        building_name = flat_number
 
+    else:
+        zone = building.get('zone')
+        building_name = building['building']
 
+    payload = create_payload(building, building_name, value, timestamp, zone)
+    topic = TOPIC_ELECTRICITY if sensor_type == 'electricity' else TOPIC_GAS
+    client.publish(topic, json.dumps(payload))
+
+    logger.info(f"Published {sensor_type} data for {building['building']}.")
+
+# Function to create payload for electricity or gas data
+def create_payload(building, building_name, value, timestamp, zone=""):
+    return {
+        "timestamp": timestamp,
+        "building": building_name if building.get('is_accommodation') else f"{building['building']}",
+        "building_code": building.get("building_code", ""),
+        "zone": zone if zone else "",
+        "value": value
+    }
 # Callback when the client connects to the broker
 def on_connect(client, userdata, flags, rc):
     logger.info(f"Connected to MQTT broker with result code {rc}")
