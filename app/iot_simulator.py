@@ -133,6 +133,7 @@ def on_message(client, userdata, msg):
         category=category
     )
 
+    # Add the reading to the list
     readings_to_add.append(reading)
 
     # Commit the batch when the batch size limit is reached
