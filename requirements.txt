@@ -29,10 +29,7 @@ sql==2022.4.0
 SQLAlchemy
 typing_extensions
 Werkzeug
-<<<<<<< Updated upstream
 wheel==0.44.0
 WTForms
-=======
-WTForms
 paho-mqtt
->>>>>>> Stashed changes
+

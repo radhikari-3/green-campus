@@ -133,27 +133,24 @@ def on_message(client, userdata, msg):
         category=category
     )
 
-    # Add the reading to the list
-    with readings_lock:
-        readings_to_add.append(reading)
+    readings_to_add.append(reading)
 
-        # Commit the batch when the batch size limit is reached
-        if len(readings_to_add) >= BATCH_SIZE:
-            with app.app_context():
-                db.session.add_all(readings_to_add)
-                db.session.commit()
-                logger.debug(f"Committed {BATCH_SIZE} readings to the database.")
-                readings_to_add.clear()  # Clear the list after committing
+    # Commit the batch when the batch size limit is reached
+    if len(readings_to_add) >= BATCH_SIZE:
+        with app.app_context():
+            db.session.add_all(readings_to_add)
+            db.session.commit()
+            logger.debug(f"Committed {BATCH_SIZE} readings to the database.")
+            readings_to_add.clear()  # Clear the list after committing
 
 #Commit any remaining readings after processing all messages
 def commit_remaining_readings():
     with app.app_context():
-        with readings_lock:
-            if readings_to_add:
-                db.session.add_all(readings_to_add)
-                db.session.commit()
-                logger.debug(f"Committed remaining {len(readings_to_add)} readings to the database.")
-                readings_to_add.clear()
+        if readings_to_add:
+            db.session.add_all(readings_to_add)
+            db.session.commit()
+            logger.debug(f"Committed remaining {len(readings_to_add)} readings to the database.")
+            readings_to_add.clear()
 
 # Background thread to run the simulator and consume messages
 def simulator_thread():

@@ -36,3 +36,5 @@ node_modules/
 
 # Docker
 *.pid
+
+.DS_Store
