@@ -1,13 +1,27 @@
 {% extends "base.html" %}
 {% import "bootstrap_wtf.html" as wtf %}
 
+{% block head %}
+    {{ super() }}
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/dashboard.css') }}">
+{% endblock %}
+
+
 {% block content %}
-<h1>Private Account Page</h1>
+<div class="dashboard-container">
 
-<p>Hello {{ current_user.username }}</p>
+    <div class="dashboard-card">
+        <h2>Welcome, {{ current_user.username }}! 👋</h2>
+        <p><strong>Email:</strong> {{ current_user.email }}</p>
+    </div>
 
-<p>This page is only available to you as the currently logged in user</p>
-
-<p>The email address we have recorded for you is: {{ current_user.email }}</p>
-
+    <div class="dashboard-section">
+        <h3>Account Settings</h3>
+        <ul class="dashboard-links">
+            <li><a href="/update-profile">Update Profile</a></li>
+            <li><a href="/change-password">Change Password</a></li>
+            <li><a href="/logout">Logout</a></li>
+        </ul>
+    </div>
+</div>
 {% endblock %}
