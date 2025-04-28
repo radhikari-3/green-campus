@@ -11,4 +11,4 @@ class Config:
     SQLALCHEMY_TRACK_MODIFICATIONS = False
     SQLALCHEMY_ECHO = True
 
-    SQLALCHEMY_DATABASE_URI = 'postgresql://local:admin@localhost/postgres'
+    SQLALCHEMY_DATABASE_URI = 'postgresql://postgres:admin@localhost/postgres'
