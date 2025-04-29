@@ -3,62 +3,118 @@ import datetime
 import json
 import os
 
+
+static_folder = 'static'
+file_name     = "all_users_step_data.json"
+file_path     = os.path.join(static_folder, file_name)
+
+
+tz_today      = datetime.date.today()
+start_date    = datetime.date(2025, 4, 1)
+yesterday     = tz_today - datetime.timedelta(days=1)
+
+
+if not os.path.exists(static_folder):
+    os.makedirs(static_folder)
+
+
+
 def generate_random_steps(start_date, end_date):
-    step_data = []
+
+    step_data    = []
     current_date = start_date
     while current_date <= end_date:
+
         if current_date.weekday() >= 5:
-            steps = random.randint(8000, 13000)
+            steps = random.randint(8_000, 13_000)
         else:
-            steps = random.randint(4000, 10000)
+            steps = random.randint(4_000, 10_000)
 
         step_data.append({
-            "date": current_date.strftime("%Y-%m-%d"),
+            "date":  current_date.strftime("%Y-%m-%d"),
             "steps": steps
         })
         current_date += datetime.timedelta(days=1)
 
     return step_data
 
-static_folder = 'static'
-if not os.path.exists(static_folder):
-    os.makedirs(static_folder)
 
-file_name = "all_users_step_data.json"
-file_path = os.path.join(static_folder, file_name)
-
-yesterday = datetime.date.today() - datetime.timedelta(days=1)
-start_date = datetime.date(2025, 4, 1)
 
 def run_steps_simulator():
+
     from app import app, db
-    from app.models import User
+    from app.models import User, StepData, EcoPoints
 
     with app.app_context():
-        users = User.query.all()
-        user_steps_data = {}
 
         if os.path.exists(file_path):
-            with open(file_path, 'r') as json_file:
-                existing_data = json.load(json_file)
+            with open(file_path, 'r') as f:
+                all_data = json.load(f)
         else:
-            existing_data = {}
+            all_data = {}
 
-        for user in users:
-            existing_steps = existing_data.get(user.username, [])
 
-            if existing_steps:
-                last_date = datetime.datetime.strptime(existing_steps[-1]["date"], "%Y-%m-%d").date()
+        users = User.query.all()
+        for u in users:
+            history = all_data.get(u.username, [])
+            if history:
+                last = datetime.datetime.strptime(history[-1]["date"], "%Y-%m-%d").date()
             else:
-                last_date = start_date
+                last = start_date - datetime.timedelta(days=1)
 
-            if last_date < yesterday:
-                new_steps = generate_random_steps(last_date + datetime.timedelta(days=1), yesterday)
-                existing_steps.extend(new_steps)
+            if last < yesterday:
+                new_batch = generate_random_steps(last + datetime.timedelta(days=1), yesterday)
+                history.extend(new_batch)
 
-            user_steps_data[user.username] = existing_steps
+            all_data[u.username] = history
 
-        with open(file_path, 'w') as json_file:
-            json.dump(user_steps_data, json_file, indent=4)
 
-        print(f"Saved/Updated step data for all users in {file_path}")
+        with open(file_path, 'w') as f:
+            json.dump(all_data, f, indent=4)
+
+
+
+        inserted_steps = 0
+        for username, entries in all_data.items():
+            for e in entries:
+                entry_date = datetime.datetime.strptime(e["date"], "%Y-%m-%d").date()
+                exists = StepData.query.filter_by(username=username, date=entry_date).first()
+                if not exists:
+                    sd = StepData(
+                        username=username,
+                        date=entry_date,
+                        steps=e["steps"]
+                    )
+                    db.session.add(sd)
+                    inserted_steps += 1
+        db.session.commit()
+
+
+
+        updated = 0
+        for u in users:
+            total_steps = db.session.query(
+                db.func.sum(StepData.steps)
+            ).filter_by(username=u.username).scalar() or 0
+
+            eco_value = total_steps // 10_000
+            now = datetime.datetime.utcnow()
+
+            eco_entry = EcoPoints.query.filter_by(username=u.username).first()
+            if eco_entry:
+                eco_entry.eco_points = eco_value
+                eco_entry.last_updated_at = now
+            else:
+                eco_entry = EcoPoints(
+                    username=u.username,
+                    eco_points=eco_value,
+                    last_updated_at=now
+                )
+                db.session.add(eco_entry)
+            updated += 1
+        db.session.commit()
+
+
+# optional standalone execution
+# if __name__ == "__main__":
+#     run_steps_simulator()

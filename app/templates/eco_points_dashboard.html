@@ -3,17 +3,68 @@
 {% block head %}
     {{ super() }}
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css" rel="stylesheet">
+    <style>
+      /* Fancy card animations and styling */
+      .eco-card {
+        background: linear-gradient(135deg, #6fcf97 0%, #66d6ef 100%);
+        color: #fff;
+        border: none;
+      }
+      .eco-card .card-body {
+        position: relative;
+        overflow: hidden;
+      }
+      .eco-card .point-count {
+        font-size: 3rem;
+        font-weight: 700;
+      }
+      .eco-card .hint {
+        font-size: 0.9rem;
+        opacity: 0.8;
+      }
+      .eco-card:before {
+        content: "";
+        position: absolute;
+        width: 150px;
+        height: 150px;
+        background: rgba(255,255,255,0.2);
+        border-radius: 50%;
+        top: -50px;
+        right: -50px;
+        animation: pulse 4s infinite;
+      }
+      @keyframes pulse {
+        0% { transform: scale(0.8); opacity: 0.2; }
+        50% { transform: scale(1.2); opacity: 0.4; }
+        100% { transform: scale(0.8); opacity: 0.2; }
+      }
+    </style>
 {% endblock %}
 
 {% block content %}
-<div class="dashboard-page bg-light d-flex justify-content-center align-items-center" style="height: 100vh;">
-    <div class="text-center w-100 w-md-75 w-lg-50">  <!-- Adjusted width for different screen sizes -->
-        <header class="bg-success text-white py-5 shadow-lg text-center rounded-bottom">
+<div class="dashboard-page bg-light d-flex justify-content-center align-items-center" style="min-height: 100vh; padding: 2rem 0;">
+    <div class="text-center w-100 w-md-75 w-lg-50">
+        <header class="bg-success text-white py-5 shadow-lg text-center rounded-bottom mb-4">
             <h1 class="display-4">🌱 Eco Points Dashboard</h1>
             <p class="lead">Track your sustainable impact and compare with the community</p>
         </header>
 
-        <section class="container mt-5">
+        <!-- Fancy Eco Points Display -->
+        <section class="container mb-5">
+            <div class="row justify-content-center">
+                <div class="col-md-8">
+                    <div class="card eco-card shadow-lg">
+                        <div class="card-body">
+                            <h4 class="card-title"><i class="bi bi-star-fill me-2"></i> Eco Reward Points</h4>
+                            <p class="point-count mb-1">{{ eco_points }}</p>
+                            <p class="hint">Earn 1 Eco Point for every 10,000 steps you take!</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section class="container mb-5">
             <div class="row">
                 <div class="col-md-12 mx-auto mb-4">
                     <div class="card shadow-lg">
@@ -22,14 +73,14 @@
                             <p class="card-text text-center text-muted">Here’s your impact—steps or energy savings. Select below:</p>
                             {% if user_data %}
                                 <div class="text-center mb-4">
-                                    <label for="dataSelection" class="font-weight-bold">Select Data:</label>
+                                    <label for="dataSelection" class="fw-bold">Select Data:</label>
                                     <select id="dataSelection" onchange="updateGraph()" class="form-select form-select-lg w-50 mx-auto">
                                         <option value="steps">Steps</option>
                                         <option value="energy">Energy Savings</option>
                                     </select>
                                 </div>
-                                <div class="graph-container mt-4">
-                                    <canvas id="mainChart" height="350"></canvas>
+                                <div class="graph-container mt-4 position-relative" style="height: 350px;">
+                                    <canvas id="mainChart"></canvas>
                                 </div>
                             {% else %}
                                 <p class="text-danger text-center">No data found for your account.</p>
@@ -40,8 +91,8 @@
             </div>
         </section>
 
-        <footer class="bg-dark text-white text-center py-4 mt-5">
-            <p>© 2025 Green Campus Initiative. Walking toward a greener tomorrow.</p>
+        <footer class="bg-dark text-white text-center py-4 mt-5 rounded-top">
+            <p class="mb-0">© 2025 Green Campus Initiative. Walking toward a greener tomorrow.</p>
         </footer>
     </div>
 </div>
@@ -52,136 +103,53 @@
     const avgData = {{ avg_data|tojson }};
 
     const labels = userData.map(entry => entry.date);
-
-    const stepData = {
-        user: userData.map(entry => entry.steps),
-        avg: avgData.map(entry => entry.steps)
-    };
-
-    const energyData = {
-        user: userData.map(entry => entry.energy || 0),
-        avg: avgData.map(entry => entry.energy || 0)
-    };
+    const stepData = { user: userData.map(e => e.steps), avg: avgData.map(e => e.steps) };
+    const energyData = { user: userData.map(e => e.energy||0), avg: avgData.map(e => e.energy||0) };
 
     const ctx = document.getElementById('mainChart').getContext('2d');
-
-    const gradientUser = ctx.createLinearGradient(0, 0, 0, 400);
-    gradientUser.addColorStop(0, 'rgba(72, 121, 235, 0.4)');  // Blue gradient
+    const gradientUser = ctx.createLinearGradient(0,0,0,350);
+    gradientUser.addColorStop(0, 'rgba(72, 121, 235, 0.4)');
     gradientUser.addColorStop(1, 'rgba(72, 121, 235, 0)');
 
-    const gradientAvg = ctx.createLinearGradient(0, 0, 0, 400);
-    gradientAvg.addColorStop(0, 'rgba(246, 133, 51, 0.4)');  // Orange gradient
+    const gradientAvg = ctx.createLinearGradient(0,0,0,350);
+    gradientAvg.addColorStop(0, 'rgba(246, 133, 51, 0.4)');
     gradientAvg.addColorStop(1, 'rgba(246, 133, 51, 0)');
 
     const config = {
         type: 'line',
         data: {
-            labels: labels,
+            labels,
             datasets: [
-                {
-                    label: 'Your Steps',
-                    data: stepData.user,
-                    borderColor: '#4879eb',  // Blue color for your steps
-                    backgroundColor: gradientUser,
-                    borderWidth: 3,
-                    fill: true,
-                    tension: 0.4,
-                    pointRadius: 5,
-                    pointBackgroundColor: '#4879eb',  // Blue points
-                },
-                {
-                    label: 'Average Steps',
-                    data: stepData.avg,
-                    borderColor: '#f68533',  // Orange color for average steps
-                    backgroundColor: gradientAvg,
-                    borderWidth: 3,
-                    fill: true,
-                    tension: 0.4,
-                    pointRadius: 5,
-                    pointBackgroundColor: '#f68533',  // Orange points
-                }
+                { label:'Your Steps', data:stepData.user, borderColor:'#4879eb', backgroundColor:gradientUser, fill:true, tension:0.3, pointRadius:4 },
+                { label:'Average Steps', data:stepData.avg, borderColor:'#f68533', backgroundColor:gradientAvg, fill:true, tension:0.3, pointRadius:4 }
             ]
         },
         options: {
-            responsive: true,
-            maintainAspectRatio: false,
-            plugins: {
-                title: {
-                    display: false
-                },
-                tooltip: {
-                    backgroundColor: '#374151',
-                    titleColor: '#fff',
-                    bodyColor: '#fff'
-                },
-                legend: {
-                    labels: {
-                        font: {
-                            size: 16
-                        }
-                    }
-                }
-            },
-            scales: {
-                y: {
-                    beginAtZero: true,
-                    title: {
-                        display: true,
-                        text: 'Value',
-                        font: {
-                            size: 16
-                        }
-                    },
-                    ticks: {
-                        stepSize: 1000
-                    },
-                    grid: {
-                        color: 'rgba(0,0,0,0.05)'
-                    }
-                },
-                x: {
-                    title: {
-                        display: true,
-                        text: 'Date',
-                        font: {
-                            size: 16
-                        }
-                    },
-                    grid: {
-                        display: false
-                    }
-                }
-            }
+            responsive:true, maintainAspectRatio:false,
+            plugins:{ legend:{labels:{font:{size:14}}}, tooltip:{mode:'index', intersect:false} },
+            scales:{ y:{beginAtZero:true,title:{display:true,text:'Value',font:{size:14}},grid:{color:'rgba(0,0,0,0.05)'}},
+                     x:{title:{display:true,text:'Date',font:{size:14}},grid:{display:false}} }
         }
     };
 
     const chart = new Chart(ctx, config);
-
-    function updateGraph() {
-        const selectedData = document.getElementById('dataSelection').value;
-
-        if (selectedData === 'steps') {
-            chart.data.datasets[0].data = stepData.user;
-            chart.data.datasets[1].data = stepData.avg;
-            chart.data.datasets[0].label = 'Your Steps';
-            chart.data.datasets[1].label = 'Average Steps';
-            chart.data.datasets[0].borderColor = '#4879eb';  // Blue for steps
-            chart.data.datasets[1].borderColor = '#f68533';  // Orange for avg steps
-            chart.data.datasets[0].pointBackgroundColor = '#4879eb';
-            chart.data.datasets[1].pointBackgroundColor = '#f68533';
+    function updateGraph(){
+        const sel = document.getElementById('dataSelection').value;
+        if(sel==='steps'){
+            chart.data.datasets[0].data=stepData.user;
+            chart.data.datasets[1].data=stepData.avg;
+            chart.data.datasets[0].label='Your Steps';
+            chart.data.datasets[1].label='Average Steps';
+            chart.data.datasets[0].borderColor='#4879eb';
+            chart.data.datasets[1].borderColor='#f68533';
         } else {
-            chart.data.datasets[0].data = energyData.user;
-            chart.data.datasets[1].data = energyData.avg;
-            chart.data.datasets[0].label = 'Your Energy Savings';
-            chart.data.datasets[1].label = 'Average Energy Savings';
-            chart.data.datasets[0].borderColor = '#67b13b';  // Green for energy savings
-            chart.data.datasets[1].borderColor = '#f1a541';  // Yellowish for avg energy savings
-            chart.data.datasets[0].backgroundColor = 'rgba(103, 177, 59, 0.4)';
-            chart.data.datasets[1].backgroundColor = 'rgba(241, 165, 65, 0.4)';
-            chart.data.datasets[0].pointBackgroundColor = '#67b13b';
-            chart.data.datasets[1].pointBackgroundColor = '#f1a541';
+            chart.data.datasets[0].data=energyData.user;
+            chart.data.datasets[1].data=energyData.avg;
+            chart.data.datasets[0].label='Your Energy Savings';
+            chart.data.datasets[1].label='Average Energy Savings';
+            chart.data.datasets[0].borderColor='#67b13b';
+            chart.data.datasets[1].borderColor='#f1a541';
         }
-
         chart.update();
     }
 </script>
