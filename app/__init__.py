@@ -8,6 +8,7 @@ from flask_sqlalchemy import SQLAlchemy
 from jinja2 import StrictUndefined
 
 from app.logger import logger
+from app.stepsdata_simulator import run_steps_simulator
 from config import Config
 
 app = Flask(__name__)
@@ -37,3 +38,6 @@ def activate_simulator():
         thread = threading.Thread(target=simulator_thread)
         thread.daemon = True
         thread.start()
+
+        with app.app_context():
+            run_steps_simulator()

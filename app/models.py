@@ -49,3 +49,32 @@ class EnergyReading(db.Model):
     def __repr__(self):
         return f'EnergyReading(id={self.id}, timestamp={self.timestamp}, building={self.building}, ' \
                f'building_code={self.building_code}, zone={self.zone}, value={self.value}, category={self.category})'
+
+
+class StepData(db.Model):
+    __tablename__ = 'step_data'
+
+    id: so.Mapped[int] = so.mapped_column(primary_key=True)
+    user_id: so.Mapped[int] = so.mapped_column(sa.Integer, sa.ForeignKey('users.id'), nullable=False)
+    date: so.Mapped[datetime] = so.mapped_column(sa.DateTime, default=datetime.utcnow)
+    steps: so.Mapped[int] = so.mapped_column(sa.Integer)
+
+    # Relationship with the User table
+    user: so.Mapped["User"] = so.relationship("User", back_populates="steps_data")
+
+    def __repr__(self):
+        return f'StepData(id={self.id}, user_id={self.user_id}, date={self.date}, steps={self.steps})'
+
+
+class EcoPoints(db.Model):
+    __tablename__ = 'eco_points'
+
+    user_id: so.Mapped[int] = so.mapped_column(sa.Integer, sa.ForeignKey('users.id'), primary_key=True)
+    eco_points: so.Mapped[int] = so.mapped_column(sa.Integer, default=0)
+    last_updated_at: so.Mapped[datetime] = so.mapped_column(sa.DateTime, default=datetime.utcnow)
+
+    # Relationship with the User table
+    user: so.Mapped["User"] = so.relationship("User", back_populates="eco_points")
+
+    def __repr__(self):
+        return f'EcoPoints(user_id={self.user_id}, eco_points={self.eco_points}, last_updated_at={self.last_updated_at})'

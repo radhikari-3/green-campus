@@ -23,4 +23,15 @@ def reset_db():
         user.set_password(pw)
         # add the newly created user object to the database session:
         db.session.add(user)
+
+        # Add StepData and EcoPoints for each user
+        for user in User.query.all():
+            # Add initial StepData for the user
+            initial_steps = StepData(user_id=user.id, date=datetime.utcnow(),
+                                     steps=1000)  # Example: 1000 steps for initialization
+            db.session.add(initial_steps)
+
+            # Add initial EcoPoints for the user (e.g., 10 eco points)
+            initial_eco_points = EcoPoints(user_id=user.id, eco_points=10, last_updated_at=datetime.utcnow())
+            db.session.add(initial_eco_points)
     db.session.commit()

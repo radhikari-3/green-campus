@@ -40,3 +40,17 @@
 .dashboard-links a:hover {
     text-decoration: underline;
 }
+
+.toggle-container {
+    text-align: center;
+    margin: 20px auto;
+    font-size: 16px;
+}
+
+.toggle-container select {
+    padding: 6px 12px;
+    font-size: 15px;
+    border-radius: 8px;
+    border: 1px solid #ccc;
+    outline: none;
+}

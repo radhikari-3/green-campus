@@ -3,7 +3,8 @@ from urllib.parse import urlsplit
 import sqlalchemy as sa
 from flask import render_template, redirect, url_for, flash, request
 from flask_login import current_user, login_user, logout_user, login_required
-
+import os
+import json
 from app import app
 from app import db
 from app.forms import LoginForm
@@ -19,6 +20,40 @@ def home():
 @login_required
 def account():
     return render_template('account.html', title="Account")
+
+@app.route("/eco-points-dashboard")
+@login_required
+def eco_points_dashboard():
+    try:
+        with open(os.path.join("app", "static", "all_users_step_data.json")) as f:
+            all_data = json.load(f)
+    except FileNotFoundError:
+        all_data = {}
+
+    username = current_user.username
+    user_data = all_data.get(username, [])
+
+    # Calculate average steps across all users by date
+    date_to_steps = {}
+    for user_steps in all_data.values():
+        for entry in user_steps:
+            date = entry["date"]
+            date_to_steps.setdefault(date, []).append(entry["steps"])
+
+    avg_data = [
+        {"date": date, "steps": sum(steps) // len(steps)}
+        for date, steps in sorted(date_to_steps.items())
+    ]
+
+    return render_template(
+        "eco_points_dashboard.html",
+        title="Eco Points Dashboard",
+        username=username,
+        user_data=user_data,
+        avg_data=avg_data
+    )
+
+
 
 
 @app.route('/login', methods=['GET', 'POST'])
