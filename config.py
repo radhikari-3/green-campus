@@ -1,4 +1,8 @@
+from dotenv import load_dotenv
 import os
+
+# Load environment variables from .flaskenv
+load_dotenv()
 
 basedir = os.path.abspath(os.path.dirname(__file__))
 class Config:
@@ -11,8 +15,8 @@ class Config:
     UPLOAD_FOLDER = os.path.join(basedir, 'app', 'data', 'uploads')
     MAX_CONTENT_LENGTH = 1 * 1024 * 1024
 
-    #SQLALCHEMY_DATABASE_URI = 'sqlite:///' + os.path.join(basedir, 'app', 'data', 'data.sqlite')
     SQLALCHEMY_TRACK_MODIFICATIONS = False
     SQLALCHEMY_ECHO = True
 
-    SQLALCHEMY_DATABASE_URI = 'postgresql://postgres:%40Anupama2000@localhost/postgres'
+    SQLALCHEMY_DATABASE_URI = f"postgresql://{os.environ.get('DB_USERNAME')}:{os.environ.get('DB_PASSWORD')}@localhost/{os.environ.get('DB_NAME')}"
+

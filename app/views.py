@@ -41,7 +41,6 @@ def signup():
         u.set_password(form.password.data)
         otp = u.generate_otp()
         db.session.add(u); db.session.commit()
-        print(f"[DEV] Signup OTP for {u.email}: {otp}", file=sys.stderr)
 
         send_email_via_gmail(
             to = u.email,

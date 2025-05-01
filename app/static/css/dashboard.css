@@ -1,0 +1,42 @@
+.dashboard-container {
+    max-width: 900px;
+    margin: 0 auto;
+    padding: 40px 20px;
+}
+
+.dashboard-card {
+    background-color: #ffffff;
+    padding: 25px;
+    border-radius: 8px;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+    margin-bottom: 30px;
+    text-align: center;
+}
+
+.dashboard-card h2 {
+    margin-bottom: 10px;
+}
+
+.dashboard-section {
+    background-color: #f8f9fa;
+    padding: 20px;
+    border-radius: 8px;
+}
+
+.dashboard-links {
+    list-style-type: none;
+    padding: 0;
+}
+
+.dashboard-links li {
+    margin: 10px 0;
+}
+
+.dashboard-links a {
+    text-decoration: none;
+    color: #007bff;
+}
+
+.dashboard-links a:hover {
+    text-decoration: underline;
+}

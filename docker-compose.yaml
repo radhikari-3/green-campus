@@ -1,4 +1,17 @@
 services:
+
+  mqtt-broker:
+    image: eclipse-mosquitto:2
+    container_name: mosquitto_local
+    ports:
+      - "1883:1883"   # MQTT protocol
+      - "9001:9001"   # (Optional) WebSocket support
+    volumes:
+      - ./mosquitto/config:/mosquitto/config
+      - ./mosquitto/data:/mosquitto/data
+      - ./mosquitto/log:/mosquitto/log
+    restart: unless-stopped
+
   db:
     image: postgres:latest
     container_name: postgres_local

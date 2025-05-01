@@ -1,22 +1,30 @@
-{% extends "base.html" %}
-{% import "bootstrap_wtf.html" as wtf %}
-
-{% block content %}
-<h1>Private Account Page</h1>
-<p>Hello, welcome to your Account Page</p>
-<p>This page is only available to you as the currently logged in user</p>
-<p>Your registered email: {{ current_user.email }}</p>
-{% if days_since_signup > 90 %}
-  <div class="alert alert-warning">
-    Your password is over 90 days old. Please
-    <a href="{{ url_for('reset_password') }}">change your password</a>.
-  </div>
-{% endif %}
-
+{% block head %}
+      {{ super() }}
+      <link rel="stylesheet" href="{{ url_for('static', filename='css/dashboard.css') }}">
 {% endblock %}
 
+{% block content %}
+  <div class="dashboard-container">
 
+      <div class="dashboard-card">
+          <h2>Welcome, {{ current_user.username }}! 👋</h2>
+          <p><strong>Email:</strong> {{ current_user.email }}</p>
+          {% if days_since_signup > 90 %}
+          <div class="alert alert-warning">
+              Your password is over 90 days old. Please
+              <a href="{{ url_for('reset_password') }}">change your password</a>.
+          </div>
+          {% endif %}
+      </div>
 
+      <div class="dashboard-section">
+          <h3>Account Settings</h3>
+          <ul class="dashboard-links">
+              <li><a href="/update-profile">Update Profile</a></li>
+              <li><a href="/change-password">Change Password</a></li>
+              <li><a href="/logout">Logout</a></li>
+          </ul>
+      </div>
 
-
-
+  </div>
+{% endblock %}

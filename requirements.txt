@@ -4,7 +4,6 @@ Flask-Login==0.6.3
 Flask-Migrate==4.1.0
 Flask-SQLAlchemy
 Flask-WTF==1.2.2
-<<<<<<< Updated upstream
 Jinja2
 psycopg2-binary==2.9.10
 pytest
@@ -12,7 +11,6 @@ python-dateutil
 SQLAlchemy
 Werkzeug
 WTForms
-=======
 greenlet
 idna
 iniconfig
@@ -38,4 +36,6 @@ google-auth-oauthlib~=1.2.2
 google-api-python-client~=2.169.0
 protobuf~=6.30.2
 python-dotenv~=0.21.0
->>>>>>> Stashed changes
+colorlog>=5.0.0
+paho-mqtt
+psycopg2
