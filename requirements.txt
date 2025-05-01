@@ -12,4 +12,5 @@ SQLAlchemy
 Werkzeug
 WTForms
 colorlog>=5.0.0
-paho
+paho-mqtt
+psycopg2
