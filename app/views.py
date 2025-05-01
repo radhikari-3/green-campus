@@ -101,10 +101,6 @@ def forgot_password_verify(user_id):
     if form.validate_on_submit():
         if (u.email_otp == form.otp.data
             and u.email_otp_expires > datetime.utcnow()):
-            #if (u.email == form.email.data
-             #       and u.email_otp == form.otp.data
-              #      and u.email_otp_expires > datetime.utcnow()):
-            # clear OTP
             u.email_otp = None
             u.email_otp_expires = None
             db.session.commit()

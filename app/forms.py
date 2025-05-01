@@ -12,10 +12,9 @@ class LoginForm(FlaskForm):
     submit = SubmitField('Sign In')
 
 class SignupForm(FlaskForm):
-    #username = StringField('Username', validators=[DataRequired()])
     email    = StringField('Email',    validators=[DataRequired(), Email()])
     password = PasswordField('Password', validators=[DataRequired()])
-    password2= PasswordField('Confirm Password', validators=[DataRequired(), EqualTo('password')])
+    confirm_password = PasswordField('Confirm Password', validators=[DataRequired(), EqualTo('password')])
     submit   = SubmitField('Sign Up')
 
 class VerifyEmailForm(FlaskForm):
@@ -28,18 +27,17 @@ class ResetPasswordRequestForm(FlaskForm):
 
 class ResetPasswordForm(FlaskForm):
     password  = PasswordField('New Password', validators=[DataRequired()])
-    password2 = PasswordField('Confirm Password', validators=[DataRequired(), EqualTo('password')])
+    confirm_password = PasswordField('Confirm Password', validators=[DataRequired(), EqualTo('password')])
     submit    = SubmitField('Reset Password')
 
 class ResetOTPForm(FlaskForm):
-    #email = StringField('Email', validators=[DataRequired(), Email()])
     otp = StringField('OTP code', validators=[DataRequired()])
     submit = SubmitField('Verify OTP')
 
 class PasswordChangeForm(FlaskForm):
     current_password = PasswordField('Current Password', validators=[DataRequired()])
     new_password = PasswordField('New Password',     validators=[DataRequired()])
-    new_password2 = PasswordField('Confirm New Password',validators=[DataRequired(), EqualTo('new_password')])
+    confirm_password = PasswordField('Confirm Password',validators=[DataRequired(), EqualTo('new_password')])
     submit = SubmitField('Change Password')
 
 
