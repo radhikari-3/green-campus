@@ -39,3 +39,4 @@ python-dotenv~=0.21.0
 colorlog>=5.0.0
 paho-mqtt
 psycopg2
+

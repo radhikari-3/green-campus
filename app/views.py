@@ -1,7 +1,7 @@
 #views.py
 from urllib.parse import urlsplit
 from itsdangerous import URLSafeTimedSerializer, SignatureExpired, BadSignature
-from app.gmail import send_email_via_gmail
+from app.oauth_config import send_email_via_gmail
 from datetime import datetime
 import sqlalchemy as sa
 from flask import render_template, redirect, url_for, flash, request
