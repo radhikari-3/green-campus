@@ -36,7 +36,10 @@
                 </li>
                 {% else %}
                 <li class="nav-item">
-                    <a class="nav-link" aria-current="page" href="{{ url_for('logout') }}">Logout {{ current_user.username }}</a>
+                    <a class="nav-link" href="{{ url_for('reset_password') }}">Reset Password</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" aria-current="page" href="{{ url_for('logout') }}">Logout</a>
                 </li>
                 {% endif %}
                 <li class="nav-item">

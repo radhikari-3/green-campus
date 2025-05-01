@@ -1,4 +1,3 @@
-#debug_utils.py
 import datetime
 from app import db
 from app.models import User
@@ -8,23 +7,17 @@ def reset_db():
     db.drop_all()
     db.create_all()
 
-    demo_users = [
-        {'username': 'amy',   'email': 'amy@b.com'},
-        {'username': 'tom',   'email': 'tom@b.com'},
-        {'username': 'yin',   'email': 'yin@b.com'},
-        {'username': 'tariq', 'email': 'trq@b.com'},
-        {'username': 'jo',    'email': 'jo@b.com'},
+    users = [
+        {'email': 'amy@b.com', 'role': 'Admin', 'pw': 'amy.pw'},
+        {'email': 'tom@b.com', 'pw': 'amy.pw'},
+        {'email': 'yin@b.com', 'role': 'Admin', 'pw': 'amy.pw'},
+        {'email': 'trq@b.com', 'pw': 'amy.pw'},
+        {'email': 'jo@b.com', 'pw': 'amy.pw'}
     ]
 
-    for udata in demo_users:
-        user = User(
-            username=udata['username'],
-            email=udata['email'],
-            role='Admin',
-            email_verified=True
-        )
-        user.signup_date = datetime.datetime.utcnow()
-        user.set_password('amy.pw')
+    for u in users:
+        pw = u.pop('pw')
+        user = User(**u)
+        user.set_password(pw)
         db.session.add(user)
-
     db.session.commit()

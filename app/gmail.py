@@ -1,4 +1,3 @@
-#gmail.py
 import os, pickle, base64
 from email.mime.text import MIMEText
 from google.auth.transport.requests import Request

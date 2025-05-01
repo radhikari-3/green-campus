@@ -3,11 +3,20 @@
 
 {% block content %}
 <h1>Private Account Page</h1>
-
-<p>Hello {{ current_user.username }}</p>
-
+<p>Hello, welcome to your Account Page</p>
 <p>This page is only available to you as the currently logged in user</p>
-
-<p>The email address we have recorded for you is: {{ current_user.email }}</p>
+<p>Your registered email: {{ current_user.email }}</p>
+{% if days_since_signup > 90 %}
+  <div class="alert alert-warning">
+    Your password is over 90 days old. Please
+    <a href="{{ url_for('reset_password') }}">change your password</a>.
+  </div>
+{% endif %}
 
 {% endblock %}
+
+
+
+
+
+
