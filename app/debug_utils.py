@@ -1,26 +1,30 @@
+#debug_utils.py
+import datetime
 from app import db
 from app.models import User
 
-
 def reset_db():
+    """ Drop all tables and seed five verified demo users. """
     db.drop_all()
     db.create_all()
 
-    users =[
-        {'username': 'amy',   'email': 'amy@b.com', 'role': 'Admin', 'pw': 'amy.pw'},
-        {'username': 'tom',   'email': 'tom@b.com',                  'pw': 'amy.pw'},
-        {'username': 'yin',   'email': 'yin@b.com', 'role': 'Admin', 'pw': 'amy.pw'},
-        {'username': 'tariq', 'email': 'trq@b.com',                  'pw': 'amy.pw'},
-        {'username': 'jo',    'email': 'jo@b.com',                   'pw': 'amy.pw'}
+    demo_users = [
+        {'username': 'amy',   'email': 'amy@b.com'},
+        {'username': 'tom',   'email': 'tom@b.com'},
+        {'username': 'yin',   'email': 'yin@b.com'},
+        {'username': 'tariq', 'email': 'trq@b.com'},
+        {'username': 'jo',    'email': 'jo@b.com'},
     ]
 
-    for u in users:
-        # get the password value and remove it from the dict:
-        pw = u.pop('pw')
-        # create a new user object using the parameters defined by the remaining entries in the dict:
-        user = User(**u)
-        # set the password for the user object:
-        user.set_password(pw)
-        # add the newly created user object to the database session:
+    for udata in demo_users:
+        user = User(
+            username=udata['username'],
+            email=udata['email'],
+            role='Admin',
+            email_verified=True
+        )
+        user.signup_date = datetime.datetime.utcnow()
+        user.set_password('amy.pw')
         db.session.add(user)
+
     db.session.commit()

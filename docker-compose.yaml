@@ -4,8 +4,8 @@ services:
     container_name: postgres_local
     environment:
       POSTGRES_DB: postgres
-      POSTGRES_USER: local
-      POSTGRES_PASSWORD: admin
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: @Anupama2000
     volumes:
       - postgres_data:/var/lib/postgresql/data
     ports:

@@ -1,10 +1,12 @@
+#init.py
+from dotenv import load_dotenv
+load_dotenv()
 import sqlalchemy as sa
 import sqlalchemy.orm as so
 from flask import Flask
 from flask_login import LoginManager
 from flask_sqlalchemy import SQLAlchemy
 from jinja2 import StrictUndefined
-
 from config import Config
 
 app = Flask(__name__)
@@ -13,7 +15,6 @@ app.config.from_object(Config)
 db = SQLAlchemy(app)
 login = LoginManager(app)
 login.login_view = 'login'
-
 from app import views, models
 from app.debug_utils import reset_db
 

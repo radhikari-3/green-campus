@@ -1,14 +1,15 @@
+#views.py
 from urllib.parse import urlsplit
-
+from itsdangerous import URLSafeTimedSerializer, SignatureExpired, BadSignature
+from app.gmail import send_email_via_gmail
+import datetime
 import sqlalchemy as sa
 from flask import render_template, redirect, url_for, flash, request
 from flask_login import current_user, login_user, logout_user, login_required
-
-from app import app
-from app import db
-from app.forms import LoginForm
+from app import app, db
+from app.forms import LoginForm, VerifyEmailForm, SignupForm, ResetPasswordForm, ResetPasswordRequestForm, ChangePasswordForm
 from app.models import User
-
+import sys
 
 @app.route("/")
 def home():
@@ -21,6 +22,112 @@ def account():
     return render_template('account.html', title="Account")
 
 
+# helper to get serializer
+def get_serializer():
+    return URLSafeTimedSerializer(app.config['SECRET_KEY'])
+
+# --- SIGNUP ---
+@app.route('/signup', methods=['GET','POST'])
+def signup():
+    if current_user.is_authenticated:
+        return redirect(url_for('home'))
+    form = SignupForm()
+    if form.validate_on_submit():
+        existing = db.session.scalar(sa.select(User).where(User.email == form.email.data))
+        if existing:
+            flash('Email already registered','danger')
+            return redirect(url_for('signup'))
+        u = User(username=form.username.data,
+                 email=form.email.data,
+                 role=form.role.data)
+        u.set_password(form.password.data)
+        ##here, make the collected password stored in debug.py
+        otp = u.generate_otp()
+        db.session.add(u); db.session.commit()
+        print(f"[DEV] Signup OTP for {u.email}: {otp}", file=sys.stderr)
+
+        send_email_via_gmail(
+            to = u.email,
+            subject = "Your Verification Code",
+            body = f"Your signup code is {otp}. It expires in 10 minutes."
+        )
+        flash('OTP sent to your email.','info')
+        return redirect(url_for('verify_email', user_id=u.id))
+    return render_template('generic_form.html', title='Sign Up', form=form)
+
+@app.route('/verify/<int:user_id>', methods=['GET','POST'])
+def verify_email(user_id):
+    u = db.session.get(User, user_id)
+    form = VerifyEmailForm()
+    if form.validate_on_submit():
+        if (u.email_otp == form.otp.data
+            and u.email_otp_expires > datetime.datetime.utcnow()):
+            u.email_verified = True
+            u.email_otp = None
+            u.email_otp_expires = None
+            db.session.commit()
+            flash('Email verified! You can now log in.','success')
+            return redirect(url_for('login'))
+        else:
+            flash('Invalid or expired OTP.','danger')
+    return render_template('generic_form.html', title='Verify Email', form=form)
+
+
+@app.route('/forgot_password', methods=['GET','POST'])
+def forgot_password():
+    # If already logged in, go home
+    if current_user.is_authenticated:
+        return redirect(url_for('home'))
+
+    form = ChangePasswordForm()
+    if form.validate_on_submit():
+        # Lookup by email
+        u = db.session.scalar(
+            sa.select(User).where(User.email == form.email.data)
+        )
+        if u is None:
+            flash('No account found with that email.', 'danger')
+            return redirect(url_for('forgot_password'))
+
+        # Verify current password
+        if not u.check_password(form.current_password.data):
+            flash('Current password is incorrect.', 'danger')
+            return redirect(url_for('forgot_password'))
+
+        # All good: hash & store new password
+        u.set_password(form.new_password.data)
+        db.session.commit()
+
+        flash('Your password has been reset. You can now log in.', 'success')
+        return redirect(url_for('login'))
+
+    return render_template('generic_form.html', title='Reset Password', form=form)
+
+@app.route('/reset_password/<token>', methods=['GET','POST'])
+def reset_password(token):
+    if current_user.is_authenticated:
+        return redirect(url_for('home'))
+    s = get_serializer()
+    try:
+        email = s.loads(token, salt='password-reset', max_age=86400)
+    except (SignatureExpired, BadSignature):
+        flash('Invalid or expired reset link.','danger')
+        return redirect(url_for('forgot_password'))
+    form = ResetPasswordForm()
+    ## check old is correct ya nahi
+    if form.validate_on_submit():
+        u = db.session.scalar(sa.select(User).where(User.email==email))
+        u.set_password(form.password.data)
+        db.session.commit()
+        send_email_via_gmail(
+            to = u.email,
+            subject = "Password Changed",
+            body = "Your password has been updated."
+        )
+        flash('Your password has been reset.','success')
+        return redirect(url_for('login'))
+    return render_template('generic_form.html', title='Reset Password', form=form)
+
 @app.route('/login', methods=['GET', 'POST'])
 def login():
     if current_user.is_authenticated:
@@ -32,12 +139,15 @@ def login():
         if user is None or not user.check_password(form.password.data):
             flash('Invalid username or password', 'danger')
             return redirect(url_for('login'))
+        if not user.email_verified:
+            flash('Please verify your email before logging in.', 'warning')
+            return redirect(url_for('login'))
         login_user(user, remember=form.remember_me.data)
         next_page = request.args.get('next')
         if not next_page or urlsplit(next_page).netloc != '':
             next_page = url_for('home')
         return redirect(next_page)
-    return render_template('generic_form.html', title='Sign In', form=form)
+    return render_template('login.html', title='Sign In', form=form)
 
 @app.route('/logout')
 def logout():
