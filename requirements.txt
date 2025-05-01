@@ -11,3 +11,4 @@ python-dateutil
 SQLAlchemy
 Werkzeug
 WTForms
+colorlog>=5.0.0
