@@ -4,16 +4,6 @@ Please include a summary of the change and relevant context.
 ## 🧩 Related Issues
 _Closes #123, Depends on #456, etc._
 
-## 🔄 What Changed?
-- [ ] Refactored auth module
-- [ ] Removed deprecated `foo()` method
-
-## ✅ Type of change
-- [ ] Bug fix
-- [ ] New feature
-- [ ] Breaking change
-- [ ] Documentation update
-
 ## 🚥 Checklist Before Merge
 - [ ] My code builds and runs locally
 - [ ] I have added/updated unit tests
