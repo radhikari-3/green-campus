@@ -1,3 +1,4 @@
+import json
 import os, pickle, base64
 from email.mime.text import MIMEText
 from google.auth.transport.requests import Request
@@ -12,7 +13,7 @@ def get_gmail_service():
     creds = None
     if os.path.exists(TOKEN_FILE):
         with open(TOKEN_FILE, 'rb') as f:
-            creds = pickle.load(f)
+            creds = json.load(f)
     if not creds or not creds.valid:
         if creds and creds.expired and creds.refresh_token:
             creds.refresh(Request())
@@ -20,7 +21,7 @@ def get_gmail_service():
             flow = InstalledAppFlow.from_client_secrets_file(CREDS_FILE, SCOPES)
             creds = flow.run_console()
         with open(TOKEN_FILE, 'wb') as f:
-            pickle.dump(creds, f)
+            json.dump(creds, f)
     return build('gmail', 'v1', credentials=creds)
 
 def send_email_via_gmail(to: str, subject: str, body: str):
