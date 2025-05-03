@@ -4,9 +4,12 @@ from app.models import User
 from app.logger import logger as log
 from sqlalchemy import text
 
-
 def reset_db():
+<<<<<<< HEAD
 
+=======
+    """ Drop all tables and seed five verified demo users. """
+>>>>>>> a06ace9ab5fa065ed798c1be2b9dd748e5adcee4
     db.drop_all()
     db.create_all()
 
@@ -20,7 +23,11 @@ def reset_db():
 
     for u in users:
         pw = u.pop('pw')
+<<<<<<< HEAD
         user = User(**u, email_verified=True)
+=======
+        user = User(**u)
+>>>>>>> a06ace9ab5fa065ed798c1be2b9dd748e5adcee4
         user.set_password(pw)
         db.session.add(user)
     db.session.commit()
