@@ -1,0 +1,53 @@
+{% extends "base.html" %}
+{% import "bootstrap_wtf.html" as wtf %}
+
+{% block head %}
+    {{ super() }}
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/dashboard.css') }}">
+{% endblock %}
+
+{% block content %}
+<div class="dashboard-container">
+<img src="{{ url_for('static', filename='img/market-icon.svg') }}" alt="Smart Food Expiry" width="100" class="mb-3">
+
+    <div class="section text-center">
+        <h2 class="text-success">Welcome back, {{ current_user.username.title() }}! 👋</h2>
+        <span class="badge bg-success">Sustainable Vendor <i class="bi bi-check-circle"></i></span>
+    </div>
+    <div class="section text-center mb-4">
+        <p class="lead text-muted">
+            This is your <strong>Smart Food Expiry Dashboard</strong> — your personal space to manage expiring stock, automatically apply smart discounts based on product's freshness and delight eco-conscious costumers.
+        </p>
+        <p class="text-muted">
+            You reduce waste, make costumers happy with great deals and also contribute to a more sustainable food system. 🌍
+        </p>
+    </div>
+
+    <div class="section d-flex flex-column flex-md-row justify-content-center align-items-center gap-4 mb-4">
+        <button class="btn btn-outline-success btn-lg px-5 py-3 rounded-pill shadow w-100" type="button"
+                data-bs-toggle="collapse" data-bs-target="#productForm"
+                aria-expanded="false" aria-controls="productForm">
+            Add Product
+        </button>
+
+        <a href="{{ url_for('inventory') }}" class="btn btn-outline-info btn-lg px-5 py-3 rounded-pill shadow w-100" type="button">
+            Inventory
+        </a>
+    </div>
+
+    <div class="section collapse" id="productForm" >
+    <div class="card card-body ">
+        <h2 class="text-center text-success mb-4">Add a Product 🍕</h2>
+        {% if current_user.is_authenticated %}
+            {{ wtf.quick_form(inventory_form, action="", method="post", id="", novalidate=True, autofocus=False) }}
+        {% else %}
+            <p>Please log in to access this feature</p>
+        {% endif %}
+    </div>
+    </div>
+
+     <footer class="footer">
+        <p>© 2025 Green Campus Initiative. Empowering Sustainable Change.</p>
+    </footer>
+</div>
+{% endblock %}
