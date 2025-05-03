@@ -8,7 +8,7 @@ from flask_login import current_user, login_user, logout_user, login_required
 
 from app import app, db
 from app.forms import LoginForm
-from app.models import User, StepData, EcoPoints
+from app.models import User, ActivityLog
 
 
 @app.route("/")
@@ -25,47 +25,63 @@ def account():
 @app.route("/eco-points-dashboard")
 @login_required
 def eco_points_dashboard():
-    # Current user's username
-    username = current_user.username
+    email = current_user.email
 
 
-    steps_q = (
-        StepData.query
-                .filter_by(username=username)
-                .order_by(StepData.date)
-                .all()
+    walking_q = (
+        ActivityLog.query
+        .filter_by(email=email, activity_type="walking")
+        .order_by(ActivityLog.date)
+        .all()
     )
-    user_data = [
-        {"date": sd.date.strftime("%Y-%m-%d"), "steps": sd.steps}
-        for sd in steps_q
+    walking_data = [
+        {"date": al.date.strftime("%Y-%m-%d"), "steps": al.steps}
+        for al in walking_q
+    ]
+
+
+    cycling_q = (
+        ActivityLog.query
+        .filter_by(email=email, activity_type="cycling")
+        .order_by(ActivityLog.date)
+        .all()
+    )
+    cycling_data = [
+        {"date": al.date.strftime("%Y-%m-%d"), "distance": al.distance}
+        for al in cycling_q
     ]
 
 
     avg_q = (
         db.session.query(
-            StepData.date,
-            func.avg(StepData.steps).label("avg_steps"),
+            func.date(ActivityLog.date).label("date"),
+            func.avg(ActivityLog.steps).label("avg_steps")
         )
-        .group_by(StepData.date)
-        .order_by(StepData.date)
+        .filter(ActivityLog.activity_type == "walking")
+        .group_by(func.date(ActivityLog.date))
+        .order_by(func.date(ActivityLog.date))
         .all()
     )
     avg_data = [
-        {"date": row.date.strftime("%Y-%m-%d"), "steps": int(row.avg_steps)}
+        {"date": row.date.strftime("%Y-%m-%d"), "steps": round(row.avg_steps)}
         for row in avg_q
     ]
 
-    # 3) Retrieve current user's eco points
-    eco = EcoPoints.query.filter_by(username=username).first()
-    eco_points = eco.eco_points if eco else 0
+
+    total_eco_points = (
+        db.session.query(func.sum(ActivityLog.eco_points))
+        .filter(ActivityLog.email == email)
+        .scalar() or 0
+    )
 
     return render_template(
         "eco_points_dashboard.html",
         title="Eco Points Dashboard",
-        username=username,
-        user_data=user_data,
+        username=email,
+        walking_data=walking_data,
+        cycling_data=cycling_data,
         avg_data=avg_data,
-        eco_points=eco_points
+        eco_points=round(total_eco_points, 2)
     )
 
 

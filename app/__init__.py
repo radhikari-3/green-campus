@@ -8,12 +8,12 @@ from flask_sqlalchemy import SQLAlchemy
 from jinja2 import StrictUndefined
 
 from app.logger import logger
-from app.stepsdata_simulator import run_steps_simulator
 from config import Config
 
 app = Flask(__name__)
 app.jinja_env.undefined = StrictUndefined
 app.config.from_object(Config)
+
 db = SQLAlchemy(app)
 login = LoginManager(app)
 login.login_view = 'login'
@@ -29,7 +29,6 @@ from app.iot_simulator import simulator_thread
 
 first_request_handled = False
 
-# Start background thread when Flask starts
 @app.before_request
 def activate_simulator():
     global first_request_handled
@@ -39,5 +38,8 @@ def activate_simulator():
         thread.daemon = True
         thread.start()
 
-        with app.app_context():
-            run_steps_simulator()
+
+        from app.stepsdata_simulator import run_steps_simulator
+        if app.config.get('ENABLE_SIMULATOR', False):
+            with app.app_context():
+                run_steps_simulator()

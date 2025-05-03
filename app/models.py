@@ -1,12 +1,11 @@
 from dataclasses import dataclass
 from datetime import datetime
-from typing import Optional, List
-
+from typing import Optional
+import datetime
 import sqlalchemy as sa
 import sqlalchemy.orm as so
 from flask_login import UserMixin
 from werkzeug.security import generate_password_hash, check_password_hash
-
 from app import db, login
 
 
@@ -14,28 +13,36 @@ from app import db, login
 class User(UserMixin, db.Model):
     __tablename__ = 'users'
 
-    id: so.Mapped[int]      = so.mapped_column(primary_key=True)
-    username: so.Mapped[str] = so.mapped_column(sa.String(64), index=True, unique=True)
-    email: so.Mapped[str]    = so.mapped_column(sa.String(120), index=True, unique=True)
+    id: so.Mapped[int] = so.mapped_column(primary_key=True)
+    email: so.Mapped[str] = so.mapped_column(sa.String(120), index=True, unique=True)
     password_hash: so.Mapped[Optional[str]] = so.mapped_column(sa.String(256))
-    role: so.Mapped[str]     = so.mapped_column(sa.String(10), default="Normal")
+    role: so.Mapped[str] = so.mapped_column(sa.String(10), default="Normal")
+    email_verified: so.Mapped[bool] = so.mapped_column(sa.Boolean, default=False)
+    email_otp: so.Mapped[Optional[str]] = so.mapped_column(sa.String(6), nullable=True)
+    email_otp_expires: so.Mapped[Optional[datetime.datetime]] = so.mapped_column(sa.DateTime, nullable=True)
+    signup_date: so.Mapped[datetime.datetime] = so.mapped_column(sa.DateTime, default=datetime.datetime.utcnow, nullable=False)
 
-    # backwards relationships
-    steps_data: so.Mapped[List["StepData"]] = so.relationship(
-        "StepData", back_populates="user", cascade="all, delete-orphan"
-    )
-    eco_points: so.Mapped[Optional["EcoPoints"]] = so.relationship(
-        "EcoPoints", back_populates="user", uselist=False, cascade="all, delete-orphan"
+    # Relationship
+    activity_logs: so.WriteOnlyMapped["ActivityLog"] = so.relationship(
+        "ActivityLog", back_populates="user", cascade="all, delete-orphan"
     )
 
     def __repr__(self):
-        return f"<User {self.username}>"
+        pwh = 'None' if not self.password_hash else f'...{self.password_hash[-5:]}'
+        return f'User(id={self.id}, email={self.email}, role={self.role}, pwh={pwh})'
 
     def set_password(self, password):
         self.password_hash = generate_password_hash(password)
 
     def check_password(self, password):
         return check_password_hash(self.password_hash, password)
+
+    def generate_otp(self):
+        import random
+        code = f"{random.randint(100000, 999999)}"
+        self.email_otp = code
+        self.email_otp_expires = datetime.datetime.utcnow() + datetime.timedelta(minutes=10)
+        return code
 
 
 @login.user_loader
@@ -45,46 +52,42 @@ def load_user(id):
 
 class EnergyReading(db.Model):
     __tablename__ = 'energy_readings'
-    id: so.Mapped[int]        = so.mapped_column(primary_key=True)
+
+    id: so.Mapped[int] = so.mapped_column(primary_key=True)
     timestamp: so.Mapped[datetime] = so.mapped_column(sa.DateTime)
-    building: so.Mapped[str]  = so.mapped_column(sa.String(100))
+    building: so.Mapped[str] = so.mapped_column(sa.String(100))
     building_code: so.Mapped[str] = so.mapped_column(sa.String(10))
-    zone: so.Mapped[str]      = so.mapped_column(sa.String(50))
-    value: so.Mapped[float]   = so.mapped_column(sa.Float)
-    category: so.Mapped[str]  = so.mapped_column(sa.String(50))
+    zone: so.Mapped[str] = so.mapped_column(sa.String(50))
+    value: so.Mapped[float] = so.mapped_column(sa.Float)
+    category: so.Mapped[str] = so.mapped_column(sa.String(50))  # gas or electricity
+
+    def __repr__(self):
+        return f'EnergyReading(id={self.id}, timestamp={self.timestamp}, building={self.building}, ' \
+               f'building_code={self.building_code}, zone={self.zone}, value={self.value}, category={self.category})'
 
 
-class StepData(db.Model):
-    __tablename__ = 'step_data'
+class ActivityLog(db.Model):
+    __tablename__ = 'activity_log'
 
-    id: so.Mapped[int]             = so.mapped_column(primary_key=True)
-    username: so.Mapped[str]       = so.mapped_column(
-        sa.String(64),
-        sa.ForeignKey('users.username'),
+    id: so.Mapped[int] = so.mapped_column(primary_key=True)
+    email: so.Mapped[str] = so.mapped_column(
+        sa.String(120),
+        sa.ForeignKey('users.email'),
         nullable=False,
         index=True
     )
-    date: so.Mapped[datetime]      = so.mapped_column(sa.DateTime, default=datetime.utcnow)
-    steps: so.Mapped[int]          = so.mapped_column(sa.Integer)
+    date: so.Mapped[datetime] = so.mapped_column(sa.DateTime, default=datetime.datetime.utcnow)
+    activity_type: so.Mapped[str] = so.mapped_column(sa.String(50), default="walking")
+    steps: so.Mapped[int] = so.mapped_column(sa.Integer, default=0)
+    distance: so.Mapped[float] = so.mapped_column(sa.Float, default=0.0)
+    eco_points: so.Mapped[float] = so.mapped_column(sa.Float, default=0.0)  # ✅ Now stores decimal values
+    eco_last_updated: so.Mapped[datetime] = so.mapped_column(sa.DateTime, default=datetime.datetime.utcnow)
+    eco_last_redeemed: so.Mapped[Optional[datetime.datetime]] = so.mapped_column(sa.DateTime, nullable=True)
 
-    user: so.Mapped["User"]        = so.relationship("User", back_populates="steps_data")
-
-    def __repr__(self):
-        return f"<StepData {self.username} @ {self.date.date()}: {self.steps} steps>"
-
-
-class EcoPoints(db.Model):
-    __tablename__ = 'eco_points'
-
-    username: so.Mapped[str]       = so.mapped_column(
-        sa.String(64),
-        sa.ForeignKey('users.username'),
-        primary_key=True
-    )
-    eco_points: so.Mapped[int]     = so.mapped_column(sa.Integer, default=0)
-    last_updated_at: so.Mapped[datetime] = so.mapped_column(sa.DateTime, default=datetime.utcnow)
-
-    user: so.Mapped["User"]        = so.relationship("User", back_populates="eco_points")
+    user: so.Mapped["User"] = so.relationship("User", back_populates="activity_logs")
 
     def __repr__(self):
-        return f"<EcoPoints {self.username}: {self.eco_points}>"
+        return (
+            f"<ActivityLog {self.email} on {self.date.date()} | {self.activity_type} | "
+            f"{self.steps} steps | {self.distance}m = {self.eco_points} points>"
+        )

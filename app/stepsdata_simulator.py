@@ -1,120 +1,70 @@
 import random
 import datetime
-import json
-import os
+from app import app, db
+from app.models import User, ActivityLog
 
+tz_today   = datetime.date.today()
+start_date = datetime.date(2025, 4, 1)
+yesterday  = tz_today - datetime.timedelta(days=1)
 
-static_folder = 'static'
-file_name     = "all_users_step_data.json"
-file_path     = os.path.join(static_folder, file_name)
+def generate_random_step_count(date):
+    if date.weekday() >= 5:
+        return random.randint(8000, 13000)
+    else:
+        return random.randint(4000, 10000)
 
-
-tz_today      = datetime.date.today()
-start_date    = datetime.date(2025, 4, 1)
-yesterday     = tz_today - datetime.timedelta(days=1)
-
-
-if not os.path.exists(static_folder):
-    os.makedirs(static_folder)
-
-
-
-def generate_random_steps(start_date, end_date):
-
-    step_data    = []
-    current_date = start_date
-    while current_date <= end_date:
-
-        if current_date.weekday() >= 5:
-            steps = random.randint(8_000, 13_000)
-        else:
-            steps = random.randint(4_000, 10_000)
-
-        step_data.append({
-            "date":  current_date.strftime("%Y-%m-%d"),
-            "steps": steps
-        })
-        current_date += datetime.timedelta(days=1)
-
-    return step_data
-
-
+def generate_random_cycle_distance():
+    return round(random.uniform(3.5, 20.0), 2)  # Updated range
 
 def run_steps_simulator():
-
-    from app import app, db
-    from app.models import User, StepData, EcoPoints
-
     with app.app_context():
-
-        if os.path.exists(file_path):
-            with open(file_path, 'r') as f:
-                all_data = json.load(f)
-        else:
-            all_data = {}
-
-
         users = User.query.all()
-        for u in users:
-            history = all_data.get(u.username, [])
-            if history:
-                last = datetime.datetime.strptime(history[-1]["date"], "%Y-%m-%d").date()
+
+        for user in users:
+            latest_entry = db.session.query(
+                db.func.max(ActivityLog.date)
+            ).filter_by(email=user.email).scalar()
+
+            if latest_entry:
+                last_date = latest_entry.date()
             else:
-                last = start_date - datetime.timedelta(days=1)
+                last_date = start_date - datetime.timedelta(days=1)
 
-            if last < yesterday:
-                new_batch = generate_random_steps(last + datetime.timedelta(days=1), yesterday)
-                history.extend(new_batch)
+            current = last_date + datetime.timedelta(days=1)
 
-            all_data[u.username] = history
+            while current <= yesterday:
+                now = datetime.datetime.utcnow()
 
+                # WALKING
+                steps = generate_random_step_count(current)
+                distance = round(steps / 1450, 2)
+                eco_points = round(steps / 10000, 2)  # ✅ float division
 
-        with open(file_path, 'w') as f:
-            json.dump(all_data, f, indent=4)
+                db.session.add(ActivityLog(
+                    email=user.email,
+                    date=datetime.datetime.combine(current, datetime.time()),
+                    activity_type="walking",
+                    steps=steps,
+                    distance=distance,
+                    eco_points=eco_points,
+                    eco_last_updated=now
+                ))
 
+                # CYCLING
+                if random.random() < 0.5:
+                    cycle_distance = generate_random_cycle_distance()
+                    cycle_eco_points = round(cycle_distance / 5, 2)  # ✅ float division
 
+                    db.session.add(ActivityLog(
+                        email=user.email,
+                        date=datetime.datetime.combine(current, datetime.time()),
+                        activity_type="cycling",
+                        steps=0,
+                        distance=cycle_distance,
+                        eco_points=cycle_eco_points,
+                        eco_last_updated=now
+                    ))
 
-        inserted_steps = 0
-        for username, entries in all_data.items():
-            for e in entries:
-                entry_date = datetime.datetime.strptime(e["date"], "%Y-%m-%d").date()
-                exists = StepData.query.filter_by(username=username, date=entry_date).first()
-                if not exists:
-                    sd = StepData(
-                        username=username,
-                        date=entry_date,
-                        steps=e["steps"]
-                    )
-                    db.session.add(sd)
-                    inserted_steps += 1
+                current += datetime.timedelta(days=1)
+
         db.session.commit()
-
-
-
-        updated = 0
-        for u in users:
-            total_steps = db.session.query(
-                db.func.sum(StepData.steps)
-            ).filter_by(username=u.username).scalar() or 0
-
-            eco_value = total_steps // 10_000
-            now = datetime.datetime.utcnow()
-
-            eco_entry = EcoPoints.query.filter_by(username=u.username).first()
-            if eco_entry:
-                eco_entry.eco_points = eco_value
-                eco_entry.last_updated_at = now
-            else:
-                eco_entry = EcoPoints(
-                    username=u.username,
-                    eco_points=eco_value,
-                    last_updated_at=now
-                )
-                db.session.add(eco_entry)
-            updated += 1
-        db.session.commit()
-
-
-# optional standalone execution
-# if __name__ == "__main__":
-#     run_steps_simulator()
