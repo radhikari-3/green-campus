@@ -178,7 +178,7 @@ def send_discount_email():
                            """
                 table_html += "</table>"
 
-                msg = Message(subject, recipients=recipients)
+                msg = Message(subject, bcc=recipients)
 
                 text_body = "Name | Expiry | Units | Marked Price | Final Price | Location \n"
                 text_body += "-" * 60 + "\n"
