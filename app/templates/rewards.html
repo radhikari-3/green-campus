@@ -32,11 +32,13 @@
           <button id="downloadBtn" class="btn btn-outline-primary">⬇️ Download QR Code</button>
 
           {% if qr_data %}
-          <form method="POST" action="{{ url_for('user_dash_bp.send_qr_email') }}">
-            <input type="hidden" name="qr_data" value="{{ qr_data }}">
-            <input type="hidden" name="redeemed_points" value="{{ redeemed_points }}">
-            <button type="submit" class="btn btn-outline-success">📧 Email Voucher</button>
-          </form>
+
+              <form method="POST" action="{{ url_for('user_dash_bp.send_qr_email') }}">
+
+                <input type="hidden" name="qr_data" value="{{ qr_data }}">
+                <input type="hidden" name="redeemed_points" value="{{ redeemed_points }}">
+                <button type="submit" class="btn btn-outline-success">📧 Email Voucher</button>
+              </form>
           {% endif %}
         </div>
       </div>
@@ -68,8 +70,16 @@
       </script>
       {% endif %}
 
+<<<<<<< HEAD
       <a href="{{ url_for('user_dash_bp.eco_points_dashboard') }}" class="btn btn-outline-secondary mt-5">← Back to Dashboard</a>
     </div>
   </div>
 </div>
 {% endblock %}
+=======
+      <a href="{{ url_for('eco_points_dashboard') }}" class="btn btn-outline-secondary mt-5">← Back to Dashboard</a>
+    </div>
+  </div>
+</div>
+{% endblock %}
+>>>>>>> a445c69367a47d20470bdbf0056d85556f862b4e

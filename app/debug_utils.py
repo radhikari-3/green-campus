@@ -3,10 +3,11 @@ import random
 from typing import List
 
 from app import db
-from app.models import User, ActivityLog
-from app.logger import logger as log
-#from app.stepsdata_simulator import run_steps_simulator
-from sqlalchemy import text
+from app.models import ActivityLog
+from app.models import User
+
+
+# from app.stepsdata_simulator import run_steps_simulator
 
 def reset_db():
     """ Drop all tables and seed verified demo users. """
@@ -31,6 +32,7 @@ def reset_db():
         db.session.add(user)
 
     db.session.commit()
+
 
     tz_today = datetime.date.today()
     start_date = datetime.date(2025, 4, 1)
@@ -96,3 +98,4 @@ def reset_db():
         mock_data = create_mock_activity_data(user['email'])
         db.session.add_all(mock_data)
         db.session.commit()
+

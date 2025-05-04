@@ -1,11 +1,11 @@
 import base64
 import random
 from io import BytesIO
-from flask_mail import Message
 
 import qrcode
 from flask import Blueprint, render_template, request, redirect, flash, url_for
 from flask_login import login_required, current_user
+from flask_mail import Message
 from sqlalchemy import func
 
 from app import db, mail

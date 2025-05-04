@@ -1,5 +1,5 @@
-import datetime
 from dataclasses import dataclass
+from datetime import datetime
 from typing import Optional
 
 import sqlalchemy as sa
@@ -15,16 +15,13 @@ class User(UserMixin, db.Model):
     __tablename__ = 'users'
 
     id: so.Mapped[int] = so.mapped_column(primary_key=True)
-
-#    username: so.Mapped[str] = so.mapped_column(sa.String(64), index=True, unique=True)
-
     email: so.Mapped[str] = so.mapped_column(sa.String(120), index=True, unique=True)
     password_hash: so.Mapped[Optional[str]] = so.mapped_column(sa.String(256))
     role: so.Mapped[str] = so.mapped_column(sa.String(10), default="Normal")
     email_verified: so.Mapped[bool] = so.mapped_column(sa.Boolean, default=False)
     email_otp: so.Mapped[Optional[str]] = so.mapped_column(sa.String(6), nullable=True)
-    email_otp_expires: so.Mapped[Optional[datetime.datetime]] = so.mapped_column(sa.DateTime, nullable=True)
-    signup_date: so.Mapped[datetime.datetime] = so.mapped_column(sa.DateTime, default=datetime.datetime.utcnow, nullable=False)
+    email_otp_expires: so.Mapped[Optional[datetime]] = so.mapped_column(sa.DateTime, nullable=True)
+    signup_date: so.Mapped[datetime] = so.mapped_column(sa.DateTime, default=datetime.utcnow, nullable=False)
 
 
     # Relationship
@@ -35,6 +32,7 @@ class User(UserMixin, db.Model):
 
     def __repr__(self):
         pwh= 'None' if not self.password_hash else f'...{self.password_hash[-5:]}'
+
         return f'User(id={self.id}, email={self.email}, role={self.role}, pwh={pwh})'
 
     def set_password(self, password):
@@ -82,13 +80,13 @@ class ActivityLog(db.Model):
         nullable=False,
         index=True
     )
-    date: so.Mapped[datetime] = so.mapped_column(sa.DateTime, default=datetime.datetime.utcnow)
+    date: so.Mapped[datetime] = so.mapped_column(sa.DateTime, default=datetime.utcnow)
     activity_type: so.Mapped[str] = so.mapped_column(sa.String(50), default="walking")
     steps: so.Mapped[int] = so.mapped_column(sa.Integer, default=0)
     distance: so.Mapped[float] = so.mapped_column(sa.Float, default=0.0)
     eco_points: so.Mapped[float] = so.mapped_column(sa.Float, default=0.0)  # ✅ Now stores decimal values
-    eco_last_updated: so.Mapped[datetime] = so.mapped_column(sa.DateTime, default=datetime.datetime.utcnow)
-    eco_last_redeemed: so.Mapped[Optional[datetime.datetime]] = so.mapped_column(sa.DateTime, nullable=True)
+    eco_last_updated: so.Mapped[datetime] = so.mapped_column(sa.DateTime, default=datetime.utcnow)
+    eco_last_redeemed: so.Mapped[Optional[datetime]] = so.mapped_column(sa.DateTime, nullable=True)
 
     user: so.Mapped["User"] = so.relationship("User", back_populates="activity_logs")
 
@@ -96,4 +94,6 @@ class ActivityLog(db.Model):
         return (
             f"<ActivityLog {self.email} on {self.date.date()} | {self.activity_type} | "
             f"{self.steps} steps | {self.distance}m = {self.eco_points} points>"
+
         )
+
