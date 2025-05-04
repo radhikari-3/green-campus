@@ -11,7 +11,9 @@ def reset_db():
         {'username': 'tom',   'email': 'tom@b.com',                  'pw': 'amy.pw'},
         {'username': 'yin',   'email': 'yin@b.com', 'role': 'Admin', 'pw': 'amy.pw'},
         {'username': 'tariq', 'email': 'trq@b.com',                  'pw': 'amy.pw'},
-        {'username': 'jo',    'email': 'jo@b.com',                   'pw': 'amy.pw'}
+        {'username': 'jo',    'email': 'jo@b.com',                   'pw': 'amy.pw'},
+        {'username': 'viswa', 'email': 'nairvishwa24998@gmail.com', 'pw': 'vis.pw'},
+        {'username': 'vishu', 'email': 'vxn412@student.bham.ac.uk', 'pw': 'vis.pw'}
     ]
 
     for u in users:
@@ -23,4 +25,5 @@ def reset_db():
         user.set_password(pw)
         # add the newly created user object to the database session:
         db.session.add(user)
+    db.session.flush()
     db.session.commit()

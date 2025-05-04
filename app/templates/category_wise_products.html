@@ -1,0 +1,78 @@
+{% extends "base.html" %}
+{% import "bootstrap_wtf.html" as wtf %}
+{% block content %}
+<div class ="landing-page">
+<div class ="dashboard-container">
+<img src="{{ url_for('static', filename='img/market-icon.svg') }}" alt="Smart Food Expiry" width="100" class="mb-3">
+
+<div class="d-flex justify-content-center">
+  <h1 class="display-5 my-4 text-center text-success">📦 {{title}} </h1>
+</div>
+
+<div class="d-flex justify-content-end align-items-center mb-4">
+</div>
+
+{#<form method="GET" class="form-inline mb-3">#}
+{#  <input type="text" name="search" class="form-control mr-2" placeholder="Search product">#}
+{#  <button type="submit" class="btn btn-secondary">Search</button>#}
+{#</form>#}
+
+
+<div id="listView">
+      <section id="features" class="section">
+        <div class="product-grid">
+          {% for product in relevant_products %}
+            <div class="product-card">
+                <h3>{{product.name|upper}}</h3>
+                 <div class="info-row"><span class="label">Expiry Date:</span> <span class="value">{{ product.expiry_date }}</span></div>
+        <div class="info-row"><span class="label">Marked Price:</span> <span class="value">£{{ '%.2f' % product.marked_price }}</span></div>
+        <div class="info-row"><span class="label">Final Price:</span> <span class="value">£{{ '%.2f' % product.final_price }}</span></div>
+        <div class="info-row"><span class="label">Location:</span> <span class="value">{{ product.location }}</span></div>
+            </div>
+          {% endfor %}
+        </div>
+    </section>
+</div>
+
+
+
+
+{# This is to style the round toggle button and the table #}
+<style>
+
+input:checked + .slider {
+  background-color: #198754; /* Bootstrap green */
+}
+
+input:checked + .slider::before {
+  transform: translateX(24px);
+}
+
+table thead {
+  font-weight: 600;
+  letter-spacing: 0.5px;
+}
+
+table td, table th {
+  vertical-align: middle;
+  padding: 0.75rem;
+}
+
+tbody tr:hover {
+  background-color: #e7fce9; /* slightly deeper green on hover */
+}
+
+</style>
+
+
+{# To add space before the footer #}
+<div class="mb-5"></div>
+
+<div>
+    <footer class="footer">
+        <p> © 2025 Green Campus Initiative. Empowering Sustainable Change.</p>
+    </footer>
+</div>
+</div>
+</div>
+{% endblock %}

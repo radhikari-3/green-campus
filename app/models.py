@@ -1,10 +1,12 @@
 from dataclasses import dataclass
-from datetime import datetime
-from typing import Optional
+from datetime import datetime, date
+from typing import Optional, List
 
 import sqlalchemy as sa
 import sqlalchemy.orm as so
 from flask_login import UserMixin
+from sqlalchemy import ForeignKey
+from sqlalchemy.orm import relationship
 from werkzeug.security import generate_password_hash, check_password_hash
 
 from app import db, login
@@ -19,7 +21,10 @@ class User(UserMixin, db.Model):
     email: so.Mapped[str] = so.mapped_column(sa.String(120), index=True, unique=True)
     password_hash: so.Mapped[Optional[str]] = so.mapped_column(sa.String(256))
     role: so.Mapped[str] = so.mapped_column(sa.String(10), default="Normal")
-
+    inventory: so.Mapped[List["Inventory"]] = relationship(
+        back_populates="user",
+        cascade="all, delete-orphan"
+    )
 
     def __repr__(self):
         pwh= 'None' if not self.password_hash else f'...{self.password_hash[-5:]}'
@@ -46,6 +51,23 @@ class EnergyReading(db.Model):
     value: so.Mapped[float] = so.mapped_column(sa.Float)
     category: so.Mapped[str] = so.mapped_column(sa.String(50))  # Category: gas or electricity
 
+
     def __repr__(self):
         return f'EnergyReading(id={self.id}, timestamp={self.timestamp}, building={self.building}, ' \
                f'building_code={self.building_code}, zone={self.zone}, value={self.value}, category={self.category})'
+
+
+class Inventory(db.Model):
+    __tablename__ = 'inventory'
+
+    id: so.Mapped[int] = so.mapped_column(primary_key=True)
+    name: so.Mapped[str] = so.mapped_column(sa.String(100))
+    expiry_date: so.Mapped[date] = so.mapped_column(sa.Date())
+    units: so.Mapped[int] = so.mapped_column(sa.Integer())
+    category: so.Mapped[str] = so.mapped_column(sa.String(100))
+    marked_price: so.Mapped[float] = so.mapped_column(sa.Float())
+    discount: so.Mapped[float] = so.mapped_column(sa.Integer(), default= 0.75)
+    final_price: so.Mapped[float] = so.mapped_column(sa.Float())
+    location: so.Mapped[str] = so.mapped_column(sa.String(200))
+    user_id: so.Mapped[int] = so.mapped_column(ForeignKey("users.id"))
+    user: so.Mapped["User"] = relationship(back_populates="inventory")

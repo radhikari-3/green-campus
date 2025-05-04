@@ -1,0 +1,22 @@
+.product-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 320px));
+    justify-content: center;  /* This centers the grid items */
+    gap: 30px;
+    margin-top: 40px;
+}
+
+.product-card {
+    background: #f4fcf7;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+    transition: transform 0.3s ease;
+    width: 100%;        /* Required to fill the grid cell */
+    max-width: 320px;   /* Optional: Prevents stretching */
+    margin: 0 auto;     /* Optional: Centers individual cards if needed */
+}
+
+.product-card:hover {
+    transform: translateY(-10px);
+}

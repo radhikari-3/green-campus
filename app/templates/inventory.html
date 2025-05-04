@@ -1,0 +1,29 @@
+{% extends "base.html" %}
+{% import "bootstrap_wtf.html" as wtf %}
+{% block content %}
+<div class ="container">
+<div class="d-flex justify-content-center">
+<h1> Current inventory </h1>
+</div>
+<table class="table table-striped table-hover table-bordered">
+<thead>
+<tr>
+    <th>Product name</th>
+    <th>Expiry Date</th>
+    <th>Units</th>
+    <th>Marked Price</th>
+</tr>
+</thead>
+<tbody>
+{% for product in inventory_list %}
+<tr>
+    <td>{{ product.name }}</td>
+    <td>{{ product.expiry_date }}</td>
+    <td>{{ product.units }}</td>
+    <td>{{ product.marked_price }}</td>
+</tr>
+{% endfor %}
+</tbody>
+</table>
+</div>
+{% endblock %}
