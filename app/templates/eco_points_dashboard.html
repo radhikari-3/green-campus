@@ -50,7 +50,6 @@
     <p class="lead">Track your sustainable impact and compare with the community</p>
   </header>
 
-  <!-- Eco Points -->
   <div class="row justify-content-center mb-4">
     <div class="col-md-6 mb-3">
       <div class="card eco-card shadow text-center">
@@ -62,7 +61,6 @@
       </div>
     </div>
 
-    <!-- Redeem Tile -->
     <div class="col-md-4 mb-3">
       <div class="card text-white bg-primary h-100 shadow text-center">
         <div class="card-body d-flex flex-column justify-content-center">
@@ -74,7 +72,6 @@
     </div>
   </div>
 
-  <!-- Graph -->
   <div class="row mb-5">
     <div class="col-md-12">
       <div class="card shadow">
@@ -114,6 +111,7 @@
   const walkingData = {{ walking_data|tojson }};
   const cyclingData = {{ cycling_data|tojson }};
   const avgData = {{ avg_data|tojson }};
+  const avgCyclingData = {{ avg_cycling_data|tojson }};
 
   const allDates = [...new Set([
     ...walkingData.map(d => d.date),
@@ -129,7 +127,7 @@
 
   const getDatasets = (type, range) => {
     const source = type === 'steps' ? walkingData : cyclingData;
-    const avg = type === 'steps' ? avgData : [];
+    const avg = type === 'steps' ? avgData : avgCyclingData;
 
     const dataUser = allDates.map(date => {
       const entry = source.find(e => e.date === date);
@@ -138,7 +136,7 @@
 
     const dataAvg = allDates.map(date => {
       const entry = avg.find(e => e.date === date);
-      return entry ? { x: date, y: entry.steps } : { x: date, y: 0 };
+      return entry ? { x: date, y: type === 'steps' ? entry.steps : entry.distance } : { x: date, y: 0 };
     });
 
     return {
@@ -155,7 +153,6 @@
     const range = document.getElementById("rangeSelection").value;
 
     const { user, avg } = getDatasets(type, range);
-
     const labels = user.map(e => e.x);
 
     chart.data.labels = labels;

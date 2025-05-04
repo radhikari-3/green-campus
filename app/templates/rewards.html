@@ -29,22 +29,42 @@
         <img src="{{ qr_url }}" id="qrImage" alt="QR Code" class="img-fluid mt-3" style="max-width: 300px;">
 
         <div class="mt-4 d-flex justify-content-center gap-3 flex-wrap">
-          <a id="downloadBtn" class="btn btn-outline-primary" download="eco_voucher.png">⬇️ Download QR Code</a>
+          <button id="downloadBtn" class="btn btn-outline-primary">⬇️ Download QR Code</button>
 
+          {% if qr_data %}
           <form method="POST" action="{{ url_for('send_qr_email') }}">
             <input type="hidden" name="qr_data" value="{{ qr_data }}">
             <input type="hidden" name="redeemed_points" value="{{ redeemed_points }}">
             <button type="submit" class="btn btn-outline-success">📧 Email Voucher</button>
           </form>
+          {% endif %}
         </div>
       </div>
 
       <script>
         const qrImage = document.getElementById('qrImage');
         const downloadBtn = document.getElementById('downloadBtn');
-        qrImage.onload = () => {
-          downloadBtn.href = qrImage.src;
-        };
+
+        downloadBtn.addEventListener('click', function (e) {
+          e.preventDefault();
+          const base64Data = qrImage.src.split(',')[1];
+          const byteCharacters = atob(base64Data);
+          const byteNumbers = new Array(byteCharacters.length);
+          for (let i = 0; i < byteCharacters.length; i++) {
+            byteNumbers[i] = byteCharacters.charCodeAt(i);
+          }
+          const byteArray = new Uint8Array(byteNumbers);
+          const blob = new Blob([byteArray], { type: 'image/png' });
+          const url = URL.createObjectURL(blob);
+
+          const link = document.createElement('a');
+          link.href = url;
+          link.download = 'eco_voucher.png';
+          document.body.appendChild(link);
+          link.click();
+          document.body.removeChild(link);
+          URL.revokeObjectURL(url);
+        });
       </script>
       {% endif %}
 
