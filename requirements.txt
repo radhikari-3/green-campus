@@ -41,3 +41,4 @@ paho-mqtt
 psycopg2
 pyqrcode
 flask_mail
+qrcode
