@@ -135,7 +135,7 @@ def reset_password():
         return redirect(url_for("account"))
     return render_template("generic_form.html", title="Change Password", form=form)
 
-
+##Yash
 @app.route("/eco-points-dashboard")
 @login_required
 def eco_points_dashboard():
@@ -327,6 +327,9 @@ def send_qr_email():
 
     flash("QR voucher sent to your email 📩", "success")
     return redirect(url_for("rewards"))
+
+###Yash
+
 
 @app.route("/login", methods=["GET", "POST"])
 def login():
