@@ -1,0 +1,8 @@
+version: 2
+updates:
+  - package-ecosystem: "pip"
+    directory: "/"  # root directory
+    schedule:
+      interval: "weekly"  # or "daily", "monthly"
+    open-pull-requests-limit: 5
+    rebase-strategy: auto

@@ -3,7 +3,6 @@ import os
 
 from colorlog import ColoredFormatter
 
-# Make sure logs directory exists
 if not os.path.exists('logs'):
     os.makedirs('logs')
 
