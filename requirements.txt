@@ -40,3 +40,4 @@ colorlog>=5.0.0
 paho-mqtt
 psycopg2
 pyqrcode
+flask_mail
