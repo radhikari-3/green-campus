@@ -1,9 +1,15 @@
 import datetime
 from app import db
 from app.models import User
+from app.logger import logger as log
+from sqlalchemy import text
 
 def reset_db():
+
+
+
     """ Drop all tables and seed five verified demo users. """
+
     db.drop_all()
     db.create_all()
 
@@ -17,7 +23,12 @@ def reset_db():
 
     for u in users:
         pw = u.pop('pw')
+
+        user = User(**u, email_verified=True)
+
         user = User(**u)
+
         user.set_password(pw)
         db.session.add(user)
     db.session.commit()
+
