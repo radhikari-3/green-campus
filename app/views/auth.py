@@ -1,33 +1,20 @@
-#views.py
-from urllib.parse import urlsplit
-from itsdangerous import URLSafeTimedSerializer, SignatureExpired, BadSignature
-from app.oauth_config import send_email_via_gmail
 from datetime import datetime
+from urllib.parse import urlsplit
+
 import sqlalchemy as sa
-from flask import render_template, redirect, url_for, flash, request
-from flask_login import current_user, login_user, logout_user, login_required
-from app import app, db
-from app.forms import LoginForm, VerifyEmailForm, SignupForm, ResetPasswordForm, ResetPasswordRequestForm, PasswordChangeForm, ResetOTPForm
+from flask import Blueprint, render_template, redirect, flash, url_for, request
+from flask_login import logout_user, login_user, current_user, login_required
+
+from app import db
+from app.forms import LoginForm, PasswordChangeForm, ResetOTPForm, ResetPasswordRequestForm, VerifyEmailForm, \
+    SignupForm, ResetPasswordForm
 from app.models import User
-import sys
+from app.oauth_config import send_email_via_gmail
 
-@app.route("/")
-def home():
-    return render_template('home.html', title="Home")
-
-@app.route('/account')
-@login_required
-def account():
-    days_since = (datetime.utcnow() - current_user.signup_date).days
-    return render_template('account.html', title="Account", days_since_signup = days_since)
+auth_bp = Blueprint('auth', __name__, url_prefix='/auth')
 
 
-# helper to get serializer
-def get_serializer():
-    return URLSafeTimedSerializer(app.config['SECRET_KEY'])
-
-# --- SIGNUP ---
-@app.route('/signup', methods=['GET','POST'])
+@auth_bp.route('/signup', methods=['GET','POST'])
 def signup():
     if current_user.is_authenticated:
         return redirect(url_for('home'))
@@ -52,7 +39,7 @@ def signup():
     return render_template('generic_form.html', title='Sign Up', form=form)
 
 
-@app.route('/verify/<int:user_id>', methods=['GET','POST'])
+@auth_bp.route('/verify/<int:user_id>', methods=['GET','POST'])
 def verify_email(user_id):
     u = db.session.get(User, user_id)
     form = VerifyEmailForm()
@@ -69,7 +56,7 @@ def verify_email(user_id):
     return render_template('generic_form.html', title='Verify Email', form=form)
 
 
-@app.route('/forgot_password', methods=['GET','POST'])
+@auth_bp.route('/forgot_password', methods=['GET','POST'])
 def forgot_password():
     if current_user.is_authenticated:
         return redirect(url_for('home'))
@@ -94,7 +81,7 @@ def forgot_password():
         return redirect(url_for('forgot_password_verify', user_id=u.id))
     return render_template('generic_form.html', title='Forgot Password', form=form)
 
-@app.route('/forgot_password_verify/<int:user_id>', methods=['GET','POST'])
+@auth_bp.route('/forgot_password_verify/<int:user_id>', methods=['GET','POST'])
 def forgot_password_verify(user_id):
     form = ResetOTPForm()
     u = db.session.get(User, user_id)
@@ -108,7 +95,7 @@ def forgot_password_verify(user_id):
         flash('Invalid or expired OTP.', 'danger')
     return render_template('generic_form.html', title='Verify OTP', form=form)
 
-@app.route('/forgot_password_reset/<int:user_id>', methods=['GET','POST'])
+@auth_bp.route('/forgot_password_reset/<int:user_id>', methods=['GET','POST'])
 def forgot_password_reset(user_id):
     form = ResetPasswordForm()
     u = db.session.get(User, user_id)
@@ -121,7 +108,7 @@ def forgot_password_reset(user_id):
     return render_template('generic_form.html', title='New Password', form=form)
 
 
-@app.route('/reset_password', methods=['GET','POST'])
+@auth_bp.route('/reset_password', methods=['GET','POST'])
 @login_required
 def reset_password():
     form = PasswordChangeForm()
@@ -137,7 +124,7 @@ def reset_password():
     return render_template('generic_form.html', title='Change Password', form=form)
 
 
-@app.route('/login', methods=['GET', 'POST'])
+@auth_bp.route('/login', methods=['GET', 'POST'])
 def login():
     if current_user.is_authenticated:
         return redirect(url_for('home'))
@@ -158,30 +145,14 @@ def login():
         return redirect(next_page)
     return render_template('login.html', title='Sign In', form=form)
 
-@app.route('/logout')
+@auth_bp.route('/logout')
 def logout():
     logout_user()
     return redirect(url_for('home'))
 
 
-# Error handlers
-# See: https://en.wikipedia.org/wiki/List_of_HTTP_status_codes
-
-# Error handler for 403 Forbidden
-@app.errorhandler(403)
-def error_403(error):
-    return render_template('errors/403.html', title='Error'), 403
-
-# Handler for 404 Not Found
-@app.errorhandler(404)
-def error_404(error):
-    return render_template('errors/404.html', title='Error'), 404
-
-@app.errorhandler(413)
-def error_413(error):
-    return render_template('errors/413.html', title='Error'), 413
-
-# 500 Internal Server Error
-@app.errorhandler(500)
-def error_500(error):
-    return render_template('errors/500.html', title='Error'), 500
+@auth_bp.route('/account')
+@login_required
+def account():
+    days_since = (datetime.utcnow() - current_user.signup_date).days
+    return render_template('account.html', title="Account", days_since_signup = days_since)

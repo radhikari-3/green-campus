@@ -12,7 +12,7 @@
           {% if days_since_signup > 90 %}
           <div class="alert alert-warning">
               Your password is over 90 days old. Please
-              <a href="{{ url_for('reset_password') }}">change your password</a>.
+              <a href="{{ url_for('auth.reset_password') }}">change your password</a>.
           </div>
           {% endif %}
       </div>

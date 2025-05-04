@@ -1,11 +1,12 @@
-from dataclasses import dataclass
-from datetime import datetime
-from typing import Optional
 import datetime
+from dataclasses import dataclass
+from typing import Optional
+
 import sqlalchemy as sa
 import sqlalchemy.orm as so
 from flask_login import UserMixin
 from werkzeug.security import generate_password_hash, check_password_hash
+
 from app import db, login
 
 
@@ -20,8 +21,8 @@ class User(UserMixin, db.Model):
     role: so.Mapped[str] = so.mapped_column(sa.String(10), default="Normal")
     email_verified: so.Mapped[bool] = so.mapped_column(sa.Boolean, default=False)
     email_otp: so.Mapped[Optional[str]] = so.mapped_column(sa.String(6), nullable=True)
-    email_otp_expires: so.Mapped[Optional[datetime.datetime]] = so.mapped_column(sa.DateTime, nullable=True)
-    signup_date: so.Mapped[datetime.datetime] = so.mapped_column(sa.DateTime, default=datetime.datetime.utcnow, nullable=False)
+    email_otp_expires: so.Mapped[Optional[datetime]] = so.mapped_column(sa.DateTime, nullable=True)
+    signup_date: so.Mapped[datetime] = so.mapped_column(sa.DateTime, default=datetime.datetime.utcnow, nullable=False)
 
     def __repr__(self):
         pwh= 'None' if not self.password_hash else f'...{self.password_hash[-5:]}'
