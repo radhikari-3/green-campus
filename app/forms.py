@@ -5,7 +5,7 @@ from wtforms import SubmitField, HiddenField, StringField, PasswordField, Boolea
 from wtforms.fields.choices import SelectField
 from wtforms.fields.datetime import DateField
 from wtforms.fields.numeric import IntegerField, FloatField
-from wtforms.validators import DataRequired, NumberRange, ValidationError
+from wtforms.validators import DataRequired, NumberRange, ValidationError, InputRequired
 
 from wtforms.validators import DataRequired, Email, EqualTo
 
@@ -23,7 +23,7 @@ class InventoryForm(FlaskForm):
     expiry_date = DateField('Expiry Date', validators=[DataRequired()])
     units = IntegerField('Units', validators= [NumberRange(1,30, "You can only upload from 1 to 30 units.")])
     marked_price = FloatField('Marked Price', validators= [DataRequired()])
-    discount = FloatField('Discount Rate', validators=[DataRequired()])
+    discount = FloatField('Discount Rate', validators=[InputRequired()])
     category = SelectField('Product Category', validators=[DataRequired()], choices=[("f","fruits and vegetables"),("g","grains"),("d","dairy and related products"),("n","nuts")])
     location = StringField('Product location', validators=[DataRequired()])
     submit = SubmitField('Submit')

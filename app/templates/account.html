@@ -1,3 +1,4 @@
+{% extends "base.html" %}
 {% block head %}
       {{ super() }}
       <link rel="stylesheet" href="{{ url_for('static', filename='css/dashboard.css') }}">
@@ -6,13 +7,8 @@
 {% block content %}
   <div class="dashboard-container">
 
-    <div class="dashboard-card">
-        <h2>Welcome, {{ current_user.username }}! 👋</h2>
-        <p><strong>Email:</strong> {{ current_user.email }}</p>
-        <a href="/view_expiring_products">View Products with exciting offers which expire soon</a>
-    </div>
       <div class="dashboard-card">
-          <h2>Welcome, {{ current_user.username }}! 👋</h2>
+          <h2>Welcome, {{ current_user.email }}! 👋</h2>
           <p><strong>Email:</strong> {{ current_user.email }}</p>
           {% if days_since_signup > 90 %}
           <div class="alert alert-warning">
@@ -21,6 +17,13 @@
           </div>
           {% endif %}
       </div>
+
+     <div class="dashboard-card">
+  <a href="/view_expiring_products" style="text-decoration: none; color: inherit;">
+    <h2>View Products with exciting offers which expire soon</h2>
+  </a>
+</div>
+
 
       <div class="dashboard-section">
           <h3>Account Settings</h3>

@@ -14,8 +14,11 @@ class Config:
 
     SQLALCHEMY_ECHO = True
 
-    SQLALCHEMY_DATABASE_URI = 'postgresql://postgres:admin@localhost/postgres'
+    # Rohit's config
+    # SQLALCHEMY_DATABASE_URI = 'postgresql://local:admin@localhost/postgres'
 
-    SQLALCHEMY_ECHO = False
-    SQLALCHEMY_DATABASE_URI = f"postgresql://{os.environ.get('DB_USERNAME', 'default_user')}:{os.environ.get('DB_PASSWORD', 'default_password')}@localhost/{os.environ.get('DB_NAME', 'default_db')}"
+    SQLALCHEMY_DATABASE_URI = 'postgresql://postgres:password@localhost/postgres'
+
+    # SQLALCHEMY_ECHO = False
+    # SQLALCHEMY_DATABASE_URI = f"postgresql://{os.environ.get('DB_USERNAME', 'default_user')}:{os.environ.get('DB_PASSWORD', 'default_password')}@localhost/{os.environ.get('DB_NAME', 'default_db')}"
 

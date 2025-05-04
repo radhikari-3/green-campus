@@ -1,6 +1,7 @@
 import logging
 import os
 from datetime import datetime, timedelta, time
+from random import uniform
 from smtplib import SMTPRecipientsRefused, SMTPException
 #views.py
 import io
@@ -42,13 +43,14 @@ def discount_applicator(product_instance):
     }
     product_category = product_instance.category
     discount_range = category_range[product_category[0]]
-
+    print("discount rate is " + str(product_instance.discount))
+    print(type(product_instance.discount))
     # To ensure that if no discount rate is given a category based discount, contingent on the category can be used
-    discount_rate = (1 - product_instance.discount / 100) if product_instance.discount not in [0, None] else (random.uniform(discount_range[0], discount_range[1])) / 100
+    discount_rate = (1 - product_instance.discount / 100) if product_instance.discount is not None  else (uniform(discount_range[0], discount_range[1])) / 100
 
     # Above line is same as below
 
-    # if product_instance.discount not in [0, None]:
+    # if product_instance.discount not in None:
     #     discount_rate = (1 - product_instance.discount / 100)
     # else:
     #     random.uniform(discount_range[0], discount_range[1]) / 100
@@ -410,6 +412,7 @@ def send_discount_email():
             recipients =  [user_entity.email.strip()
                 for user_entity in db.session.scalars(select(User)).all()
                 if user_entity.email]
+            print("recipients are " + ",".join(recipients))
             # update the database with appropriate discounts
             get_updated_daily_discounts(3)
             # get products expiring in one day
@@ -483,6 +486,7 @@ def send_discount_email():
 @app.route("/expiring-offers/<category>", methods = ["GET", "POST"])
 @login_required
 def expiring_offers(category):
+    total_points, pounds = calculate_user_eco_points(current_user.email)
     category_map = {
         "f": "Fruits & Vegetable related products",  # f: fruits and Vegetables
         "g": "Grains & related products",  # g: grains
@@ -491,7 +495,12 @@ def expiring_offers(category):
     }
     relevant_products = Inventory.query.filter(Inventory.category == category).all()
     relevant_title = "Best offers on " + category_map[category]
-    return render_template("category_wise_products.html",title= relevant_title, relevant_products = relevant_products)
+    return render_template("category_wise_products.html",title= relevant_title, relevant_products = relevant_products, total_points = total_points, pounds = pounds)
+
+def calculate_user_eco_points(email):
+    total_points = db.session.query(func.sum(ActivityLog.eco_points)).filter(ActivityLog.email == email).scalar() or 0
+    pounds = round(total_points * 0.02, 2)
+    return [total_points, pounds]
 
 
 
@@ -535,6 +544,13 @@ scheduler.add_job(
     replace_existing=True
 )
 
+def start_scheduler(self):
+    # This will start the scheduler once the first request is received
+    if not scheduler.running:
+        scheduler.start()
+        print("Scheduler started in controller!")
+
+
 
 # Error handlers
 # See: https://en.wikipedia.org/wiki/List_of_HTTP_status_codes
@@ -558,8 +574,3 @@ def error_500(error):
 
 
 
-def start_scheduler(self):
-        # This will start the scheduler once the first request is received
-        if not scheduler.running:
-            scheduler.start()
-            print("Scheduler started in controller!")

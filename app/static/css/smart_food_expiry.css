@@ -20,3 +20,108 @@
 .product-card:hover {
     transform: translateY(-10px);
 }
+
+/* General styles */
+body {
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+}
+
+/* Section Title Styling */
+.section-title {
+    font-size: 2rem;
+    font-weight: bold;
+    margin-bottom: 30px;
+    color: #333;
+}
+
+.section-description {
+    font-size: 1.1rem;
+    margin-bottom: 20px;
+    color: #eeeeee;
+}
+
+/* Feature Card Grid */
+.features-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+    gap: 20px;
+    padding: 0 10px;
+}
+
+.feature-card {
+    background-color: white;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    overflow: hidden;
+    transition: transform 0.3s ease;
+}
+
+.feature-card:hover {
+    transform: scale(1.05);
+}
+
+.expiring-product-image-container img {
+    width: 100%;
+    height: 200px;
+    object-fit: cover;
+}
+
+.feature-card h3 {
+    font-size: 1.5rem;
+    margin: 20px 0;
+    text-align: center;
+    color: #333;
+}
+
+.feature-card a {
+    display: block;
+    text-decoration: none;
+}
+
+.btn-secondary {
+    background-color: #fff;  /* Removed dark green background */
+    color: #2f8b37;
+    padding: 10px 15px;
+    font-size: 1rem;
+    text-align: center;
+    border-radius: 5px;
+    border: 2px solid #2f8b37;
+    transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+.btn-secondary:hover {
+    background-color: #2f8b37;
+    color: white;
+}
+
+/* Join Us Section */
+#join-us {
+    text-align: center;
+    margin-bottom: 40px;
+    background-color: #C4D7B2;; /* Removed green background */
+}
+
+.btn-primary {
+    background-color: #2f8b37;
+    color: white;
+    padding: 12px 20px;
+    font-size: 1.25rem;
+    border-radius: 5px;
+    text-decoration: none;
+    transition: background-color 0.3s ease;
+}
+
+.btn-primary:hover {
+    background-color: #2a7430;
+}
+
+/* Footer Styling */
+.footer {
+    background-color: #2f2f2f;
+    color: white;
+    padding: 20px 0;
+    font-size: 0.9rem;
+    text-align: center;
+}

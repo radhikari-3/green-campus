@@ -1,17 +1,23 @@
 {% extends "base.html" %}
 
-{% block content %}
-<div class="landing-page">
+{% block head %}
+    {{ super() }}
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/smart_food_expiry.css') }}">
+{% endblock %}
 
-    <section id="features" class="section">
-        <h2>Choose by Category</h2>
+{% block content %}
+<div class="landing-page" style="background-color: #f4f7fa;">
+
+    <!-- Features Section -->
+    <section id="features" class="section" style="background-color: #ffffff; padding: 40px 0;">
+        <h2 class="section-title text-center">Choose by Category 🌱</h2>
         <div class="features-grid">
             <div class="feature-card">
                 <div class="expiring-product-image-container">
                     <img src="/static/images/fnv.png" alt="Fruits and Vegetables">
                 </div>
                 <a href="{{ url_for('expiring_offers', category='f') }}" class="btn-secondary">
-                                        <h3>Fruits and Vegetables</h3>
+                    <h3>Fruits and Vegetables 🍓</h3>
                 </a>
             </div>
             <div class="feature-card">
@@ -19,7 +25,7 @@
                     <img src="/static/images/grains.png" alt="Grains and Bread based products">
                 </div>
                 <a href="{{ url_for('expiring_offers', category='g') }}" class="btn-secondary">
-                                        <h3>Grains and Bread based products</h3>
+                    <h3>Grains and Bread 🥖</h3>
                 </a>
             </div>
             <div class="feature-card">
@@ -27,7 +33,7 @@
                     <img src="/static/images/dp.png" alt="Dairy and related products">
                 </div>
                 <a href="{{ url_for('expiring_offers', category='d') }}" class="btn-secondary">
-                                        <h3>Dairy and related products</h3>
+                    <h3>Dairy and related products 🧀</h3>
                 </a>
             </div>
             <div class="feature-card">
@@ -35,22 +41,24 @@
                     <img src="/static/images/nuts.jpg" alt="Nuts and related products">
                 </div>
                 <a href="{{ url_for('expiring_offers', category='n') }}" class="btn-secondary">
-                                        <h3>Nuts and related products</h3>
+                    <h3>Nuts and related products 🥜</h3>
                 </a>
             </div>
-
         </div>
     </section>
 
-    <section id="join-us" class="section">
-        <h2>Join Our Sustainability Movement</h2>
-        <p>Become part of a global model for green universities and make an impact today!</p>
-        <a href="/register" class="btn-secondary">Get Started</a>
+    <!-- Join Us Section -->
+    <section id="join-us" class="section" style="color: white; padding: 40px 0;">
+        <h2 class="section-title text-center">Join Our Sustainability Movement 🌍</h2>
+        <p class="section-description text-center">Become part of a global model for green universities and make an impact today!</p>
+        <div class="text-center">
+            <a href="/register" class="btn-primary">Get Started 🚀</a>
+        </div>
     </section>
 
-
-    <footer class="footer">
-        <p>© 2025 Green Campus Initiative. Empowering Sustainable Change.</p>
+    <!-- Footer Section -->
+    <footer class="footer" style="background-color: #2f2f2f; color: white; padding: 20px 0; text-align: center;">
+        <p>© 2025 Green Campus Initiative. Empowering Sustainable Change 🌿.</p>
     </footer>
 </div>
 {% endblock %}
