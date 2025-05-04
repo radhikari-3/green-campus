@@ -20,31 +20,37 @@
 </head>
 
 <body>
-    <nav class="navbar navbar-expand-sm bg-dark" data-bs-theme="dark">
-        <div class="container">
-            <a class="navbar-brand" href="{{ url_for('home') }}">Green Campus</a>
-            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent"
-                    aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
-                <span class="navbar-toggler-icon"></span>
-            </button>
-            <div class="collapse navbar-collapse" id="navbarSupportedContent">
-                <ul class="navbar-nav mb-2 mb-lg-0 ms-auto">
-                    {% if current_user.is_anonymous %}
-                    <li class="nav-item">
-                        <a class="nav-link" aria-current="page" href="{{ url_for('login') }}">Login</a>
-                    </li>
-                    {% else %}
-                    <li class="nav-item">
-                        <a class="nav-link" aria-current="page" href="{{ url_for('logout') }}">Logout {{ current_user.username }}</a>
-                    </li>
-                    {% endif %}
-                    <li class="nav-item">
-                        <a class="nav-link" aria-current="page" href="{{ url_for('account') }}">Account</a>
-                    </li>
-                </ul>
-            </div>
+<nav class="navbar navbar-expand-sm bg-dark" data-bs-theme="dark">
+    <div class="container">
+        <a class="navbar-brand" href="{{ url_for('main.home') }}">Green Campus</a>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent"
+                aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse justify-content-end" id="navbarSupportedContent">
+            <ul class="navbar-nav mb-2 mb-lg-0">
+                {% if current_user.is_anonymous %}
+                <li class="nav-item">
+                    <a class="nav-link" aria-current="page" href="{{ url_for('auth.login') }}">Login</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="{{ url_for('auth.signup') }}">Register</a>
+                </li>
+                {% else %}
+                <li class="nav-item">
+                    <a class="nav-link" href="{{ url_for('auth.reset_password') }}">Reset Password</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" aria-current="page" href="{{ url_for('auth.logout') }}">Logout {{ current_user.email }}</a>
+                </li>
+                {% endif %}
+                <li class="nav-item">
+                    <a class="nav-link" aria-current="page" href="{{ url_for('auth.account') }}">Account</a>
+                </li>
+            </ul>
         </div>
-    </nav>
+    </div>
+</nav>
 
     <div class="container mt-3">
         {% with messages = get_flashed_messages(with_categories=true) %}
