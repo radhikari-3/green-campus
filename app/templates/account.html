@@ -11,6 +11,10 @@
       <div class="dashboard-card">
           <h2>Welcome, {{ current_user.email }}! 👋</h2>
           <p><strong>Email:</strong> {{ current_user.email }}</p>
+          <a href="{{ url_for('user_dash_bp.eco_points_dashboard') }}"
+               class="btn btn-lg btn-success mt-4 px-4 py-2 fw-semibold shadow-sm hover-zoom">
+              🌱 Go to Eco Points Dashboard
+          </a>
           {% if days_since_signup > 90 %}
           <div class="alert alert-warning">
               Your password is over 90 days old. Please
