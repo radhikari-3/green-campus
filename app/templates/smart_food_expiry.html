@@ -39,7 +39,7 @@
     <div class="card card-body ">
         <h2 class="text-center text-success mb-4">Add a Product 🍕</h2>
         {% if current_user.is_authenticated %}
-            {{ wtf.quick_form(inventory_form, action="", method="post", id="", novalidate=True, autofocus=False) }}
+            {{ wtf.quick_form(add_product_form, action=url_for('add_product'), method="post", id="", novalidate=True, autofocus=False) }}
         {% else %}
             <p>Please log in to access this feature</p>
         {% endif %}
