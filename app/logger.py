@@ -3,7 +3,6 @@ import os
 
 from colorlog import ColoredFormatter
 
-# Make sure logs directory exists
 if not os.path.exists('logs'):
     os.makedirs('logs')
 
@@ -15,7 +14,7 @@ if flask_env == 'development':
 else:
     logger.setLevel(logging.INFO)
 
-# Create colored formatter
+# Create a coloured formatter
 formatter = ColoredFormatter(
     "%(asctime)s [%(log_color)s%(levelname)s%(reset)s] %(message)s",
     datefmt=None,

@@ -1,13 +1,89 @@
+import datetime
+
 from flask_wtf import FlaskForm
 from wtforms import SubmitField, HiddenField, StringField, PasswordField, BooleanField
-from wtforms.validators import DataRequired
+from wtforms.fields import DateField
+from wtforms.fields import IntegerField, FloatField
+from wtforms.fields import SelectField
+from wtforms.validators import DataRequired, NumberRange
+from wtforms.validators import Email, EqualTo
+from wtforms.validators import InputRequired
+from wtforms.validators import ValidationError
 
+
+def validate_expiry_date(self, field):
+    today = datetime.date.today()   # get today's date (no time part)
+    if field.data < today:          # field.data is already a date (because you're using DateField)
+        raise ValidationError("You can't upload expired goods!")
 
 class ChooseForm(FlaskForm):
     choice = HiddenField('Choice')
 
 class LoginForm(FlaskForm):
-    username = StringField('Username', validators=[DataRequired()])
+    email    = StringField('Email',    validators=[DataRequired(), Email()])
     password = PasswordField('Password', validators=[DataRequired()])
     remember_me = BooleanField('Remember Me')
     submit = SubmitField('Sign In')
+
+
+class AddProductForm(FlaskForm):
+    name = StringField('Product Name', validators=[DataRequired()])
+    expiry_date = DateField('Expiry Date', validators=[DataRequired(), validate_expiry_date])
+    units = IntegerField('Units', validators= [NumberRange(1,30, "You can only upload from 1 to 30 units.")])
+    price = FloatField('Price', validators= [DataRequired()])
+    discount = FloatField('Discount Rate', validators=[InputRequired()])
+    location = StringField('Location', validators=[DataRequired()])
+    submit = SubmitField('Submit')
+
+class DeleteForm(FlaskForm):
+    delete_product = HiddenField('delete_product')
+
+class EditProductForm(FlaskForm):
+    product_id = HiddenField('Product ID', default="-1")
+    name = StringField('Product Name', validators=[DataRequired()])
+    expiry_date = DateField('Expiry Date', validators=[DataRequired(), validate_expiry_date])
+    units = IntegerField('Units', validators=[NumberRange(1, 30, "You can only upload from 1 to 30 units.")])
+    price = FloatField('Price', validators=[DataRequired()])
+    location = StringField('Location', validators=[DataRequired()])
+    submit = SubmitField('Update')
+
+class InventoryForm(FlaskForm):
+    name = StringField('Product Name', validators=[DataRequired()])
+    expiry_date = DateField('Expiry Date', validators=[DataRequired()])
+    units = IntegerField('Units', validators= [NumberRange(1,30, "You can only upload from 1 to 30 units.")])
+    marked_price = FloatField('Marked Price', validators= [DataRequired()])
+    discount = FloatField('Discount Rate', validators=[InputRequired()])
+    category = SelectField('Product Category', validators=[DataRequired()], choices=[("f","fruits and vegetables"),("g","grains"),("d","dairy and related products"),("n","nuts")])
+    location = StringField('Product location', validators=[DataRequired()])
+    submit = SubmitField('Submit')
+
+class SignupForm(FlaskForm):
+    email    = StringField('Email',    validators=[DataRequired(), Email()])
+    password = PasswordField('Password', validators=[DataRequired()])
+    confirm_password = PasswordField('Confirm Password', validators=[DataRequired(), EqualTo('password')])
+    submit   = SubmitField('Sign Up')
+
+class VerifyEmailForm(FlaskForm):
+    otp    = StringField('OTP code', validators=[DataRequired()])
+    submit = SubmitField('Verify Email')
+
+class ResetPasswordRequestForm(FlaskForm):
+    email  = StringField('Email', validators=[DataRequired(), Email()])
+    submit = SubmitField('Request Password Reset')
+
+class ResetPasswordForm(FlaskForm):
+    password  = PasswordField('New Password', validators=[DataRequired()])
+    confirm_password = PasswordField('Confirm Password', validators=[DataRequired(), EqualTo('password')])
+    submit    = SubmitField('Reset Password')
+
+class ResetOTPForm(FlaskForm):
+    otp = StringField('OTP code', validators=[DataRequired()])
+    submit = SubmitField('Verify OTP')
+
+class PasswordChangeForm(FlaskForm):
+    current_password = PasswordField('Current Password', validators=[DataRequired()])
+    new_password = PasswordField('New Password',     validators=[DataRequired()])
+    confirm_password = PasswordField('Confirm Password',validators=[DataRequired(), EqualTo('new_password')])
+    submit = SubmitField('Change Password')
+
+

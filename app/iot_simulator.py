@@ -1,3 +1,4 @@
+
 import json
 import os
 import random
@@ -6,7 +7,8 @@ from datetime import datetime
 
 import paho.mqtt.client as mqtt
 
-from app import db, app, logger
+from app import logger
+from app.extensions import db
 from app.models import EnergyReading
 
 # MQTT Setup
@@ -112,7 +114,7 @@ def on_connect(client, userdata, flags, rc):
     client.subscribe(TOPIC_GAS)
 
 # Callback when a message is received
-def on_message(client, userdata, msg):
+def on_message(client, userdata, msg, app):
     payload = json.loads(msg.payload)
     timestamp = payload['timestamp']
     building = payload['building']
@@ -125,7 +127,7 @@ def on_message(client, userdata, msg):
 
     # Create the reading object
     reading = EnergyReading(
-        timestamp=datetime.fromisoformat(timestamp),
+        timestamp=datetime.fromisoformat(timestamp.replace("Z", "+00:00")),
         building=building,
         building_code=building_code,
         zone=zone,
@@ -145,7 +147,7 @@ def on_message(client, userdata, msg):
             readings_to_add.clear()  # Clear the list after committing
 
 #Commit any remaining readings after processing all messages
-def commit_remaining_readings():
+def commit_remaining_readings(app):
     with app.app_context():
         if readings_to_add:
             db.session.add_all(readings_to_add)
@@ -154,13 +156,13 @@ def commit_remaining_readings():
             readings_to_add.clear()
 
 # Background thread to run the simulator and consume messages
-def simulator_thread():
+def simulator_thread(app):
     logger.info("Background thread started.")
     client = connect_mqtt()
 
     # Assign callbacks
     client.on_connect = on_connect
-    client.on_message = on_message
+    client.on_message = lambda c, u, m: on_message(c, u, m, app)  # Pass app to on_message
 
     # Start the MQTT loop in the background, which will handle both subscribing and publishing
     client.loop_start()
@@ -170,3 +172,4 @@ def simulator_thread():
         publish_sensor_data(client)
         logger.info(f"Waiting {PUBLISH_INTERVAL} seconds for next publish...")
         time.sleep(PUBLISH_INTERVAL)
+        commit_remaining_readings(app)

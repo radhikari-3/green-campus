@@ -1,0 +1,222 @@
+{% extends "base.html" %}
+{% import "bootstrap_wtf.html" as wtf %}
+{% block content %}
+
+<div class ="landing-page">
+<div class ="dashboard-container">
+<img src="{{ url_for('static', filename='images/market-icon.png') }}" alt="Smart Food Expiry" width="100" class="mb-3">
+
+<div class="d-flex justify-content-center">
+  <h1 class="display-5 my-4 text-center text-success">📦 Current Inventory</h1>
+</div>
+
+<div class="d-flex justify-content-end align-items-center mb-4">
+  <label class="switch me-2">
+    <input type="checkbox" id="viewToggle">
+    <span class="slider round"> </span>
+  </label>
+  <i id="viewIcon" class="bi bi-list fs-5 text-muted" title="Toggle view"></i>
+</div>
+
+
+{# List View (Initially Visible) #}
+<div id="listView" view="table" >
+  <table class="table align-middle shadow-sm rounded overflow-hidden" style="border-collapse: separate; border-spacing: 0;">
+  <thead class="table-success text-success">
+      <tr>
+        <th>Product</th><th>Expiry</th><th>Units</th><th>Marked Price</th><th>Discount</th><th>Final Price</th><th>Store</th><th></th><th></th>
+      </tr>
+    </thead>
+
+    <tbody>
+      {% for product in user_products_list %}
+      <tr style="background-color: #f4fcf7;">
+        <td>{{ product.name }}</td>
+        <td>{{ product.expiry_date }}</td>
+        <td>{{ product.units }}</td>
+        <td>£{{ product.marked_price }}</td>
+        <td>{{ product.discount * 100 }}%</td>
+        <td>£{{ product.final_price }}</td>
+        <td>{{ product.location }}</td>
+
+        <td> <form action="{{ url_for('vendors.delete_product') }}" method="POST">
+                        {{ delete_product_form.csrf_token() }}
+                        {{ delete_product_form.delete_product(value=product.id)}}
+                        <button class="btn btn-danger btn-sm" type="submit">
+                            <i class="bi bi-trash"></i>
+                        </button>
+                        </form>
+
+        </td>
+        <td> <form action="{{ url_for ('vendors.edit_product') }}" method="GET">
+                    {{ edit_product_form.csrf_token() }}
+                    {{ edit_product_form.product_id (value=product.id) }}
+                    <input type="hidden" name="view" value="{{ view }}">
+                    <button class="btn btn-success btn-sm" type="submit">
+                        <i class="bi bi-pen"></i>
+                    </button>
+                    </form>
+        </td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+
+
+{# Card View (Initially Hidden) #}
+<div id="cardView" class="container d-none" view="card">
+  <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4">
+    {% for product in user_products_list %}
+    <div class="col">
+      <div class="card shadow-sm border-0 rounded-3">
+        <div class="card-body">
+          <h5 class="card-title">{{ product.name }}</h5>
+          <ul class="list-unstyled small">
+            <li><strong>Expiry:</strong> {{ product.expiry_date }}</li>
+            <li><strong>Units:</strong> {{ product.units }}</li>
+            <li><strong>Marked Price:</strong> £{{ product.marked_price }}</li>
+            <li><strong>Discount:</strong> {{ product.discount * 100 }}%</li>
+            <li><strong>Final Price:</strong> £{{ product.final_price }}</li>
+            <li><strong>Store:</strong> {{ product.location }}</li>
+
+            <li class="d-flex gap-2">
+                <form action="{{ url_for('vendors.delete_product') }}" method="POST">
+                        {{ delete_product_form.csrf_token() }}
+                        {{ delete_product_form.delete_product(value=product.id)}}
+                        <button class="btn btn-danger btn-sm" type="submit">
+                            <i class="bi bi-trash"></i>
+                        </button>
+                        </form>
+
+                <form action="{{ url_for ('vendors.edit_product') }}" method="GET">
+                        {{ edit_product_form.csrf_token() }}
+                        {{ edit_product_form.product_id (value=product.id) }}
+                        <input type="hidden" name="view" value="{{ view }}">
+                        <button class="btn btn-success btn-sm" type="submit">
+                            <i class="bi bi-pen"></i>
+                        </button>
+                        </form>
+            </li>
+          </ul>
+        </div>
+      </div>
+    </div>
+    {% endfor %}
+  </div>
+</div>
+
+<div class="section {% if show_form %}show{% else %}collapse{% endif %}" id="productForm">
+  <div class="card card-body">
+    <h2 class="text-center text-success mb-4">Modify a Product 🥡</h2>
+    {{ wtf.quick_form(edit_product_form, method="POST", novalidate=True, autofocus=False) }}
+  </div>
+</div>
+
+{# This is for the view toggle button #}
+<script>
+  document.addEventListener("DOMContentLoaded", function () {
+    const toggle = document.getElementById("viewToggle");
+    const icon = document.getElementById("viewIcon");
+    const listView = document.querySelector('[view="table"]');
+    const cardView = document.querySelector('[view="card"]');
+
+    // Initialize toggle state
+    toggle.addEventListener("change", () => {
+      const isCardView = toggle.checked;
+      listView.classList.toggle("d-none", isCardView);
+      cardView.classList.toggle("d-none", !isCardView);
+
+      icon.classList.toggle("bi-list", !isCardView);
+      icon.classList.toggle("bi-grid", isCardView);
+    });
+  });
+</script>
+
+
+{# This is to style the round toggle button and the table #}
+<style>
+.switch {
+  position: relative;
+  display: inline-block;
+  width: 50px;
+  height: 26px;
+}
+
+.switch input {
+  opacity: 0;
+  width: 0;
+  height: 0;
+}
+
+.slider {
+  position: absolute;
+  cursor: pointer;
+  inset: 0;
+  background-color: #ccc;
+  transition: 0.4s;
+  border-radius: 34px;
+}
+
+.slider::before {
+  position: absolute;
+  content: "";
+  height: 20px;
+  width: 20px;
+  left: 4px;
+  bottom: 3px;
+  background-color: white;
+  transition: 0.4s;
+  border-radius: 50%;
+}
+
+input:checked + .slider {
+  background-color: #198754; /* Bootstrap green */
+}
+
+input:checked + .slider::before {
+  transform: translateX(24px);
+}
+
+table thead {
+  font-weight: 600;
+  letter-spacing: 0.5px;
+}
+
+table td, table th {
+  vertical-align: middle;
+  padding: 0.75rem;
+}
+
+tbody tr:hover {
+  background-color: #e7fce9; /* slightly deeper green on hover */
+}
+
+</style>
+
+
+{#This is for the confetti #}
+    {% if confetti %}
+    <script>
+            {# Delay a bit to let the page load#}
+        setTimeout(() => {
+            confetti({
+                particleCount: 150,
+                spread: 80,
+                origin: { y: 0.6 }
+            });
+        }, 300);
+    </script>
+    {% endif %}
+
+{# To add space before the footer #}
+<div class="mb-5"></div>
+
+<div>
+    <footer class="footer">
+        <p> © 2025 Green Campus Initiative. Empowering Sustainable Change.</p>
+    </footer>
+</div>
+</div>
+</div>
+{% endblock %}
