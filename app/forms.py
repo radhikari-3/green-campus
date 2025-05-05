@@ -31,6 +31,7 @@ class AddProductForm(FlaskForm):
     expiry_date = DateField('Expiry Date', validators=[DataRequired(), validate_expiry_date])
     units = IntegerField('Units', validators= [NumberRange(1,30, "You can only upload from 1 to 30 units.")])
     price = FloatField('Price', validators= [DataRequired()])
+    discount = FloatField('Discount Rate', validators=[InputRequired()])
     location = StringField('Location', validators=[DataRequired()])
     submit = SubmitField('Submit')
 
@@ -55,19 +56,6 @@ class InventoryForm(FlaskForm):
     category = SelectField('Product Category', validators=[DataRequired()], choices=[("f","fruits and vegetables"),("g","grains"),("d","dairy and related products"),("n","nuts")])
     location = StringField('Product location', validators=[DataRequired()])
     submit = SubmitField('Submit')
-
-    def validate_expiry_date(self, field):
-        today = datetime.date.today()  # get today's date (no time part)
-        expiry_date = field.data       # field.data is already a date (because you're using DateField)
-
-        if expiry_date < today:
-            raise ValidationError("You can't upload expired goods!")
-
-    def validate_discount(self, field):
-        discount = field.data
-        if float(discount) > 100 or float(discount) < 0:
-            raise ValidationError("The discount rate should be a numerical value between 0-100")
-
 
 class SignupForm(FlaskForm):
     email    = StringField('Email',    validators=[DataRequired(), Email()])
