@@ -141,17 +141,9 @@ def login():
         login_user(user, remember=form.remember_me.data)
         next_page = request.args.get('next')
         if not next_page or urlsplit(next_page).netloc != '':
-            return redirect(url_for('main.home'))
+            return redirect(url_for('dash_bp.dashboard'))
     return render_template('login.html', title='Sign In', form=form)
 
-@auth_bp.route('/logout')
-def logout():
-    logout_user()
-    return redirect(url_for('main.home'))
 
 
-@auth_bp.route('/account')
-@login_required
-def account():
-    days_since = (datetime.utcnow() - current_user.signup_date).days
-    return render_template('account.html', title="Account", days_since_signup = days_since)
+

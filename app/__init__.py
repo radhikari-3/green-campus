@@ -11,7 +11,7 @@ from app.logger import logger
 from app.logger import logger
 from app.views.auth import auth_bp
 from app.views.main import main_bp
-from app.views.user_dashboard import user_dash_bp
+from app.views.dashboard import dash_bp
 from config import Config
 
 app = Flask(__name__)
@@ -27,7 +27,7 @@ mail.init_app(app)
 app.register_blueprint(auth_bp)
 app.register_blueprint(main_bp)
 
-app.register_blueprint(user_dash_bp)
+app.register_blueprint(dash_bp)
 
 from app import views, models           # don't remove from here
 from app.debug_utils import reset_db    # don't remove from here

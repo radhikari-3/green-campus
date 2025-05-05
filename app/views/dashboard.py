@@ -1,21 +1,34 @@
 import base64
 import random
+from datetime import datetime
 from io import BytesIO
 
 import qrcode
 from flask import Blueprint, render_template, request, redirect, flash, url_for
-from flask_login import login_required, current_user
+from flask_login import login_required, current_user, logout_user
 from flask_mail import Message
 from sqlalchemy import func
 
 from app import db, mail
 from app.models import ActivityLog
 
-user_dash_bp = Blueprint('user_dash_bp', __name__, url_prefix='/user_dashboard')
+dash_bp = Blueprint('dash_bp', __name__)
 
-@user_dash_bp.route("/eco-points-dashboard")
+
+@dash_bp.route('/account')
 @login_required
-def eco_points_dashboard():
+def account():
+    return redirect(url_for('dash_bp.dashboard'))
+
+@dash_bp.route('/logout')
+def logout():
+    logout_user()
+    return redirect(url_for('main.home'))
+
+@dash_bp.route("/dashboard")
+@login_required
+def dashboard():
+    days_since = (datetime.utcnow() - current_user.signup_date).days
     email = current_user.email
 
     # Fetch walking activity
@@ -67,7 +80,7 @@ def eco_points_dashboard():
     total_eco_points = db.session.query(func.sum(ActivityLog.eco_points)).filter(ActivityLog.email == email).scalar() or 0
 
     return render_template(
-        "eco_points_dashboard.html",
+        "dashboard.html",
         title="Eco Points Dashboard",
         username=email.split('@')[0],
         walking_data=walking_data,
@@ -75,12 +88,13 @@ def eco_points_dashboard():
         avg_data=avg_data,
         avg_cycling_data=avg_cycling_data,
         eco_points=int(total_eco_points),
-        all_logs=[]
+        all_logs=[],
+        days_since=days_since
     )
 
 
 
-@user_dash_bp.route("/rewards", methods=["GET", "POST"])
+@dash_bp.route("/rewards", methods=["GET", "POST"])
 @login_required
 def rewards():
     email = current_user.email
@@ -140,7 +154,7 @@ def rewards():
     )
 
 
-@user_dash_bp.route('/send_email', methods=['GET', 'POST'])
+@dash_bp.route('/send_email', methods=['GET', 'POST'])
 def send_email():
     if request.method == 'POST':
         recipient = request.form['recipient']
@@ -154,7 +168,7 @@ def send_email():
         return redirect(url_for('main.home'))
     return redirect(url_for('main.home'))
 
-@user_dash_bp.route("/send_qr_email", methods=["POST"])
+@dash_bp.route("/send_qr_email", methods=["POST"])
 @login_required
 def send_qr_email():
     qr_data = request.form.get('qr_data', '')
@@ -162,7 +176,7 @@ def send_qr_email():
 
     if not qr_data:
         flash('QR data missing. Please redeem again.', 'danger')
-        return redirect(url_for('user_dash_bp.rewards'))
+        return redirect(url_for('dash_bp.rewards'))
 
     # Generate QR code
     qr = qrcode.QRCode(version=1, box_size=10, border=4)
@@ -203,4 +217,4 @@ def send_qr_email():
     mail.send(msg)
 
     flash("QR voucher sent to your email 📩", "success")
-    return redirect(url_for("user_dash_bp.rewards"))
+    return redirect(url_for("dash_bp.rewards"))

@@ -1,56 +1,103 @@
-.dashboard-container {
-    max-width: 900px;
-    margin: 0 auto;
-    padding: 40px 20px;
+body {
+  background-color: #f4f7fa;
+  font-family: 'Inter', sans-serif;
+  margin: 0; /* Prevent default margins causing layout shifts */
+  overflow-x: hidden; /* Prevent horizontal scroll issues */
 }
 
-.dashboard-card {
-    background-color: #ffffff;
-    padding: 25px;
-    border-radius: 8px;
-    box-shadow: 0 4px 6px rgba(0,0,0,0.1);
-    margin-bottom: 30px;
-    text-align: center;
+/* Target Bootstrap navbar (adjust selector if navbar has a custom class) */
+.navbar {
+  position: fixed;
+  top: 0;
+  left: 250px; /* Offset by sidebar width */
+  width: calc(100% - 250px); /* Span remaining viewport width */
+  z-index: 1000; /* Above sidebar */
 }
 
-.dashboard-card h2 {
-    margin-bottom: 10px;
+.sidebar {
+  background: #1a2b49;
+  color: #fff;
+  height: 100vh; /* Full viewport height */
+  min-height: 100vh; /* Ensure it doesn't shrink */
+  max-height: 100vh; /* Prevent overflow */
+  width: 250px;
+  position: fixed;
+  top: 0; /* Align to top of viewport */
+  left: 0; /* Align to left */
+  padding-top: 20px;
+  overflow-y: auto; /* Allow scrolling within sidebar if content overflows */
+  z-index: 900; /* Below navbar */
 }
 
-.dashboard-section {
-    background-color: #f8f9fa;
-    padding: 20px;
-    border-radius: 8px;
+.sidebar a {
+  color: #a0aec0;
+  padding: 10px 20px;
+  display: block;
+  transition: color 0.3s, background 0.3s;
 }
 
-.dashboard-links {
-    list-style-type: none;
-    padding: 0;
+.sidebar a:hover {
+  color: #fff;
+  background: rgba(255, 255, 255, 0.1);
 }
 
-.dashboard-links li {
-    margin: 10px 0;
+.main-content {
+  margin-left: 250px; /* Match sidebar width */
+  padding: 20px;
+  padding-top: 76px; /* Navbar height (56px) + padding (20px) */
+  min-height: 100vh; /* Ensure main content spans viewport height */
+  box-sizing: border-box; /* Prevent padding from causing layout issues */
 }
 
-.dashboard-links a {
-    text-decoration: none;
-    color: #007bff;
+.eco-card {
+  background: #fff;
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  transition: transform 0.3s;
 }
 
-.dashboard-links a:hover {
-    text-decoration: underline;
+.eco-card:hover {
+  transform: translateY(-5px);
 }
 
-.toggle-container {
-    text-align: center;
-    margin: 20px auto;
-    font-size: 16px;
+.eco-card .point-count {
+  font-size: 2.5rem;
+  font-weight: 600;
+  color: #1a2b49;
 }
 
-.toggle-container select {
-    padding: 6px 12px;
-    font-size: 15px;
-    border-radius: 8px;
-    border: 1px solid #ccc;
-    outline: none;
+.eco-card .hint {
+  font-size: 0.85rem;
+  color: #6b7280;
+}
+
+.header {
+  background: linear-gradient(90deg, #10b981, #3b82f6);
+  color: #fff;
+  border-radius: 12px;
+  padding: 2rem;
+}
+
+.chart-container {
+  background: #fff;
+  border-radius: 12px;
+  padding: 1.5rem;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.form-select {
+  border-radius: 8px;
+  padding: 0.5rem;
+  border: 1px solid #d1d5db;
+}
+
+.btn-primary {
+  background-color: #3b82f6;
+  border: none;
+  border-radius: 8px;
+  padding: 0.5rem 1rem;
+}
+
+.btn-primary:hover {
+  background-color: #2563eb;
 }

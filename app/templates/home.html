@@ -23,7 +23,8 @@
                 <h3>Smart Energy Dashboard</h3>
                 <p>Monitor real-time energy usage and optimize campus-wide consumption.</p>
             </div>
-             <a href="{{ url_for('user_dash_bp.eco_points_dashboard') }}" class="feature-card" style="text-decoration: none; color: inherit;">
+            <a href="{{ url_for('auth.login') if not current_user.is_authenticated else url_for('dash_bp.dashboard') }}"
+               class="feature-card" style="text-decoration: none; color: inherit;">
                 <h3>Eco-Points Rewards</h3>
                 <p>Earn Eco-Points for sustainable actions and redeem exciting rewards!</p>
             </a>
