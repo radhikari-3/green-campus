@@ -17,7 +17,7 @@
         <a href="{{ url_for('dash.dashboard') }}"><i class="bi bi-house me-2"></i> Dashboard</a>
         <a href="{{ url_for('dash.rewards') }}"><i class="bi bi-gift me-2"></i> Rewards</a>
         <a href="{{ url_for('auth.reset_password') }}" ><i class="bi bi-person me-2"></i> Reset Password</a>
-        <a href="{{ url_for('vendors.view_expiring_products') }}" ><i class="bi bi-person me-2"></i> Expiring Products</a>
+        <a href="{{ url_for('smart_exp.view_expiring_products') }}" ><i class="bi bi-person me-2"></i> Expiring Products</a>
           <a href="{{ url_for('dash.logout') }}"><i class="bi bi-box-arrow-right me-2"></i> Logout</a>
       </nav>
 
@@ -29,7 +29,7 @@
                 <div class="expiring-product-image-container">
                     <img src="/static/images/fnv.png" alt="Fruits and Vegetables">
                 </div>
-                <a href="{{ url_for('vendors.expiring_offers', category='f') }}" class="btn-secondary">
+                <a href="{{ url_for('smart_exp.expiring_offers', category='f') }}" class="btn-secondary">
                     <h3>Fruits and Vegetables 🍓</h3>
                 </a>
             </div>
@@ -37,7 +37,7 @@
                 <div class="expiring-product-image-container">
                     <img src="/static/images/grains.png" alt="Grains and Bread based products">
                 </div>
-                <a href="{{ url_for('vendors.expiring_offers', category='g') }}" class="btn-secondary">
+                <a href="{{ url_for('smart_exp.expiring_offers', category='g') }}" class="btn-secondary">
                     <h3>Grains and Bread 🥖</h3>
                 </a>
             </div>
@@ -45,7 +45,7 @@
                 <div class="expiring-product-image-container">
                     <img src="/static/images/dp.png" alt="Dairy and related products">
                 </div>
-                <a href="{{ url_for('vendors.expiring_offers', category='d') }}" class="btn-secondary">
+                <a href="{{ url_for('smart_exp.expiring_offers', category='d') }}" class="btn-secondary">
                     <h3>Dairy and related products 🧀</h3>
                 </a>
             </div>
@@ -53,7 +53,7 @@
                 <div class="expiring-product-image-container">
                     <img src="/static/images/nuts.jpg" alt="Nuts and related products">
                 </div>
-                <a href="{{ url_for('vendors.expiring_offers', category='n') }}" class="btn-secondary">
+                <a href="{{ url_for('smart_exp.expiring_offers', category='n') }}" class="btn-secondary">
                     <h3>Nuts and related products 🥜</h3>
                 </a>
             </div>

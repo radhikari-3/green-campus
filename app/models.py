@@ -2,7 +2,6 @@ import datetime
 from dataclasses import dataclass
 from datetime import date
 from datetime import datetime
-from typing import List
 from typing import Optional
 
 import sqlalchemy as sa
@@ -23,10 +22,9 @@ class User(UserMixin, db.Model):
     email: so.Mapped[str] = so.mapped_column(sa.String(120), index=True, unique=True)
     password_hash: so.Mapped[Optional[str]] = so.mapped_column(sa.String(256))
     role: so.Mapped[str] = so.mapped_column(sa.String(10), default="Normal")
-    inventory: so.Mapped[List["Inventory"]] = relationship(
-        back_populates="user",
-        cascade="all, delete-orphan"
-    )
+
+    inventory: so.Mapped[Optional["Inventory"]] = relationship(back_populates="user", cascade="all, delete-orphan")
+
     email_verified: so.Mapped[bool] = so.mapped_column(sa.Boolean, default=False)
     email_otp: so.Mapped[Optional[str]] = so.mapped_column(sa.String(6), nullable=True)
     email_otp_expires: so.Mapped[Optional[datetime]] = so.mapped_column(sa.DateTime, nullable=True)
@@ -37,7 +35,6 @@ class User(UserMixin, db.Model):
     activity_logs: so.WriteOnlyMapped["ActivityLog"] = so.relationship(
         "ActivityLog", back_populates="user", cascade="all, delete-orphan"
     )
-
 
     def __repr__(self):
         pwh= 'None' if not self.password_hash else f'...{self.password_hash[-5:]}'
@@ -79,7 +76,6 @@ class EnergyReading(db.Model):
         return f'EnergyReading(id={self.id}, timestamp={self.timestamp}, building={self.building}, ' \
                f'building_code={self.building_code}, zone={self.zone}, value={self.value}, category={self.category})'
 
-
 class Inventory(db.Model):
     __tablename__ = 'inventory'
 
@@ -90,12 +86,10 @@ class Inventory(db.Model):
     category: so.Mapped[str] = so.mapped_column(sa.String(100))
     marked_price: so.Mapped[float] = so.mapped_column(sa.Float())
     discount: so.Mapped[float] = so.mapped_column(sa.Float(), default=0.75)
-    final_price: so.Mapped[float] = so.mapped_column(sa.Float())
+    final_price: so.Mapped[float] = so.mapped_column(sa.Float(), nullable=True)
     location: so.Mapped[str] = so.mapped_column(sa.String(200))
     user_id: so.Mapped[int] = so.mapped_column(ForeignKey("users.id"))
     user: so.Mapped["User"] = relationship(back_populates="inventory")
-
-
 
 class ActivityLog(db.Model):
     __tablename__ = 'activity_log'
@@ -123,4 +117,3 @@ class ActivityLog(db.Model):
             f"{self.steps} steps | {self.distance}m = {self.eco_points} points>"
 
         )
-

@@ -154,20 +154,6 @@ def rewards():
     )
 
 
-@dash_bp.route('/send_email', methods=['GET', 'POST'])
-def send_email():
-    if request.method == 'POST':
-        recipient = request.form['recipient']
-        body = request.form["body"]
-        subject = request.form["subject"]
-        msg = Message(subject=subject, recipients=[recipient])
-        msg.body = body
-        msg.html = "<h1>" + subject + "</h1>" + "<p>" + body + "</p>"
-        mail.send(msg)
-        flash(f'A test message was sent to {recipient}.')
-        return redirect(url_for('main.home'))
-    return redirect(url_for('main.home'))
-
 @dash_bp.route("/send_qr_email", methods=["POST"])
 @login_required
 def send_qr_email():
