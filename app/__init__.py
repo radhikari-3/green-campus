@@ -2,13 +2,14 @@ import threading
 
 import sqlalchemy as sa
 import sqlalchemy.orm as so
+from apscheduler.triggers.cron import CronTrigger
 from flask import Flask
 from jinja2 import StrictUndefined
 
 from app.extensions import db, login, mail, scheduler
 from app.logger import logger
 from app.logger import logger
-from app.tasks import send_discount_email
+from app.tasks import scheduled_send_discount_email
 from app.views.auth import auth_bp
 from app.views.dashboard import dash_bp
 from app.views.main import main_bp
@@ -45,10 +46,18 @@ def create_app(config_class=Config, test_config=None):
     logger.info("Scheduler has started.")
     #logger.info(f"Scheduled job: {job.id}, function: {job.func_ref}, next run: {job.next_run_time}")
 
+    scheduler.add_job(
+        func=scheduled_send_discount_email,
+        trigger=CronTrigger(hour=7, minute=0),
+        id='daily_discount_email',
+        replace_existing=True
+    )
+    logger.info("Scheduled daily_discount_email job for 7 AM.")
+
     # Optional: trigger immediately on startup
     if app.config.get('SCHEDULER_TEST_NOW', False):
         with app.app_context():
-            send_discount_email()
+            scheduled_send_discount_email()
 
     from app import views, models           # don't remove from here
     from app.debug_utils import reset_db    # don't remove from here

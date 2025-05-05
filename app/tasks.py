@@ -10,7 +10,7 @@ from app.models import User
 from app.views.vendor import get_updated_daily_discounts
 
 
-def send_discount_email():
+def scheduled_send_discount_email():
     with current_app.app_context():
         recipients = _get_recipient_emails()
         if not recipients:

@@ -89,7 +89,7 @@ class Inventory(db.Model):
     units: so.Mapped[int] = so.mapped_column(sa.Integer())
     category: so.Mapped[str] = so.mapped_column(sa.String(100))
     marked_price: so.Mapped[float] = so.mapped_column(sa.Float())
-    discount: so.Mapped[float] = so.mapped_column(sa.Integer(), default= 0.75)
+    discount: so.Mapped[float] = so.mapped_column(sa.Float(), default=0.75)
     final_price: so.Mapped[float] = so.mapped_column(sa.Float())
     location: so.Mapped[str] = so.mapped_column(sa.String(200))
     user_id: so.Mapped[int] = so.mapped_column(ForeignKey("users.id"))
