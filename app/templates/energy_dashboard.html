@@ -1,0 +1,103 @@
+{% extends "base.html" %}
+
+{% block head %}
+{{ super() }}
+<script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+<style>
+    /* Custom styles for multi-select and charts */
+    select[multiple] {
+        width: 100%;
+        max-height: 150px;
+        overflow-y: auto;
+    }
+    #energy-chart, #fuelTypeChart {
+        width: 100%;
+        height: 400px;
+    }
+    /* Ensure controls are compact in the sidebar */
+    .controls-sidebar {
+        padding-left: 1rem;
+        border-left: 1px solid #dee2e6;
+    }
+    @media (max-width: 767.98px) {
+        .controls-sidebar {
+            padding-left: 0;
+            border-left: none;
+            border-top: 1px solid #dee2e6;
+            padding-top: 1rem;
+            margin-top: 1rem;
+        }
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="mt-4">
+    <!-- Header -->
+    <h1 class="display-5 fw-bold text-dark mb-4 d-flex align-items-center">
+        <span class="me-2"></span> Energy Analytics
+    </h1>
+
+    <!-- Energy Chart with Controls -->
+    <div class="card shadow-sm mb-4">
+        <div class="card-body">
+            <div class="row g-3">
+                <!-- Chart -->
+                <div class="col-md-8 col-12">
+                    <h5 class="fw-semibold text-dark mb-3">Energy Use Per Building</h5>
+                    <div id="energy-chart"></div>
+                </div>
+                <!-- Controls Section -->
+                <div class="col-md-4 col-12 controls-sidebar">
+
+                    <div class="mb-3">
+                        <h5 class="fw-semibold text-dark mb-3">Chart Controls</h5>
+                        <label for="time-range" class="form-label">Time Range</label>
+                        <select id="time-range" onchange="updateChart()" class="form-select">
+                            <option value="daily">Daily</option>
+                            <option value="weekly">Weekly</option>
+                            <option value="monthly">Monthly</option>
+                            <option value="custom">Custom Range</option>
+                        </select>
+                        <div id="custom-date-range" class="mt-2" style="display: none;">
+                            <input type="date" id="start-date" onchange="updateChart()" class="form-control mb-2">
+                            <input type="date" id="end-date" onchange="updateChart()" class="form-control">
+                        </div>
+                    </div>
+                    <div class="mb-3">
+                        <label for="building-select" class="form-label">Select Building(s)</label>
+                        <select id="building-select" multiple onchange="updateChart()" class="form-select">
+                            {% for building in buildings %}
+                                <option value="{{ building }}">{{ building }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <div>
+                        <label for="energy-type" class="form-label">Energy Type</label>
+                        <select id="energy-type" onchange="updateChart()" class="form-select">
+                            <option value="electricity">Electricity</option>
+                            <option value="gas">Gas</option>
+                            <option value="both" selected>Both</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Fuel Type Chart -->
+    <div class="card shadow-sm">
+        <div class="card-body">
+            <h2 class="h4 fw-semibold text-dark mb-3">Total Energy Usage by Fuel Type</h2>
+            <div id="fuelTypeChart"></div>
+        </div>
+    </div>
+</div>
+
+<!-- Pass Jinja2 data to JavaScript and load charts.js -->
+<script>
+    // Define global variable for total_usage_by_zones
+    window.totalUsageByZones = {{ total_usage_by_zones | tojson }};
+</script>
+<script src="{{ url_for('static', filename='js/charts.js') }}"></script>
+{% endblock %}

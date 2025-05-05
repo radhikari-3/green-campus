@@ -1,0 +1,34 @@
+[
+  {
+    "timestamp": "2025-04-28 10:21:54",
+    "building": "Denis Howell Building",
+    "block": "B5",
+    "zone": "Blue",
+    "amount": 348.79,
+    "type": "electricity"
+  },
+  {
+    "timestamp": "2025-04-28 10:21:54",
+    "building": "Denis Howell Building",
+    "block": "B5",
+    "zone": "Blue",
+    "amount": 40.82,
+    "type": "gas"
+  },
+  {
+    "timestamp": "2025-04-28 10:21:54",
+    "building": "Institute of Research and Development",
+    "block": "B6",
+    "zone": "Blue",
+    "amount": 578.63,
+    "type": "electricity"
+  },
+  {
+    "timestamp": "2025-04-28 10:21:54",
+    "building": "Institute of Research and Development",
+    "block": "B6",
+    "zone": "Blue",
+    "amount": 35.41,
+    "type": "gas"
+  }
+]

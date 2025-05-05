@@ -12,6 +12,7 @@ from app.logger import logger
 from app.tasks import scheduled_send_discount_email
 from app.views.auth import auth_bp
 from app.views.dashboard import dash_bp
+from app.views.energy_dashboard import energy_bp
 from app.views.main import main_bp
 from app.views.smart_expiry_dashboard import smart_exp_bp
 from app.views.utils import utils_bp
@@ -43,6 +44,7 @@ def create_app(config_class=Config, test_config=None):
     app.register_blueprint(utils_bp)
     app.register_blueprint(smart_exp_bp)
     app.register_blueprint(vendors_bp)
+    app.register_blueprint(energy_bp)
 
     # Setup scheduler
     if app.config.get('SCHEDULER_ENABLED', True):
@@ -79,7 +81,7 @@ def create_app(config_class=Config, test_config=None):
         global first_request_handled
         if not first_request_handled:
             first_request_handled = True
-            thread = threading.Thread(target=simulator_thread)
+            thread = threading.Thread(target=simulator_thread, args=(app,))  # Pass app to simulator_thread
             thread.daemon = True
             thread.start()
     return app
