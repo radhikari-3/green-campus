@@ -38,10 +38,10 @@
                     </li>
                 {% else %}
                     <li class="nav-item">
-                        <a class="nav-link" aria-current="page" href="{{ url_for('dash_bp.logout') }}">Logout</a>
+                        <a class="nav-link" aria-current="page" href="{{ url_for('dash.logout') }}">Logout</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" aria-current="page" href="{{ url_for('dash_bp.account') }}">Account</a>
+                        <a class="nav-link" aria-current="page" href="{{ url_for('dash.account') }}">Account</a>
                     </li>
                 {% endif %}
 
@@ -67,4 +67,3 @@
     </div>
 </body>
 </html>
-

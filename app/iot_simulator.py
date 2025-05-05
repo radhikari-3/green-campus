@@ -6,7 +6,7 @@ from datetime import datetime
 
 import paho.mqtt.client as mqtt
 
-from app import logger, app
+from app import logger
 from app.extensions import db
 from app.models import EnergyReading
 

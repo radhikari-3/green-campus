@@ -42,3 +42,4 @@ psycopg2
 pyqrcode
 flask_mail
 qrcode
+flask-apscheduler

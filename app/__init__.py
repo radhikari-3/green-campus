@@ -2,49 +2,80 @@ import threading
 
 import sqlalchemy as sa
 import sqlalchemy.orm as so
+from apscheduler.triggers.cron import CronTrigger
 from flask import Flask
 from jinja2 import StrictUndefined
 
-
-from app.extensions import db, login, mail
+from app.extensions import db, login, mail, scheduler
 from app.logger import logger
 from app.logger import logger
+from app.tasks import scheduled_send_discount_email
 from app.views.auth import auth_bp
-from app.views.main import main_bp
 from app.views.dashboard import dash_bp
+from app.views.main import main_bp
+from app.views.utils import utils_bp
+from app.views.vendor import vendors_bp
 from config import Config
 
-app = Flask(__name__)
-app.jinja_env.undefined = StrictUndefined
-app.config.from_object(Config)
 
-db.init_app(app)
-login.login_view = 'auth.login'
-login.init_app(app)
-mail.init_app(app)
+def create_app(config_class=Config, test_config=None):
+    app = Flask(__name__)
+    app.config.from_object(config_class)
 
-#Register blueprints
-app.register_blueprint(auth_bp)
-app.register_blueprint(main_bp)
+    if test_config is not None:
+        app.config.update(test_config)
 
-app.register_blueprint(dash_bp)
+    app.jinja_env.undefined = StrictUndefined
+    app.config.from_object(Config)
 
-from app import views, models           # don't remove from here
-from app.debug_utils import reset_db    # don't remove from here
+    db.init_app(app)
+    login.login_view = 'auth.login'
+    login.init_app(app)
+    mail.init_app(app)
 
-@app.shell_context_processor
-def make_shell_context():
-    return dict(db=db, sa=sa, so=so, reset_db=reset_db)
+    #Register blueprints
+    app.register_blueprint(auth_bp)
+    app.register_blueprint(main_bp)
+    app.register_blueprint(dash_bp)
 
-first_request_handled = False
+    app.register_blueprint(utils_bp)
+    app.register_blueprint(vendors_bp)
 
-from app.iot_simulator import simulator_thread # don't remove from here
-# Start a background thread when Flask starts
-@app.before_request
-def activate_simulator():
-    global first_request_handled
-    if not first_request_handled:
-        first_request_handled = True
-        thread = threading.Thread(target=simulator_thread)
-        thread.daemon = True
-        thread.start()
+    # Setup scheduler
+    scheduler.start()
+    logger.info("Scheduler has started.")
+    #logger.info(f"Scheduled job: {job.id}, function: {job.func_ref}, next run: {job.next_run_time}")
+
+    scheduler.add_job(
+        func=scheduled_send_discount_email,
+        trigger=CronTrigger(hour=7, minute=0),
+        id='daily_discount_email',
+        replace_existing=True
+    )
+    logger.info("Scheduled daily_discount_email job for 7 AM.")
+
+    # Optional: trigger immediately on startup
+    if app.config.get('SCHEDULER_TEST_NOW', False):
+        with app.app_context():
+            scheduled_send_discount_email()
+
+    from app import views, models           # don't remove from here
+    from app.debug_utils import reset_db    # don't remove from here
+
+    @app.shell_context_processor
+    def make_shell_context():
+        return dict(db=db, sa=sa, so=so, reset_db=reset_db)
+
+    first_request_handled = False
+
+    from app.iot_simulator import simulator_thread # don't remove from here
+    # Start a background thread when Flask starts
+    @app.before_request
+    def activate_simulator():
+        global first_request_handled
+        if not first_request_handled:
+            first_request_handled = True
+            thread = threading.Thread(target=simulator_thread)
+            thread.daemon = True
+            thread.start()
+    return app

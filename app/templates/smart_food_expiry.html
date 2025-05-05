@@ -1,0 +1,12 @@
+{% extends "base.html" %}
+{% import "bootstrap_wtf.html" as wtf %}
+
+{% block content %}
+    <div class="container">
+        {% if current_user.is_authenticated %}
+            {{ wtf.quick_form(inventory_form, action="", method="post", id="", novalidate=True, autofocus=False) }}
+        {% else %}
+            <p>Please login to access this feature</p>
+        {% endif %}
+    </div>
+{% endblock %}

@@ -3,7 +3,7 @@ from urllib.parse import urlsplit
 
 import sqlalchemy as sa
 from flask import Blueprint, render_template, redirect, flash, url_for, request
-from flask_login import logout_user, login_user, current_user, login_required
+from flask_login import login_user, current_user, login_required
 
 from app import db
 from app.forms import LoginForm, PasswordChangeForm, ResetOTPForm, ResetPasswordRequestForm, VerifyEmailForm, \
@@ -141,7 +141,7 @@ def login():
         login_user(user, remember=form.remember_me.data)
         next_page = request.args.get('next')
         if not next_page or urlsplit(next_page).netloc != '':
-            return redirect(url_for('dash_bp.dashboard'))
+            return redirect(url_for('dash.dashboard'))
     return render_template('login.html', title='Sign In', form=form)
 
 
