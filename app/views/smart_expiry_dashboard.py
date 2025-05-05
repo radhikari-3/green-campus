@@ -31,7 +31,11 @@ def expiring_offers(category):
     }
     relevant_products = Inventory.query.filter(Inventory.category == category).all()
     relevant_title = "Best offers on " + category_map[category]
-    return render_template("category_wise_products.html",title= relevant_title, relevant_products = relevant_products, total_points = total_points, pounds = pounds)
+    return render_template("category_wise_products.html",
+                           title = relevant_title,
+                           relevant_products = relevant_products,
+                           total_points = total_points,
+                           pounds = pounds)
 
 
 def calculate_user_eco_points(email):
@@ -65,7 +69,8 @@ def discount_applicator(product_instance):
 
 def get_updated_daily_discounts(time_limit):
     time_limit = datetime.today() + timedelta(days=time_limit)
-    inventory_list = db.session.scalars(select(Inventory).where(Inventory.expiry_date >= today(), Inventory.expiry_date <= time_limit)).all()
+    inventory_list = db.session.scalars(select(Inventory).where(Inventory.expiry_date >= today(),
+                                                                Inventory.expiry_date <= time_limit)).all()
     for index in range(len(inventory_list)):
         inventory_list[index] = discount_applicator(inventory_list[index])
     db.session.commit()

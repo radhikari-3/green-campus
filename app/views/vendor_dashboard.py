@@ -12,8 +12,10 @@ vendors_bp = Blueprint('vendors', __name__)
 @login_required
 def smart_food_expiry():
     add_product_form = AddProductForm()
-    return render_template('smart_food_expiry.html', title='Smart Food Expiry System',
-                           add_product_form=add_product_form, confetti=False)
+    return render_template('smart_food_expiry.html',
+                           title='Smart Food Expiry System',
+                           add_product_form=add_product_form,
+                           confetti=False)
 
 
 @vendors_bp.route('/inventory', methods= ['GET', 'POST'])
@@ -44,11 +46,18 @@ def add_product():
         product_price = add_product_form.price.data
 
         product_discount = db.session.scalar(select(Inventory.discount).filter_by(name=product_name))
-        final_price = product_price if not product_discount else round(product_price * (1 - product_discount), 2)
+        final_price = product_price if product_discount is None else round(product_price * (1 - product_discount), 2)
         product_location = add_product_form.location.data
         existing_product = db.session.scalars(select(Inventory).filter_by(name=product_name)).first()
         if existing_product is None:
-            db.session.add(Inventory(name=product_name,expiry_date=product_expiry_date,units=product_units,marked_price=product_price,discount=product_discount,final_price=final_price,location=product_location,user_id=current_user.id))
+            db.session.add(Inventory(name=product_name,
+                                     expiry_date=product_expiry_date,
+                                     units=product_units,
+                                     marked_price=product_price,
+                                     discount=product_discount,
+                                     final_price=final_price,
+                                     location=product_location,
+                                     user_id=current_user.id))
         else:
             existing_product.units += product_units
         db.session.commit()
@@ -117,7 +126,15 @@ def edit_product():
             session['show_confetti'] = True
             return redirect(url_for('vendors.inventory', view=view))
 
-    return render_template('inventory.html',title='Edit Product',add_product_form=add_product_form,edit_product_form=edit_product_form,user_products_list=user_products_list,delete_product_form=delete_product_form,show_form=True,confetti=show_confetti, view=view)
+    return render_template('inventory.html',
+                           title='Edit Product',
+                           add_product_form=add_product_form,
+                           edit_product_form=edit_product_form,
+                           user_products_list=user_products_list,
+                           delete_product_form=delete_product_form,
+                           show_form=True,
+                           confetti=show_confetti,
+                           view=view)
 
 
 def update_product_fields(product, edit_product_form):

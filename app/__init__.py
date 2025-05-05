@@ -56,7 +56,7 @@ def create_app(config_class=Config, test_config=None):
         )
         logger.info("Scheduled daily_discount_email job for 7 AM.")
     else:
-        logger.info("Scheduler is disabled because SCHEDULER_API_ENABLED is set to False.")
+        logger.info("Scheduler is disabled because SCHEDULER_ENABLED is set to False.")
 
 
     # Optional: trigger immediately on startup
