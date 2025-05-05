@@ -14,17 +14,13 @@ def app():
         'SQLALCHEMY_DATABASE_URI': 'sqlite:///:memory:',  # In-memory database
         'SQLALCHEMY_TRACK_MODIFICATIONS': False,  # Suppress warnings
         'SQLALCHEMY_ECHO': False,  # Disable SQL logging for cleaner test output
+        'SERVER_NAME': 'localhost',
+        'APPLICATION_ROOT': '/',
+        'PREFERRED_URL_SCHEME': 'http'
     }
     #print("Test config URI:", test_config['SQLALCHEMY_DATABASE_URI'])  # Debug point 1
     app = create_app(config_class=None, test_config=test_config)
     #print("App config after creation:", app.config.get('SQLALCHEMY_DATABASE_URI'))  # Debug point 2
-
-    app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///:memory:'
-    app.config['DATABASE_URL'] = None
-    app.config['SERVER_NAME'] = 'localhost'
-    app.config['APPLICATION_ROOT'] = '/'
-    app.config['PREFERRED_URL_SCHEME'] = 'http'
-    #print("Forced SQLite URI:", app.config.get('SQLALCHEMY_DATABASE_URI'))  # Debug point 3
 
     with app.app_context():
         db.create_all()  # Create tables
