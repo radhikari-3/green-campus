@@ -1,4 +1,3 @@
-import datetime
 from dataclasses import dataclass
 from datetime import date
 from datetime import datetime
@@ -9,7 +8,6 @@ import sqlalchemy.orm as so
 from flask_login import UserMixin
 from sqlalchemy import ForeignKey
 from sqlalchemy.orm import relationship
-from werkzeug.security import generate_password_hash, check_password_hash
 
 from app import db, login
 
@@ -30,7 +28,6 @@ class User(UserMixin, db.Model):
     email_otp_expires: so.Mapped[Optional[datetime]] = so.mapped_column(sa.DateTime, nullable=True)
     signup_date: so.Mapped[datetime] = so.mapped_column(sa.DateTime, default=datetime.utcnow, nullable=False)
 
-
     # Relationship
     activity_logs: so.WriteOnlyMapped["ActivityLog"] = so.relationship(
         "ActivityLog", back_populates="user", cascade="all, delete-orphan"
@@ -41,23 +38,11 @@ class User(UserMixin, db.Model):
 
         return f'User(id={self.id}, email={self.email}, role={self.role}, pwh={pwh})'
 
-    def set_password(self, password):
-        self.password_hash = generate_password_hash(password)
-
-    def check_password(self, password):
-        return check_password_hash(self.password_hash, password)
-
-    def generate_otp(self):
-        import random
-        code = f"{random.randint(100000, 999999)}"
-        self.email_otp = code
-        self.email_otp_expires = datetime.datetime.utcnow() + datetime.timedelta(minutes=10)
-        return code
-
 
 @login.user_loader
 def load_user(id):
     return db.session.get(User, int(id))
+
 
 
 class EnergyReading(db.Model):

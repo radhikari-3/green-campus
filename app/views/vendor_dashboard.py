@@ -62,6 +62,7 @@ def add_product():
         product_name = add_product_form.name.data
         product_expiry_date = add_product_form.expiry_date.data
         product_units = add_product_form.units.data
+        product_category = add_product_form.category.data
         product_price = add_product_form.price.data
         product_location = add_product_form.location.data
 
@@ -73,6 +74,7 @@ def add_product():
             db.session.add(Inventory(name=product_name,
                                      expiry_date=product_expiry_date,
                                      units=product_units,
+                                     category=product_category,
                                      marked_price=product_price,
                                      discount=product_discount,
                                      final_price=final_price,

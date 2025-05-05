@@ -30,7 +30,7 @@
                 <p>Earn Eco-Points for sustainable actions and redeem exciting rewards!</p>
             </a>
 
-             <a href="{{ url_for('auth.login') if not current_user.is_authenticated else url_for('dash.dashboard') }}"
+             <a href="{{ url_for('auth.login') if not current_user.is_authenticated else url_for('vendors.smart_food_expiry') }}"
                class="feature-card" style="text-decoration: none; color: inherit;">
                 <h3>Expiring Food Discounts</h3>
                 <p>Save food and money with dynamic discounting of near-expiry items.</p>

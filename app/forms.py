@@ -28,9 +28,12 @@ class LoginForm(FlaskForm):
 
 class AddProductForm(FlaskForm):
     name = StringField('Product Name', validators=[DataRequired()])
-    expiry_date = DateField('Expiry Date', validators=[DataRequired(), validate_expiry_date])
+    expiry_date = DateField('Expiry Date', validators=[DataRequired(), validate_expiry_date]) #TODO: show the format how to select the date
     units = IntegerField('Units', validators= [NumberRange(1,30, "You can only upload from 1 to 30 units.")])
     price = FloatField('Price', validators= [DataRequired()])
+    category = SelectField('Product Category', validators=[DataRequired()],
+                           choices=[("f", "Fruits and Vegetables"), ("g", "Grains"),
+                                    ("d", "Dairy and Animal products"), ("n", "Nuts")])
     discount = FloatField('Discount Rate', validators=[InputRequired()])
     location = StringField('Location', validators=[DataRequired()])
     submit = SubmitField('Submit')
@@ -44,18 +47,12 @@ class EditProductForm(FlaskForm):
     expiry_date = DateField('Expiry Date', validators=[DataRequired(), validate_expiry_date])
     units = IntegerField('Units', validators=[NumberRange(1, 30, "You can only upload from 1 to 30 units.")])
     price = FloatField('Price', validators=[DataRequired()])
+    category = SelectField('Product Category', validators=[DataRequired()],
+                           choices=[("f","Fruits and Vegetables"),("g","Grains"),
+                                    ("d","Dairy and Animal products"),("n","Nuts")])
+    discount = FloatField('Discount Rate', validators=[InputRequired()])
     location = StringField('Location', validators=[DataRequired()])
     submit = SubmitField('Update')
-
-class InventoryForm(FlaskForm):
-    name = StringField('Product Name', validators=[DataRequired()])
-    expiry_date = DateField('Expiry Date', validators=[DataRequired()])
-    units = IntegerField('Units', validators= [NumberRange(1,30, "You can only upload from 1 to 30 units.")])
-    marked_price = FloatField('Marked Price', validators= [DataRequired()])
-    discount = FloatField('Discount Rate', validators=[InputRequired()])
-    category = SelectField('Product Category', validators=[DataRequired()], choices=[("f","fruits and vegetables"),("g","grains"),("d","dairy and related products"),("n","nuts")])
-    location = StringField('Product location', validators=[DataRequired()])
-    submit = SubmitField('Submit')
 
 class SignupForm(FlaskForm):
     email    = StringField('Email',    validators=[DataRequired(), Email()])
