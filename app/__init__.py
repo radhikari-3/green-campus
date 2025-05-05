@@ -6,6 +6,7 @@ from apscheduler.triggers.cron import CronTrigger
 from flask import Flask
 from jinja2 import StrictUndefined
 
+import config
 from app.extensions import db, login, mail, scheduler
 from app.logger import logger
 from app.logger import logger
@@ -23,13 +24,12 @@ first_request_handled = False
 
 def create_app(config_class=Config, test_config=None):
     app = Flask(__name__)
-    app.config.from_object(config_class)
+    app.config.from_object(Config)
 
-    if test_config is not None:
+    if test_config:
         app.config.update(test_config)
 
     app.jinja_env.undefined = StrictUndefined
-    app.config.from_object(Config)
 
     db.init_app(app)
     login.login_view = 'auth.login'
@@ -79,9 +79,10 @@ def create_app(config_class=Config, test_config=None):
     @app.before_request
     def activate_simulator():
         global first_request_handled
-        if not first_request_handled:
+        if not first_request_handled and not app.config.get('TESTING', False):
             first_request_handled = True
             thread = threading.Thread(target=simulator_thread, args=(app,))  # Pass app to simulator_thread
             thread.daemon = True
             thread.start()
+
     return app

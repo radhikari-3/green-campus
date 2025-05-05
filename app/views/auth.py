@@ -21,12 +21,6 @@ auth_bp = Blueprint('auth', __name__, url_prefix='/auth')
 # ---------------------
 # Utility Functions
 # ---------------------
-def set_password(user, password):
-    user.password_hash = generate_password_hash(password)
-
-def verify_password(user, password):
-    return check_password_hash(user.password_hash, password)
-
 def generate_otp(user):
     import random
     otp = f"{random.randint(100000, 999999)}"
@@ -74,7 +68,7 @@ def signup():
             return redirect(url_for('auth.signup'))
 
         user = User(email=form.email.data)
-        set_password(user, form.password.data)
+        user.set_password(form.password.data)
         otp = generate_otp(user)
 
         db.session.add(user)
@@ -158,7 +152,7 @@ def forgot_password_reset(user_id):
     user = db.session.get(User, user_id)
 
     if form.validate_on_submit():
-        set_password(user, form.password.data)
+        user.set_password(form.password.data)
         user.signup_date = datetime.utcnow()
         db.session.commit()
         flash('Your password has been reset. You may now log in.', 'success')
@@ -173,11 +167,11 @@ def reset_password():
     form = PasswordChangeForm()
 
     if form.validate_on_submit():
-        if not verify_password(current_user, form.current_password.data):
+        if not current_user.check_password(form.current_password.data):
             flash('Current password incorrect.', 'danger')
             return redirect(url_for('auth.reset_password'))
 
-        set_password(current_user, form.new_password.data)
+        current_user.set_password(form.new_password.data)
         current_user.signup_date = datetime.utcnow()
         db.session.commit()
         flash('Your password has been changed.', 'success')
@@ -195,7 +189,7 @@ def login():
     if form.validate_on_submit():
         user = db.session.scalar(sa.select(User).where(User.email == form.email.data))
 
-        if not user or not verify_password(user, form.password.data):
+        if not user or not user.check_password(form.password.data):
             flash('Invalid username or password', 'danger')
             return redirect(url_for('auth.login'))
 

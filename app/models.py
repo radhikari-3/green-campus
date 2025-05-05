@@ -8,12 +8,13 @@ import sqlalchemy.orm as so
 from flask_login import UserMixin
 from sqlalchemy import ForeignKey
 from sqlalchemy.orm import relationship
+from werkzeug.security import check_password_hash, generate_password_hash
 
 from app import db, login
 
 
 @dataclass
-class User(UserMixin, db.Model):
+class User(db.Model):
     __tablename__ = 'users'
 
     id: so.Mapped[int] = so.mapped_column(primary_key=True)
@@ -32,6 +33,12 @@ class User(UserMixin, db.Model):
     activity_logs: so.WriteOnlyMapped["ActivityLog"] = so.relationship(
         "ActivityLog", back_populates="user", cascade="all, delete-orphan"
     )
+
+    def set_password(self, password):
+        self.password_hash = generate_password_hash(password)
+
+    def check_password(self, password):
+        return check_password_hash(self.password_hash, password)
 
     def __repr__(self):
         pwh= 'None' if not self.password_hash else f'...{self.password_hash[-5:]}'
