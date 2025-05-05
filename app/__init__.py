@@ -13,6 +13,7 @@ from app.views.auth import auth_bp
 from app.views.main import main_bp
 from app.views.dashboard import dash_bp
 from config import Config
+first_request_handled = False
 
 app = Flask(__name__)
 app.jinja_env.undefined = StrictUndefined
@@ -36,7 +37,7 @@ from app.debug_utils import reset_db    # don't remove from here
 def make_shell_context():
     return dict(db=db, sa=sa, so=so, reset_db=reset_db)
 
-first_request_handled = False
+
 
 from app.iot_simulator import simulator_thread # don't remove from here
 # Start a background thread when Flask starts

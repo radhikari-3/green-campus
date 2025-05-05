@@ -86,3 +86,59 @@ body {
     padding: 20px;
     font-size: 0.9em;
 }
+
+
+input[type=number]::-webkit-outer-spin-button,
+input[type=number]::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+}
+
+
+input[type=number] {
+    -moz-appearance: textfield;
+}
+
+
+.redeem-card {
+    border-radius: 16px;
+    border: none;
+}
+
+.redeem-header {
+    background: linear-gradient(135deg, #16a34a, #3b82f6);
+    color: white;
+    padding: 2rem;
+    border-top-left-radius: 16px;
+    border-top-right-radius: 16px;
+}
+
+.btn-lg {
+    font-size: 1.1rem;
+    padding: 0.75rem 1.25rem;
+    border-radius: 8px;
+}
+
+.form-control-lg {
+    border-radius: 10px;
+    font-size: 1.2rem;
+}
+
+.form-text {
+    font-size: 0.9rem;
+    color: #6b7280;
+}
+
+@media (max-width: 576px) {
+    .redeem-header h1 {
+        font-size: 1.75rem;
+    }
+
+    .fs-1 {
+        font-size: 2rem !important;
+    }
+
+    .form-control-lg {
+        font-size: 1rem;
+    }
+}
