@@ -3,7 +3,7 @@ import random
 from typing import List
 
 from app import db
-from app.models import ActivityLog, User
+from app.models import ActivityLog, User, Inventory
 
 
 def reset_db():
@@ -12,19 +12,20 @@ def reset_db():
     db.create_all()
 
     users = [
-        {'email': 'amy.b12345@yopmail.com', 'role': 'Admin', 'pw': 'amy.pw'},
-        {'email': 'tom.b12345@yopmail.com', 'pw': 'amy.pw'},
-        {'email': 'yin.b12345@yopmail.com', 'role': 'Admin', 'pw': 'amy.pw'},
-        {'email': 'trq.b12345@yopmail.com', 'pw': 'amy.pw'},
-        {'email': 'jo.b12345@yopmail.com', 'pw': 'amy.pw'}
-    ]
+            {'email': 'amy.b12345@yopmail.com', 'role': 'Admin', 'pw': 'amy.pw'},
+            {'email': 'tom.b12345@yopmail.com', 'role': 'Normal', 'pw': 'amy.pw'},
+            {'email': 'yin.b12345@yopmail.com', 'role': 'Vendor', 'pw': 'amy.pw'},
+            {'email': 'trq.b12345@yopmail.com', 'role': 'Normal', 'pw': 'amy.pw'},
+            {'email': 'jo.b12345@yopmail.com', 'role': 'Normal', 'pw': 'amy.pw'}
+        ]
 
     for u in users:
         pw = u.pop('pw')
-        u.pop('role', None)
+        role = u.pop('role', 'Normal')  # Default role is 'User'
         user = User(**u)
         user.set_password(pw)
         user.email_verified = True
+        user.role = role
         db.session.add(user)
     db.session.commit()
 
@@ -96,9 +97,54 @@ def reset_db():
 
         return data
 
+    # Commit users first
+    db.session.commit()
+
+    # Now inventory and activity logs
+    create_mock_inventory_data()
+
     for user in users:
         user_email = user['email']
         habit_factor = random.uniform(0.3, 0.6)
         logs = create_mock_activity_data(user_email, habit_factor)
         db.session.add_all(logs)
+
     db.session.commit()
+
+def create_mock_inventory_data():
+        """Generate random inventory data for all users."""
+
+        categories = {
+            "pizza": "g",
+            "salad": "f",
+            "milk": "d",
+            "bread": "g",
+            "grapes": "f",
+            "oranges": "f",
+            "tomato": "f",
+            "nuts": "n"
+        }
+        expiry_date = datetime.date.today() + datetime.timedelta(days=random.choice([0, 1, 2, 3]))
+        users = User.query.all()
+
+        for user in users:
+            for _ in range(random.randint(5, 10)):  # Create 5-10 products per user
+                products = list(categories.keys())
+                name = random.choice(products)
+                product = Inventory(
+                    name=name,
+                    expiry_date=expiry_date,
+                    units=random.randint(1, 50),
+                    category=categories[name],
+                    marked_price=round(random.uniform(10.0, 100.0), 2),
+                    discount=round(random.uniform(0.1, 0.5), 2),
+                    final_price=0.0,  # Will calculate below
+                    location=random.choice(["Nisa Local", "Spar", "Campus Living"]),
+                    user_id=user.id
+                )
+                product.final_price = round(product.marked_price * (1 - product.discount), 2)
+                db.session.add(product)
+        db.session.commit()
+
+
+

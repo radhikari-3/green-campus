@@ -12,13 +12,13 @@ from sqlalchemy import func
 from app import db, mail
 from app.models import ActivityLog
 
-dash_bp = Blueprint('dash_bp', __name__)
+dash_bp = Blueprint('dash', __name__)
 
 
 @dash_bp.route('/account')
 @login_required
 def account():
-    return redirect(url_for('dash_bp.dashboard'))
+    return redirect(url_for('dash.dashboard'))
 
 @dash_bp.route('/logout')
 def logout():
@@ -154,20 +154,6 @@ def rewards():
     )
 
 
-@dash_bp.route('/send_email', methods=['GET', 'POST'])
-def send_email():
-    if request.method == 'POST':
-        recipient = request.form['recipient']
-        body = request.form["body"]
-        subject = request.form["subject"]
-        msg = Message(subject=subject, recipients=[recipient])
-        msg.body = body
-        msg.html = "<h1>" + subject + "</h1>" + "<p>" + body + "</p>"
-        mail.send(msg)
-        flash(f'A test message was sent to {recipient}.')
-        return redirect(url_for('main.home'))
-    return redirect(url_for('main.home'))
-
 @dash_bp.route("/send_qr_email", methods=["POST"])
 @login_required
 def send_qr_email():
@@ -176,7 +162,7 @@ def send_qr_email():
 
     if not qr_data:
         flash('QR data missing. Please redeem again.', 'danger')
-        return redirect(url_for('dash_bp.rewards'))
+        return redirect(url_for('dash.rewards'))
 
     # Generate QR code
     qr = qrcode.QRCode(version=1, box_size=10, border=4)
@@ -217,4 +203,4 @@ def send_qr_email():
     mail.send(msg)
 
     flash("QR voucher sent to your email 📩", "success")
-    return redirect(url_for("dash_bp.rewards"))
+    return redirect(url_for("dash.rewards"))

@@ -75,6 +75,19 @@ body {
     transition: transform 0.3s ease;
 }
 
+.expiring-product-image-container img {
+    max-width: 100%;
+    height: auto;
+    display: block;
+}
+
+/* Optional: control the size with the container */
+.expiring-product-image-container {
+    width: 100%; /* or set a max-width like 150px if needed */
+    max-width: 200px; /* prevents it from becoming too large */
+    margin: 0 auto; /* center image */
+}
+
 .feature-card:hover {
     transform: translateY(-10px);
 }
