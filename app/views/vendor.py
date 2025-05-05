@@ -1,21 +1,16 @@
-import logging
 # views.py
 from datetime import datetime
-from datetime import timedelta, time
+from datetime import timedelta
 from random import uniform
-from smtplib import SMTPRecipientsRefused, SMTPException
 
-from apscheduler.schedulers.background import BackgroundScheduler
-from apscheduler.triggers.interval import IntervalTrigger
 from dateutil.utils import today
-from flask import render_template, flash, Blueprint
+from flask import render_template, Blueprint
 from flask_login import current_user, login_required
-from flask_mail import Message
 from sqlalchemy import select
 from sqlalchemy.sql.functions import func
 
-from app import db, mail, logger, scheduler
-from app.models import User, Inventory, ActivityLog
+from app import db
+from app.models import Inventory, ActivityLog
 
 vendors_bp = Blueprint('vendors', __name__)
 

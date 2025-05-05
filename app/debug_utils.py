@@ -6,7 +6,6 @@ from app import db
 from app.models import ActivityLog, User, Inventory
 
 
-
 def reset_db():
     """Drop all tables and seed verified demo users with realistic activity logs."""
     db.drop_all()

@@ -1,9 +1,7 @@
 import threading
-from datetime import datetime, timedelta, time
 
 import sqlalchemy as sa
 import sqlalchemy.orm as so
-from apscheduler.triggers.interval import IntervalTrigger
 from flask import Flask
 from jinja2 import StrictUndefined
 

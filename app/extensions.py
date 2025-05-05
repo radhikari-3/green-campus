@@ -1,4 +1,3 @@
-from apscheduler.schedulers.background import BackgroundScheduler
 from flask_apscheduler import APScheduler
 from flask_login import LoginManager
 from flask_mail import Mail

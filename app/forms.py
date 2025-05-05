@@ -2,9 +2,9 @@ import datetime
 
 from flask_wtf import FlaskForm
 from wtforms import SubmitField, HiddenField, StringField, PasswordField, BooleanField
-from wtforms.fields import SelectField
 from wtforms.fields import DateField
 from wtforms.fields import IntegerField, FloatField
+from wtforms.fields import SelectField
 from wtforms.validators import DataRequired, Email, EqualTo
 from wtforms.validators import NumberRange, ValidationError, InputRequired
 

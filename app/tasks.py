@@ -1,7 +1,8 @@
 import logging
-from flask_mail import Message
 from smtplib import SMTPRecipientsRefused, SMTPException
+
 from flask import current_app
+from flask_mail import Message
 from sqlalchemy import select
 
 from app.extensions import db, mail
