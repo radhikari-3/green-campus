@@ -54,18 +54,10 @@ def discount_applicator(product_instance):
     }
     product_category = product_instance.category
     discount_range = category_range[product_category[0]]
-    logger.debug("discount rate is " + str(product_instance.discount))
-    logger.debug(type(product_instance.discount))
+    #logger.debug("discount rate is " + str(product_instance.discount))
+    #logger.debug(type(product_instance.discount))
     # To ensure that if no discount rate is given a category based discount, contingent on the category can be used
     discount_rate = (1 - product_instance.discount / 100) if product_instance.discount is not None  else (uniform(discount_range[0], discount_range[1])) / 100
-
-    # Above line is same as below
-
-    # if product_instance.discount not in None:
-    #     discount_rate = (1 - product_instance.discount / 100)
-    # else:
-    #     random.uniform(discount_range[0], discount_range[1]) / 100
-
     date_today = datetime.today()
 
     if product_instance.expiry_date <= (date_today + timedelta(days=1)).date():
