@@ -12,19 +12,20 @@ def reset_db():
     db.create_all()
 
     users = [
-        {'email': 'amy.b12345@yopmail.com', 'role': 'Admin', 'pw': 'amy.pw'},
-        {'email': 'tom.b12345@yopmail.com', 'pw': 'amy.pw'},
-        {'email': 'yin.b12345@yopmail.com', 'role': 'Admin', 'pw': 'amy.pw'},
-        {'email': 'trq.b12345@yopmail.com', 'pw': 'amy.pw'},
-        {'email': 'jo.b12345@yopmail.com', 'pw': 'amy.pw'}
-    ]
+            {'email': 'amy.b12345@yopmail.com', 'role': 'Admin', 'pw': 'amy.pw'},
+            {'email': 'tom.b12345@yopmail.com', 'role': 'Normal', 'pw': 'amy.pw'},
+            {'email': 'yin.b12345@yopmail.com', 'role': 'Vendor', 'pw': 'amy.pw'},
+            {'email': 'trq.b12345@yopmail.com', 'role': 'Normal', 'pw': 'amy.pw'},
+            {'email': 'jo.b12345@yopmail.com', 'role': 'Normal', 'pw': 'amy.pw'}
+        ]
 
     for u in users:
         pw = u.pop('pw')
-        u.pop('role', None)
+        role = u.pop('role', 'Normal')  # Default role is 'User'
         user = User(**u)
         user.set_password(pw)
         user.email_verified = True
+        user.role = role
         db.session.add(user)
     db.session.commit()
 
