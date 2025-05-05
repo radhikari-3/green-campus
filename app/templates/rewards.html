@@ -29,27 +29,28 @@
         <img src="{{ qr_url }}" id="qrImage" alt="QR Code" class="img-fluid mt-3" style="max-width: 300px;">
 
         <div class="mt-4 d-flex justify-content-center gap-3 flex-wrap">
-          <a id="downloadBtn" class="btn btn-outline-primary" download="eco_voucher.png">⬇️ Download QR Code</a>
+          <button id="downloadBtn" class="btn btn-outline-primary">⬇️ Download QR Code</button>
 
-          <form method="POST" action="{{ url_for('send_qr_email') }}">
-            <input type="hidden" name="qr_data" value="{{ qr_data }}">
-            <input type="hidden" name="redeemed_points" value="{{ redeemed_points }}">
-            <button type="submit" class="btn btn-outline-success">📧 Email Voucher</button>
-          </form>
+          {% if qr_data %}
+
+              <form method="POST" action="{{ url_for('dash.send_qr_email') }}">
+
+                <input type="hidden" name="qr_data" value="{{ qr_data }}">
+                <input type="hidden" name="redeemed_points" value="{{ redeemed_points }}">
+                <button type="submit" class="btn btn-outline-success">📧 Email Voucher</button>
+              </form>
+          {% endif %}
         </div>
       </div>
 
-      <script>
-        const qrImage = document.getElementById('qrImage');
-        const downloadBtn = document.getElementById('downloadBtn');
-        qrImage.onload = () => {
-          downloadBtn.href = qrImage.src;
-        };
-      </script>
+      <script src="{{ url_for('static', filename='js/rewards.js') }}"></script>
       {% endif %}
 
-      <a href="{{ url_for('eco_points_dashboard') }}" class="btn btn-outline-secondary mt-5">← Back to Dashboard</a>
+      <a href="{{ url_for('dash.dashboard') }}" class="btn btn-outline-secondary mt-5">← Back to Dashboard</a>
     </div>
   </div>
 </div>
 {% endblock %}
+
+
+

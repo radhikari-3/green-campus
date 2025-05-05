@@ -1,6 +1,8 @@
+import base64
 import json
-import os, pickle, base64
+import os
 from email.mime.text import MIMEText
+
 from google.auth.transport.requests import Request
 from google_auth_oauthlib.flow import InstalledAppFlow
 from googleapiclient.discovery import build

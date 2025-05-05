@@ -2,12 +2,12 @@ import datetime
 
 from flask_wtf import FlaskForm
 from wtforms import SubmitField, HiddenField, StringField, PasswordField, BooleanField
-from wtforms.fields.choices import SelectField
-from wtforms.fields.datetime import DateField
-from wtforms.fields.numeric import IntegerField, FloatField
-from wtforms.validators import DataRequired, NumberRange, ValidationError, InputRequired
-
+from wtforms.fields import SelectField
+from wtforms.fields import DateField
+from wtforms.fields import IntegerField, FloatField
 from wtforms.validators import DataRequired, Email, EqualTo
+from wtforms.validators import NumberRange, ValidationError, InputRequired
+
 
 class ChooseForm(FlaskForm):
     choice = HiddenField('Choice')

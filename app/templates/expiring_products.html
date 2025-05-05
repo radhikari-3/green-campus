@@ -3,10 +3,23 @@
 {% block head %}
     {{ super() }}
     <link rel="stylesheet" href="{{ url_for('static', filename='css/smart_food_expiry.css') }}">
+    <link href="{{ url_for('static', filename='css/dashboard.css') }}" rel="stylesheet">
+
 {% endblock %}
 
 {% block content %}
 <div class="landing-page" style="background-color: #f4f7fa;">
+    <!-- Sidebar -->
+      <nav class="sidebar">
+        <div class="px-4 mb-4">
+          <h3 class="text-xl font-semibold">🌱 Eco Dashboard</h3>
+        </div>
+        <a href="{{ url_for('dash.dashboard') }}"><i class="bi bi-house me-2"></i> Dashboard</a>
+        <a href="{{ url_for('dash.rewards') }}"><i class="bi bi-gift me-2"></i> Rewards</a>
+        <a href="{{ url_for('auth.reset_password') }}" ><i class="bi bi-person me-2"></i> Reset Password</a>
+        <a href="{{ url_for('vendors.view_expiring_products') }}" ><i class="bi bi-person me-2"></i> Expiring Products</a>
+          <a href="{{ url_for('dash.logout') }}"><i class="bi bi-box-arrow-right me-2"></i> Logout</a>
+      </nav>
 
     <!-- Features Section -->
     <section id="features" class="section" style="background-color: #ffffff; padding: 40px 0;">
@@ -16,7 +29,7 @@
                 <div class="expiring-product-image-container">
                     <img src="/static/images/fnv.png" alt="Fruits and Vegetables">
                 </div>
-                <a href="{{ url_for('expiring_offers', category='f') }}" class="btn-secondary">
+                <a href="{{ url_for('vendors.expiring_offers', category='f') }}" class="btn-secondary">
                     <h3>Fruits and Vegetables 🍓</h3>
                 </a>
             </div>
@@ -24,7 +37,7 @@
                 <div class="expiring-product-image-container">
                     <img src="/static/images/grains.png" alt="Grains and Bread based products">
                 </div>
-                <a href="{{ url_for('expiring_offers', category='g') }}" class="btn-secondary">
+                <a href="{{ url_for('vendors.expiring_offers', category='g') }}" class="btn-secondary">
                     <h3>Grains and Bread 🥖</h3>
                 </a>
             </div>
@@ -32,7 +45,7 @@
                 <div class="expiring-product-image-container">
                     <img src="/static/images/dp.png" alt="Dairy and related products">
                 </div>
-                <a href="{{ url_for('expiring_offers', category='d') }}" class="btn-secondary">
+                <a href="{{ url_for('vendors.expiring_offers', category='d') }}" class="btn-secondary">
                     <h3>Dairy and related products 🧀</h3>
                 </a>
             </div>
@@ -40,25 +53,12 @@
                 <div class="expiring-product-image-container">
                     <img src="/static/images/nuts.jpg" alt="Nuts and related products">
                 </div>
-                <a href="{{ url_for('expiring_offers', category='n') }}" class="btn-secondary">
+                <a href="{{ url_for('vendors.expiring_offers', category='n') }}" class="btn-secondary">
                     <h3>Nuts and related products 🥜</h3>
                 </a>
             </div>
         </div>
     </section>
 
-    <!-- Join Us Section -->
-    <section id="join-us" class="section" style="color: white; padding: 40px 0;">
-        <h2 class="section-title text-center">Join Our Sustainability Movement 🌍</h2>
-        <p class="section-description text-center">Become part of a global model for green universities and make an impact today!</p>
-        <div class="text-center">
-            <a href="/register" class="btn-primary">Get Started 🚀</a>
-        </div>
-    </section>
-
-    <!-- Footer Section -->
-    <footer class="footer" style="background-color: #2f2f2f; color: white; padding: 20px 0; text-align: center;">
-        <p>© 2025 Green Campus Initiative. Empowering Sustainable Change 🌿.</p>
-    </footer>
 </div>
 {% endblock %}

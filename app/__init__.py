@@ -1,47 +1,56 @@
-import os
-
 import threading
+from datetime import datetime, timedelta, time
+
 import sqlalchemy as sa
 import sqlalchemy.orm as so
+from apscheduler.triggers.interval import IntervalTrigger
 from flask import Flask
-from flask_login import LoginManager
-from flask_mail import Mail
-from flask_sqlalchemy import SQLAlchemy
-from flask_login import LoginManager
 from jinja2 import StrictUndefined
 
+from app.extensions import db, login, mail, scheduler
+from app.logger import logger
+from app.logger import logger
+from app.tasks import send_discount_email
+from app.views.auth import auth_bp
+from app.views.dashboard import dash_bp
+from app.views.main import main_bp
+from app.views.utils import utils_bp
+from app.views.vendor import vendors_bp
 from config import Config
 
+
 app = Flask(__name__)
-app.config['SECRET_KEY'] = 'top-secret!'
-app.config['MAIL_SERVER'] = 'smtp.sendgrid.net'
-app.config['MAIL_PORT'] = 587
-app.config['MAIL_USE_TLS'] = True
-app.config['MAIL_USERNAME'] = 'apikey'
-app.config['MAIL_PASSWORD'] = os.environ.get('SENDGRID_API_KEY')
-app.config['MAIL_DEFAULT_SENDER'] = os.environ.get('MAIL_DEFAULT_SENDER')
-
-mail = Mail(app)
-
 app.jinja_env.undefined = StrictUndefined
 app.config.from_object(Config)
 
-db = SQLAlchemy(app)
-login = LoginManager(app)
-login.login_view = 'login'
+db.init_app(app)
+login.login_view = 'auth.login'
+login.init_app(app)
+mail.init_app(app)
 
-from app.debug_utils import reset_db
-from app.logger import logger
-from app.views import scheduler
+#Register blueprints
+app.register_blueprint(auth_bp)
+app.register_blueprint(main_bp)
+app.register_blueprint(dash_bp)
+
+app.register_blueprint(utils_bp)
+app.register_blueprint(vendors_bp)
+
+# Setup scheduler
+scheduler.init_app(app)
+scheduler.start()
+
+from app import views, models           # don't remove from here
+from app.debug_utils import reset_db    # don't remove from here
 
 @app.shell_context_processor
 def make_shell_context():
     return dict(db=db, sa=sa, so=so, reset_db=reset_db)
 
-from app.iot_simulator import simulator_thread
-
 first_request_handled = False
 
+from app.iot_simulator import simulator_thread # don't remove from here
+# Start a background thread when Flask starts
 @app.before_request
 def activate_simulator():
     global first_request_handled
@@ -50,20 +59,3 @@ def activate_simulator():
         thread = threading.Thread(target=simulator_thread)
         thread.daemon = True
         thread.start()
-
-        from app.stepsdata_simulator import run_steps_simulator
-        if app.config.get('ENABLE_SIMULATOR', False):
-            with app.app_context():
-                run_steps_simulator()
-
-#
-from app import views
-
-
-def start_scheduler():
-    if not scheduler.running:
-        scheduler.start()
-        print("Scheduler started!")
-
-# Initialize the scheduler
-start_scheduler()

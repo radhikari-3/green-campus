@@ -6,7 +6,8 @@ from datetime import datetime
 
 import paho.mqtt.client as mqtt
 
-from app import db, app, logger
+from app import logger, app
+from app.extensions import db
 from app.models import EnergyReading
 
 # MQTT Setup
@@ -80,7 +81,7 @@ def publish_sensor_data(client):
 
 # Publish data for a building or flat
 def publish_data(client, building, sensor_type, flat_number):
-    timestamp = datetime.utcnow().isoformat()
+    timestamp = datetime.now(datetime.timezone.utc)
     value = generate_reading(sensor_type)
     if building.get('is_accommodation') == True:
         zone = ''
