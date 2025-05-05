@@ -37,4 +37,7 @@ node_modules/
 # Docker
 *.pid
 
+credentials.json
+token.pickle
+
 .DS_Store

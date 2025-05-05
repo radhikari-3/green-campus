@@ -1,4 +1,2 @@
-from flask_migrate import Migrate
-from app import app, db  # adjust based on your project structure
+from app import create_app
 
-migrate = Migrate(app, db)

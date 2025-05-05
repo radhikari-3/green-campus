@@ -4,7 +4,7 @@
 
 <div class ="landing-page">
 <div class ="dashboard-container">
-<img src="{{ url_for('static', filename='img/market-icon.svg') }}" alt="Smart Food Expiry" width="100" class="mb-3">
+<img src="{{ url_for('static', filename='images/market-icon.svg') }}" alt="Smart Food Expiry" width="100" class="mb-3">
 
 <div class="d-flex justify-content-center">
   <h1 class="display-5 my-4 text-center text-success">📦 Current Inventory</h1>
@@ -39,7 +39,7 @@
         <td>£{{ product.final_price }}</td>
         <td>{{ product.location }}</td>
 
-        <td> <form action="{{ url_for('delete_product') }}" method="POST">
+        <td> <form action="{{ url_for('vendors.delete_product') }}" method="POST">
                         {{ delete_product_form.csrf_token() }}
                         {{ delete_product_form.delete_product(value=product.id)}}
                         <button class="btn btn-danger btn-sm" type="submit">
@@ -48,7 +48,7 @@
                         </form>
 
         </td>
-        <td> <form action="{{ url_for ('edit_product') }}" method="GET">
+        <td> <form action="{{ url_for ('vendors.edit_product') }}" method="GET">
                     {{ edit_product_form.csrf_token() }}
                     {{ edit_product_form.product_id (value=product.id) }}
                     <input type="hidden" name="view" value="{{ view }}">
@@ -81,7 +81,7 @@
             <li><strong>Store:</strong> {{ product.location }}</li>
 
             <li class="d-flex gap-2">
-                <form action="{{ url_for('delete_product') }}" method="POST">
+                <form action="{{ url_for('vendors.delete_product') }}" method="POST">
                         {{ delete_product_form.csrf_token() }}
                         {{ delete_product_form.delete_product(value=product.id)}}
                         <button class="btn btn-danger btn-sm" type="submit">
@@ -89,7 +89,7 @@
                         </button>
                         </form>
 
-                <form action="{{ url_for ("edit_product") }}" method="GET">
+                <form action="{{ url_for ('vendors.edit_product') }}" method="GET">
                         {{ edit_product_form.csrf_token() }}
                         {{ edit_product_form.product_id (value=product.id) }}
                         <input type="hidden" name="view" value="{{ view }}">
