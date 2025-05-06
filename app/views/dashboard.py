@@ -80,7 +80,7 @@ def dashboard():
     total_eco_points = db.session.query(func.sum(ActivityLog.eco_points)).filter(ActivityLog.email == email).scalar() or 0
 
     return render_template(
-        "dashboard.html",
+        "user_dashboard.html",
         title="Eco Points Dashboard",
         username=email.split('@')[0],
         walking_data=walking_data,

@@ -1,125 +1,123 @@
-{% extends "base.html" %}
-{% block content %}
+{% extends "user_dashboard_base.html" %}
+
+{% block dashboard_content %}
 <div class="container my-5">
+    <div class="text-center mb-5">
+        <img src="{{ url_for('static', filename='img/market-icon.png') }}" alt="Smart Food Expiry" width="100" class="mb-3">
+        <h1 class="display-5 fw-bold text-success">📦 {{ title }}</h1>
 
-  <div class="text-center mb-5">
-    <img src="{{ url_for('static', filename='img/market-icon.png') }}" alt="Smart Food Expiry" width="100" class="mb-3">
-    <h1 class="display-5 fw-bold text-success">📦 {{ title }}</h1>
+        <p class="lead text-muted fw-semibold">
+            🌿 <span class="text-success">Your Eco-Points:</span>
+            <span class="fw-bold text-dark">{{ '%.2f' % total_points }}</span>
+        </p>
+        <p class="text-muted small fst-italic">
+            💷 Your eco-points are worth £{{ '%.2f' % pounds }}
+        </p>
+    </div>
 
-    <p class="lead text-muted fw-semibold">
-      🌿 <span class="text-success">Your Eco-Points:</span>
-      <span class="fw-bold text-dark">{{ '%.2f' % total_points }}</span>
-    </p>
-    <p class="text-muted small fst-italic">
-      💷 Your eco-points are worth £{{ '%.2f' % pounds }}
-    </p>
-  </div>
+    <div class="row row-cols-1 row-cols-md-3 g-4 justify-content-center">
+        {% for product in relevant_products %}
+        <div class="col">
+            <div class="card h-100 border-0 shadow-lg {{ 'product-card-insufficient' if pounds < product.final_price else 'product-card' }}">
+                <div class="card-body text-white">
+                    <h5 class="card-title fw-bold mb-3">{{ product.name|upper }}</h5>
 
-  <div class="row row-cols-1 row-cols-md-3 g-4 justify-content-center">
-    {% for product in relevant_products %}
-      <div class="col">
-        <div class="card h-100 border-0 shadow-lg {{ 'product-card-insufficient' if pounds < product.final_price else 'product-card' }}">
-          <div class="card-body text-white">
-            <h5 class="card-title fw-bold mb-3">{{ product.name|upper }}</h5>
+                    {% if pounds >= product.final_price %}
+                    <div class="alert alert-success py-2 px-3 rounded-pill small mb-3 d-inline-block">
+                        😊 You have enough eco-points for this product!
+                    </div>
+                    {% else %}
+                    <div class="alert alert-danger py-2 px-3 rounded-pill small mb-3 d-inline-block">
+                        😟 Not enough eco-points for this product.
+                    </div>
+                    {% endif %}
 
-            {% if pounds >= product.final_price %}
-              <div class="alert alert-success py-2 px-3 rounded-pill small mb-3 d-inline-block">
-                😊 You have enough eco-points for this product!
-              </div>
-            {% else %}
-              <div class="alert alert-danger py-2 px-3 rounded-pill small mb-3 d-inline-block">
-                😟 Not enough eco-points for this product.
-              </div>
-            {% endif %}
-
-            <ul class="list-group list-group-flush text-white">
-              <li class="list-group-item bg-transparent border-0 ps-0">
-                🗓 <strong>Expiry Date:</strong> {{ product.expiry_date }}
-              </li>
-              <li class="list-group-item bg-transparent border-0 ps-0">
-                💷 <strong>Marked Price:</strong> £{{ '%.2f' % product.marked_price }}
-              </li>
-              <li class="list-group-item bg-transparent border-0 ps-0">
-                🔖 <strong>Final Price:</strong> <span class="text-warning fw-bold">£{{ '%.2f' % product.final_price }}</span>
-              </li>
-              <li class="list-group-item bg-transparent border-0 ps-0">
-                📍 <strong>Location:</strong> {{ product.location }}
-              </li>
-            </ul>
-          </div>
+                    <ul class="list-group list-group-flush text-white">
+                        <li class="list-group-item bg-transparent border-0 ps-0">
+                            🗓 <strong>Expiry Date:</strong> {{ product.expiry_date }}
+                        </li>
+                        <li class="list-group-item bg-transparent border-0 ps-0">
+                            💷 <strong>Marked Price:</strong> £{{ '%.2f' % product.marked_price }}
+                        </li>
+                        <li class="list-group-item bg-transparent border-0 ps-0">
+                            🔖 <strong>Final Price:</strong> <span class="text-warning fw-bold">£{{ '%.2f' % product.final_price }}</span>
+                        </li>
+                        <li class="list-group-item bg-transparent border-0 ps-0">
+                            📍 <strong>Location:</strong> {{ product.location }}
+                        </li>
+                    </ul>
+                </div>
+            </div>
         </div>
-      </div>
-    {% else %}
-     <div class="col-12 text-center d-flex">
-    <div class="alert alert-warning">No products available in this category.</div>
-</div>
+        {% else %}
+        <div class="col-12 text-center d-flex">
+            <div class="alert alert-warning">No products available in this category.</div>
+        </div>
+        {% endfor %}
+    </div>
 
-    {% endfor %}
-  </div>
-
-  <footer class="footer mt-5 pt-4 border-top text-center text-muted small">
-    © 2025 Green Campus Initiative. Empowering Sustainable Change.
-  </footer>
-
+    <footer class="footer mt-5 pt-4 border-top text-center text-muted small">
+        © 2025 Green Campus Initiative. Empowering Sustainable Change.
+    </footer>
 </div>
 
 <style>
 /* Green card (affordable) */
 .product-card {
-  transition: transform 0.3s ease, box-shadow 0.3s ease;
-  border-radius: 16px;
-  background: linear-gradient(135deg, #a8e6cf, #81c784, #66bb6a);
-  background-size: 400% 400%;
-  animation: gradientBG 8s ease infinite;
-  color: white;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    border-radius: 16px;
+    background: linear-gradient(135deg, #a8e6cf, #81c784, #66bb6a);
+    background-size: 400% 400%;
+    animation: gradientBG 8s ease infinite;
+    color: white;
 }
 
 /* Red card (not affordable) */
 .product-card-insufficient {
-  transition: transform 0.3s ease, box-shadow 0.3s ease;
-  border-radius: 16px;
-  background: linear-gradient(135deg, #ff8a80, #ef5350, #e53935);
-  background-size: 400% 400%;
-  animation: gradientBG 8s ease infinite;
-  color: white;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    border-radius: 16px;
+    background: linear-gradient(135deg, #ff8a80, #ef5350, #e53935);
+    background-size: 400% 400%;
+    animation: gradientBG 8s ease infinite;
+    color: white;
 }
 
 /* Hover effect shared by both */
 .product-card:hover,
 .product-card-insufficient:hover {
-  transform: translateY(-10px);
-  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
-  cursor: pointer;
+    transform: translateY(-10px);
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+    cursor: pointer;
 }
 
 /* Subtle card fade-in */
 @keyframes fadeInUp {
-  from {
-    opacity: 0;
-    transform: translateY(20px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
 }
 .card-body {
-  animation: fadeInUp 0.6s ease;
+    animation: fadeInUp 0.6s ease;
 }
 
 /* Animated gradient background movement */
 @keyframes gradientBG {
-  0% {background-position: 0% 50%;}
-  50% {background-position: 100% 50%;}
-  100% {background-position: 0% 50%;}
+    0% {background-position: 0% 50%;}
+    50% {background-position: 100% 50%;}
+    100% {background-position: 0% 50%;}
 }
 
 .card-title {
-  font-size: 1.25rem;
+    font-size: 1.25rem;
 }
 
 .list-group-item {
-  font-size: 0.95rem;
+    font-size: 0.95rem;
 }
 </style>
 {% endblock %}

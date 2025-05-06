@@ -42,7 +42,10 @@
                         <a class="nav-link" aria-current="page" href="{{ url_for('dash.logout') }}">Logout</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" aria-current="page" href="{{ url_for('dash.account') }}">Account</a>
+                        <a class="nav-link" aria-current="page" href="{{ url_for('dash.account')
+                        if 'Normal' in current_user.role else url_for('vendors.smart_food_expiry') }}">
+                            Account
+                        </a>
                     </li>
                 {% endif %}
             </ul>
