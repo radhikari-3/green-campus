@@ -3,10 +3,10 @@
 {% import "bootstrap_wtf.html" as wtf %}
 
 {% block content %}
-    <br>
-    <br>
-    <div class="container" style="max-width: 500px;">
-        <h2 class="mb-4 text-center">{{ title }}</h2>
-        {{ wtf.quick_form(form, action="", method="post", id="", novalidate=True, autofocus=False) }}
+    <div class="form-container d-flex justify-content-center align-items-center">
+        <div class="form-box p-4 shadow">
+            <h2 class="mb-4 text-center">{{ title }}</h2>
+            {{ wtf.quick_form(form, action="", method="post", id="", novalidate=True, autofocus=False) }}
+        </div>
     </div>
 {% endblock %}

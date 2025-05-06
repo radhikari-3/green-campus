@@ -59,7 +59,7 @@ def signup():
         flash(f'OTP sent to your email {user.email}.', 'info')
         return redirect(url_for('auth.verify_email', user_id=user.id))
 
-    return render_template('generic_form.html', title='Sign Up', form=form)
+    return render_template('generic_form.html', title='Register', form=form)
 
 
 @auth_bp.route('/verify/<int:user_id>', methods=['GET', 'POST'])
@@ -150,7 +150,10 @@ def reset_password():
         current_user.signup_date = datetime.utcnow()
         db.session.commit()
         flash('Your password has been changed.', 'success')
-        return redirect(url_for('dash.account'))
+        if 'Vendor' in current_user.role:
+            return redirect(url_for('vendors.smart_food_expiry'))
+        else:
+            return redirect(url_for('dash.dashboard'))
 
     # 👉 Role-aware template selection
     if 'Vendor' in current_user.role:
@@ -186,4 +189,4 @@ def login():
             next_page = url_for('vendors.smart_food_expiry' if 'Vendor' in user.role else 'dash.dashboard')
         return redirect(next_page)
 
-    return render_template('generic_form.html', title='Sign In', form=form)
+    return render_template('generic_form.html', title='Login', form=form)

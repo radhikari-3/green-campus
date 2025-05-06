@@ -2,72 +2,87 @@
 
 {% block content %}
 <div class="landing-page">
-    <header class="hero">
-        <h1>Welcome to Green Campus 🌿</h1>
-        <p>Building a Sustainable Future through Technology, Engagement, and Innovation</p>
-        <a href="#features" class="btn-primary">Explore Features</a>
+    <!-- Hero Section -->
+    <header class="hero text-center text-white d-flex flex-column justify-content-center align-items-center">
+        <h1 class="display-4 fw-bold">Welcome to Green Campus 🌿</h1>
+        <p class="lead">Building a Sustainable Future through Technology, Engagement, and Innovation</p>
+        <a href="#features" class="btn btn-primary btn-lg mt-3">Explore Features</a>
     </header>
 
-    <section id="about" class="section">
-        <h2>About Green Campus</h2>
-        <p>
-            Green Campus is a sustainable campus management system aimed at minimizing environmental impact through
-            real-time energy tracking, smart waste management, eco-reward systems, and promoting sustainable food practices.
-        </p>
-    </section>
-
-    <section id="features" class="section">
-        <h2>Our Key Features</h2>
-        <div class="features-grid">
-            <a href="{{ url_for('energy_dash.energy_dashboard') }}" class="feature-card"
-               style="text-decoration: none; color: inherit;">
-                <h3>Smart Energy Dashboard</h3>
-                <p>Monitor real-time energy usage and optimize campus-wide consumption.</p>
-            </a>
-
-            <a href="{{ url_for('auth.login') if not current_user.is_authenticated or 'Normal'
-            not in current_user.role else url_for('dash.dashboard') }}"
-               class="feature-card" style="text-decoration: none; color: inherit;">
-                <h3>Eco-Points Rewards</h3>
-                <p>Earn Eco-Points for sustainable actions and redeem exciting rewards!</p>
-            </a>
-
-            <a href="{{ url_for('auth.login') if not current_user.is_authenticated or 'Normal'
-            not in current_user.role else url_for('smart_exp.view_expiring_products') }}"
-               class="feature-card" style="text-decoration: none; color: inherit;">
-                <h3>Expiring Food Discounts</h3>
-                <p>Save food and money with dynamic discounting of near-expiry items.</p>
-            </a>
-
-            <a href="{{ url_for('auth.login') if not current_user.is_authenticated or 'Vendor'
-            not in current_user.role else url_for('vendors.smart_food_expiry') }}"
-               class="feature-card" style="text-decoration: none; color: inherit;">
-                <h3>Vendor Management</h3>
-                <p>Add products to inventory and manage them efficiently.</p>
-            </a>
-
+    <!-- About Section -->
+    <section id="about" class="section bg-light-green-gradient py-5">
+        <div class="container-fluid text-center">
+            <h2 class="text-success fw-bold">About Green Campus</h2>
+            <p class="lead mt-3">
+                Green Campus is a sustainable campus management system aimed at minimizing environmental impact through
+                real-time energy tracking, smart waste management, eco-reward systems, and promoting sustainable food practices.
+            </p>
         </div>
     </section>
 
-    <section id="join-us" class="section">
-        <h2>Join Our Sustainability Movement</h2>
-        <p>Become part of a global model for green universities and make an impact today!</p>
-        <a href="{{ url_for('auth.signup') }}" class="btn-secondary">Get Started</a>
+    <!-- Features Section -->
+    <section id="features" class="section py-5">
+        <div class="container-fluid">
+            <h2 class="text-center text-success fw-bold">Our Key Features</h2>
+            <div class="row mt-4 g-4">
+                <div class="col-lg-3 col-md-6">
+                    <div class="card feature-card h-100">
+                        <div class="card-body text-center">
+                            <h3 class="card-title text-success">Smart Energy Dashboard</h3>
+                            <p class="card-text">Monitor real-time energy usage and optimize campus-wide consumption.</p>
+                            <a href="{{ url_for('energy_dash.energy_dashboard') }}" class="btn btn-outline-success">Learn More</a>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-lg-3 col-md-6">
+                    <div class="card feature-card h-100">
+                        <div class="card-body text-center">
+                            <h3 class="card-title text-success">Eco-Points Rewards</h3>
+                            <p class="card-text">Earn Eco-Points for sustainable actions and redeem exciting rewards!</p>
+                            <a href="{{ url_for('auth.login') if not current_user.is_authenticated or 'Normal'
+                            not in current_user.role else url_for('dash.dashboard') }}" class="btn btn-outline-success">Learn More</a>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-lg-3 col-md-6">
+                    <div class="card feature-card h-100">
+                        <div class="card-body text-center">
+                            <h3 class="card-title text-success">Expiring Food Discounts</h3>
+                            <p class="card-text">Save food and money with dynamic discounting of near-expiry items.</p>
+                            <a href="{{ url_for('auth.login') if not current_user.is_authenticated or 'Normal'
+                            not in current_user.role else url_for('smart_exp.view_expiring_products') }}" class="btn btn-outline-success">Learn More</a>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-lg-3 col-md-6">
+                    <div class="card feature-card h-100">
+                        <div class="card-body text-center">
+                            <h3 class="card-title text-success">Vendor Management</h3>
+                            <p class="card-text">Add products to inventory and manage them efficiently.</p>
+                            <a href="{{ url_for('auth.login') if not current_user.is_authenticated or 'Vendor'
+                            not in current_user.role else url_for('vendors.smart_food_expiry') }}" class="btn btn-outline-success">Learn More</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
     </section>
 
-    <footer class="footer" style="width: 100vw; margin-left: calc(-50vw + 50%);">
+    <!-- Join Us Section -->
+    <section id="join-us" class="section bg-dark-green text-white py-5">
+        <div class="container-fluid text-center">
+            <h2 class="fw-bold text-light">Join Our Sustainability Movement</h2>
+            <p class="lead mt-3 text-light">Become part of a global model for green universities and make an impact today!</p>
+            <a href="{{ url_for('auth.signup') }}" class="btn btn-light btn-lg mt-3">Get Started</a>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer text-center py-3 bg-dark text-white">
         <p>© 2025 Green Campus Initiative. Empowering Sustainable Change.</p>
     </footer>
 </div>
-
-<style>
-    /* Add hover effect for clickable feature cards */
-    .feature-card {
-        transition: background-color 0.2s, box-shadow 0.2s;
-    }
-    .feature-card:hover {
-        background-color: #f8f9fa;
-        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-    }
-</style>
 {% endblock %}

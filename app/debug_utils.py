@@ -1,9 +1,12 @@
 import datetime
+import json
 import random
 from typing import List
 
-from app import db
-from app.models import ActivityLog, User, Inventory
+from app import db, logger
+from app.iot_simulator import publish_sensor_data, generate_reading
+from app.models import ActivityLog, User, Inventory, EnergyReading
+from app.utils import load_buildings_data
 
 
 def reset_db():
@@ -28,74 +31,9 @@ def reset_db():
         user.role = role
         db.session.add(user)
     db.session.commit()
+    logger.info("Mock user data generated successfully.")
 
-    tz_today = datetime.date.today()
-    start_date = datetime.date(2025, 4, 1)
-    yesterday = tz_today - datetime.timedelta(days=1)
-
-    def generate_walking_data(date: datetime.date):
-        is_weekend = date.weekday() >= 5
-        steps = random.randint(7000, 13000) if is_weekend else random.randint(4000, 10000)
-        distance_km = round(steps * 0.0008, 2)
-        eco_points = round(steps * 0.001, 2)
-        return steps, distance_km, eco_points
-
-    def generate_cycling_data(date: datetime.date, intensity: float = 1.0):
-        base = random.uniform(5.0, 12.0)
-        variation = random.uniform(-2.0, 3.0)
-        distance_km = round(max(0.0, base + variation) * intensity, 2)
-        eco_points = round(distance_km * 0.5, 2)
-        return distance_km, eco_points
-
-    def create_mock_activity_data(user_email: str, habit_factor: float = 0.4) -> List[ActivityLog]:
-        data = []
-        current_date = start_date
-        consecutive_no_cycling = 0
-
-        while current_date <= yesterday:
-            activity_date = datetime.datetime.combine(current_date, datetime.time.min)
-
-            # Walking: daily
-            walk_steps, walk_distance, walk_points = generate_walking_data(current_date)
-            data.append(ActivityLog(
-                email=user_email,
-                date=activity_date,
-                activity_type="walking",
-                steps=walk_steps,
-                distance=walk_distance,
-                eco_points=walk_points,
-                eco_last_updated=datetime.datetime.now(datetime.timezone.utc),
-                eco_last_redeemed=None
-            ))
-
-            # Cycling: 30–70% chance, avoids long dry spells
-            day_offset = (current_date - start_date).days
-            cycling_probability = min(habit_factor + 0.01 * (day_offset // 7), 0.7)
-            should_cycle = random.random() < cycling_probability or consecutive_no_cycling >= 2
-
-            if should_cycle:
-                intensity = random.choice([0.8, 1.0, 1.2])
-                cycle_distance, cycle_points = generate_cycling_data(current_date, intensity)
-                if cycle_distance > 1.0:
-                    consecutive_no_cycling = 0
-                    data.append(ActivityLog(
-                        email=user_email,
-                        date=activity_date,
-                        activity_type="cycling",
-                        steps=0,
-                        distance=cycle_distance,
-                        eco_points=cycle_points,
-                        eco_last_updated=datetime.datetime.utcnow(),
-                        eco_last_redeemed=None
-                    ))
-                else:
-                    consecutive_no_cycling += 1
-            else:
-                consecutive_no_cycling += 1
-
-            current_date += datetime.timedelta(days=1)
-
-        return data
+    generate_sensor_data()
 
     # Commit users first
     db.session.commit()
@@ -110,6 +48,77 @@ def reset_db():
         db.session.add_all(logs)
 
     db.session.commit()
+    logger.info("Mock activity data generated for users successfully.")
+
+#Helper Functions
+
+def generate_walking_data(date: datetime.date):
+    is_weekend = date.weekday() >= 5
+    steps = random.randint(7000, 13000) if is_weekend else random.randint(4000, 10000)
+    distance_km = round(steps * 0.0008, 2)
+    eco_points = round(steps * 0.001, 2)
+    return steps, distance_km, eco_points
+
+def generate_cycling_data(date: datetime.date, intensity: float = 1.0):
+    base = random.uniform(5.0, 12.0)
+    variation = random.uniform(-2.0, 3.0)
+    distance_km = round(max(0.0, base + variation) * intensity, 2)
+    eco_points = round(distance_km * 0.5, 2)
+    return distance_km, eco_points
+
+def create_mock_activity_data(user_email: str, habit_factor: float = 0.4) -> List[ActivityLog]:
+    tz_today = datetime.date.today()
+    start_date = datetime.date(2025, 4, 1)
+    yesterday = tz_today - datetime.timedelta(days=1)
+
+    data = []
+    current_date = start_date
+    consecutive_no_cycling = 0
+
+    while current_date <= yesterday:
+        activity_date = datetime.datetime.combine(current_date, datetime.time.min)
+
+        # Walking: daily
+        walk_steps, walk_distance, walk_points = generate_walking_data(current_date)
+        data.append(ActivityLog(
+            email=user_email,
+            date=activity_date,
+            activity_type="walking",
+            steps=walk_steps,
+            distance=walk_distance,
+            eco_points=walk_points,
+            eco_last_updated=datetime.datetime.now(datetime.timezone.utc),
+            eco_last_redeemed=None
+        ))
+
+        # Cycling: 30–70% chance, avoids long dry spells
+        day_offset = (current_date - start_date).days
+        cycling_probability = min(habit_factor + 0.01 * (day_offset // 7), 0.7)
+        should_cycle = random.random() < cycling_probability or consecutive_no_cycling >= 2
+
+        if should_cycle:
+            intensity = random.choice([0.8, 1.0, 1.2])
+            cycle_distance, cycle_points = generate_cycling_data(current_date, intensity)
+            if cycle_distance > 1.0:
+                consecutive_no_cycling = 0
+                data.append(ActivityLog(
+                    email=user_email,
+                    date=activity_date,
+                    activity_type="cycling",
+                    steps=0,
+                    distance=cycle_distance,
+                    eco_points=cycle_points,
+                    eco_last_updated=datetime.datetime.utcnow(),
+                    eco_last_redeemed=None
+                ))
+            else:
+                consecutive_no_cycling += 1
+        else:
+            consecutive_no_cycling += 1
+
+        current_date += datetime.timedelta(days=1)
+
+    return data
 
 def create_mock_inventory_data():
         """Generate random inventory data for all users."""
@@ -149,6 +158,58 @@ def create_mock_inventory_data():
                 product.final_price = round(product.marked_price * (1 - product.discount), 2)
                 db.session.add(product)
         db.session.commit()
+        logger.info("Mock inventory data generated successfully.")
 
+def generate_sensor_data():
+    """Generate and commit mock energy readings for all buildings and flats."""
+    university_buildings, accommodation_buildings = load_buildings_data()
 
+    energy_types = ["electricity", "gas"]
+    start_time = datetime.datetime.now() - datetime.timedelta(days=7)
+    end_time = datetime.datetime.now()
+    interval = datetime.timedelta(minutes=5)
 
+    current_time = start_time
+    batch = []
+    while current_time <= end_time:
+        # University buildings
+        for building in university_buildings:
+            for energy_type in energy_types:
+                for _ in range(random.randint(4, 5)):
+                    reading = EnergyReading(
+                        timestamp=current_time,
+                        building=building.get("building"),
+                        building_code=building.get("building_code", ""),
+                        zone=building.get("zone", ""),
+                        value=generate_reading(energy_type),
+                        category=energy_type
+                    )
+                    batch.append(reading)
+
+        # Accommodation buildings - generate per flat
+        # for building in accommodation_buildings:
+        #     total_flats = building.get("total_flats", 0)
+        #     for flat_number in range(1, total_flats + 1):
+        #         flat_building_name = f"{building['building']} Flat {flat_number}"
+        #         for energy_type in energy_types:
+        #             for _ in range(random.randint(4, 5)):
+        #                 reading = EnergyReading(
+        #                     timestamp=current_time,
+        #                     building=flat_building_name,
+        #                     building_code=building.get("building_code", ""),
+        #                     zone=building.get("zone", ""),
+        #                     value=generate_reading(energy_type),
+        #                     category=energy_type
+        #                 )
+        #                 batch.append(reading)
+
+        current_time += interval
+        if len(batch) >= 1000:
+            db.session.add_all(batch)
+            db.session.commit()
+            batch.clear()
+
+    if batch:
+        db.session.add_all(batch)
+        db.session.commit()
+    logger.info("Mock energy readings generated successfully.")

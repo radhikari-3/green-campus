@@ -21,4 +21,5 @@ class Config:
     MAIL_DEFAULT_SENDER = os.environ.get('MAIL_DEFAULT_SENDER')
     SCHEDULER_ENABLED = False
     SCHEDULER_TEST_NOW = False
+    IOT_SIMULATOR_ACTIVE = False
 

@@ -79,8 +79,9 @@ def create_app(config_class=Config, test_config=None):
         global first_request_handled
         if not first_request_handled and not app.config.get('TESTING', False):
             first_request_handled = True
-            thread = threading.Thread(target=simulator_thread, args=(app,))  # Pass app to simulator_thread
-            thread.daemon = True
-            thread.start()
+            if app.config.get('IOT_SIMULATOR_ACTIVE', True):
+                thread = threading.Thread(target=simulator_thread, args=(app,))  # Pass app to simulator_thread
+                thread.daemon = True
+                thread.start()
 
     return app

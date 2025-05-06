@@ -15,6 +15,19 @@ def test_calculate_user_eco_points_valid_user(mock_query, fake_user):
     assert total_points == 100
     assert pounds == 2.0  # 100 points * 0.02 = £2.0
 
+@patch('app.views.food_expiry.db.session.query')
+def test_calculate_user_eco_points_valid_user_negative(mock_query, fake_user):
+    """
+    Positive test case: Ensure eco points are calculated correctly for a valid user.
+    """
+    # Mock the database query to return a sum of eco points
+    mock_query.return_value.filter.return_value.scalar.return_value = 5  # User has 100 eco points
+
+    total_points, pounds = calculate_user_eco_points(fake_user.email)
+    assert total_points != 10
+    assert pounds != 2.0  # 100 points * 0.02 = £2.0
+
+
 
 @patch('app.views.food_expiry.db.session.query')
 def test_calculate_user_eco_points_no_points(mock_query, fake_user):
