@@ -79,6 +79,7 @@ def dashboard():
 
     total_eco_points = db.session.query(func.sum(ActivityLog.eco_points)).filter(ActivityLog.email == email).scalar() or 0
 
+
     return render_template(
         "user_dashboard.html",
         title="Eco Points Dashboard",
@@ -89,6 +90,7 @@ def dashboard():
         avg_cycling_data=avg_cycling_data,
         eco_points=int(total_eco_points),
         all_logs=[],
+        electricity_units=int(total_eco_points)*0.37,
         days_since=days_since
     )
 
@@ -204,3 +206,5 @@ def send_qr_email():
 
     flash("QR voucher sent to your email 📩", "success")
     return redirect(url_for("dash.rewards"))
+
+

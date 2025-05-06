@@ -1,32 +1,32 @@
+/* Base styles */
 body {
   background-color: #f4f7fa;
   font-family: 'Inter', sans-serif;
-  margin: 0; /* Prevent default margins causing layout shifts */
-  overflow-x: hidden; /* Prevent horizontal scroll issues */
+  margin: 0;
+  overflow-x: hidden;
 }
 
-/* Target Bootstrap navbar (adjust selector if navbar has a custom class) */
+/* Navbar */
 .navbar {
   position: fixed;
   top: 0;
-  left: 250px; /* Offset by sidebar width */
-  width: calc(100% - 250px); /* Span remaining viewport width */
-  z-index: 1000; /* Above sidebar */
+  left: 0;
+  width: 100%;
+  z-index: 1000;
 }
 
+/* Sidebar */
 .sidebar {
   background: #1a2b49;
   color: #fff;
-  height: 100vh; /* Full viewport height */
-  min-height: 100vh; /* Ensure it doesn't shrink */
-  max-height: 100vh; /* Prevent overflow */
-  width: 250px;
   position: fixed;
-  top: 0; /* Align to top of viewport */
-  left: 0; /* Align to left */
+  top: 56px; /* <-- height of navbar */
+  left: 0;
+  width: 250px;
+  height: calc(100vh - 56px);
+  overflow-y: auto;
+  z-index: 900;
   padding-top: 20px;
-  overflow-y: auto; /* Allow scrolling within sidebar if content overflows */
-  z-index: 900; /* Below navbar */
 }
 
 .sidebar a {
@@ -41,23 +41,48 @@ body {
   background: rgba(255, 255, 255, 0.1);
 }
 
-.main-content {
-  margin-left: 250px; /* Match sidebar width */
-  padding: 20px;
-  padding-top: 76px; /* Navbar height (56px) + padding (20px) */
-  min-height: 100vh; /* Ensure main content spans viewport height */
-  box-sizing: border-box; /* Prevent padding from causing layout issues */
+.sidebar .nav-link.active {
+  background-color: #2d3748;
+  color: #fff;
+  font-weight: bold;
 }
 
-.eco-card {
-  background: #fff;
+.main-content {
+  margin-left: 250px;
+  padding: 2rem;
+  padding-top: 76px; /* Ensure content is pushed below navbar */
+  min-height: calc(100vh - 56px);
+  box-sizing: border-box;
+}
+
+
+/* Header */
+.header {
+  background: linear-gradient(90deg, #10b981, #3b82f6);
+  color: #fff;
   border-radius: 12px;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-  transition: transform 0.3s;
+  padding: 2rem;
+  text-align: center;
+}
+
+/* Eco cards */
+.eco-card {
+  background: linear-gradient(135deg, #f0f4ff, #d9e8ff);
+  border-radius: 12px;
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
+  transition: transform 0.3s, box-shadow 0.3s;
+  padding: 1.5rem;
+  text-align: center;
 }
 
 .eco-card:hover {
-  transform: translateY(-5px);
+  transform: translateY(-6px) scale(1.01);
+  box-shadow: 0 12px 20px rgba(0, 0, 0, 0.15);
+}
+
+.eco-card h4 {
+  font-weight: 600;
+  color: #0d6efd;
 }
 
 .eco-card .point-count {
@@ -71,13 +96,7 @@ body {
   color: #6b7280;
 }
 
-.header {
-  background: linear-gradient(90deg, #10b981, #3b82f6);
-  color: #fff;
-  border-radius: 12px;
-  padding: 2rem;
-}
-
+/* Chart container */
 .chart-container {
   background: #fff;
   border-radius: 12px;
@@ -85,17 +104,20 @@ body {
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
 }
 
+/* Forms */
 .form-select {
   border-radius: 8px;
   padding: 0.5rem;
   border: 1px solid #d1d5db;
 }
 
+/* Buttons */
 .btn-primary {
   background-color: #3b82f6;
   border: none;
   border-radius: 8px;
   padding: 0.5rem 1rem;
+  font-weight: 500;
 }
 
 .btn-primary:hover {

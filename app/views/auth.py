@@ -177,8 +177,11 @@ def reset_password():
         flash('Your password has been changed.', 'success')
         return redirect(url_for('dash.account'))
 
-    return render_template('generic_form.html', title='Change Password', form=form)
-
+    # 👉 Role-aware template selection
+    if 'Vendor' in current_user.role:
+        return render_template('reset_password_vendor.html', title='Reset Your Password', form=form)
+    else:
+        return render_template('reset_password_user.html', title='Reset Your Password', form=form)
 
 @auth_bp.route('/login', methods=['GET', 'POST'])
 def login():

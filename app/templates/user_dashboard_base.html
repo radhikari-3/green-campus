@@ -2,31 +2,38 @@
 
 {% block head %}
 {{ super() }}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/dashboard.css') }}">
 <style>
     .sidebar {
         background-color: #212529;
         color: #ffffff;
-        min-height: calc(100vh - 56px);
         position: fixed;
-        left: 0;
         top: 56px;
+        left: 0;
         width: 250px;
+        min-height: calc(100vh - 56px);
+        z-index: 999;
     }
+
     .sidebar .nav-link {
         color: #adb5bd;
         transition: color 0.2s, background-color 0.2s;
     }
+
     .sidebar .nav-link:hover {
         color: #ffffff;
         background-color: #343a40;
     }
+
     .sidebar .nav-link.active {
         color: #ffffff;
         background-color: #495057;
         font-weight: bold;
     }
-    .container-fluid {
+
+    body > .container-fluid {
         margin-left: 250px;
+        padding-top: 56px;
     }
 </style>
 {% endblock %}
@@ -35,7 +42,7 @@
 <div class="container-fluid">
     <div class="row">
         <!-- Sidebar -->
-        <nav id="sidebar" class="col-md-3 col-lg-2 d-md-block sidebar">
+        <nav id="sidebar" class="sidebar">
             <div class="position-sticky pt-3">
                 <ul class="nav flex-column">
                     <li class="nav-item">
@@ -68,10 +75,8 @@
         </nav>
 
         <!-- Main content -->
-        <main class="col-md-9 ms-sm-auto col-lg-10 px-md-4">
-            <div class="container">
-                {% block dashboard_content %}{% endblock dashboard_content %}
-            </div>
+        <main class="col offset-2 px-md-5 py-4">
+            {% block dashboard_content %}{% endblock dashboard_content %}
         </main>
     </div>
 </div>

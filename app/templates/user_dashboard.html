@@ -6,75 +6,84 @@
     <p class="text-lg opacity-80">Track your sustainable impact and compare with the community</p>
 </header>
 
-<div class="container-fluid" style="margin-left: 0; padding-left: 0;">
-    <div class="row g-4">
+<div class="row g-4">
         <!-- Eco Points Card -->
-        <div class="col-lg-6 col-md-6">
-            <div class="eco-card p-4 text-center">
-                <h4 class="font-semibold text-lg mb-2">
-                    <i class="bi bi-star-fill text-yellow-400 me-2"></i> Eco Reward Points
-                </h4>
-                <p class="point-count">{{ eco_points|int }}</p>
-                <p class="hint">Earn points for walking and cycling — the greener your travel, the higher you score!</p>
+    <div class="row row-cols-1 row-cols-md-2 g-4">
+        <!-- Eco Points Card -->
+        <div class="col">
+            <div class="eco-card h-100 p-4 text-center d-flex flex-column justify-content-between">
+                <div>
+                    <h4 class="font-semibold text-lg mb-2">
+                        <i class="bi bi-star-fill text-yellow-400 me-2"></i> Eco Reward Points
+                    </h4>
+                    <p class="point-count">{{ eco_points|int }}</p>
+                    <p class="hint">Earn points for walking and cycling — the greener your travel, the higher you score!</p>
+                </div>
             </div>
         </div>
 
         <!-- Redeem Points Card -->
-        <div class="col-lg-6 col-md-6">
-            <div class="eco-card p-4 text-center">
-                <h4 class="font-semibold text-lg mb-2">
-                    <i class="bi bi-gift text-blue-500 me-2"></i> Redeem Eco Points
-                </h4>
-                <p class="hint mb-3">Use your points to claim rewards and contribute to a greener planet!</p>
-                <a href="{{ url_for('dash.rewards') }}" class="btn btn-primary">Explore Rewards</a>
+        <div class="col">
+            <div class="eco-card h-100 p-4 text-center d-flex flex-column justify-content-between">
+                <div>
+                    <h4 class="font-semibold text-lg mb-2">
+                        <i class="bi bi-gift text-blue-500 me-2"></i> Redeem Eco Points
+                    </h4>
+                    <p class="hint mb-3">Use your points to claim rewards and contribute to a greener planet!</p>
+                </div>
+                <a href="{{ url_for('dash.rewards') }}" class="btn btn-primary mt-auto">Explore Rewards</a>
             </div>
         </div>
 
         <!-- Expiring Products Card -->
-        <div class="col-lg-6 col-md-6">
-            <div class="eco-card p-4 text-center">
-                <h4 class="font-semibold text-lg mb-2">
-                    <i class="bi bi-gift text-blue-500 me-2"></i> Expiring Products
-                </h4>
-                <p class="hint mb-3">View products with exciting offers that expire soon</p>
-                <a href="{{ url_for('smart_exp.view_expiring_products') }}" class="btn btn-primary">View Products</a>
+        <div class="col">
+            <div class="eco-card h-100 p-4 text-center d-flex flex-column justify-content-between">
+                <div>
+                    <h4 class="font-semibold text-lg mb-2">
+                        <i class="bi bi-gift text-blue-500 me-2"></i> Expiring Products
+                    </h4>
+                    <p class="hint mb-3">View products with exciting offers that expire soon</p>
+                </div>
+                <a href="{{ url_for('smart_exp.view_expiring_products') }}" class="btn btn-primary mt-auto">View Products</a>
             </div>
         </div>
 
         <!-- Energy Usage Card -->
-        <div class="col-lg-6 col-md-6">
-            <div class="eco-card p-4 text-center">
-                <h4 class="font-semibold text-lg mb-2">
-                    <i class="bi bi-star-fill text-yellow-400 me-2"></i> Energy Usage
-                </h4>
-                <p class="point-count">{{ eco_points|int }}</p>
-                <p class="hint">Total energy usage of your accommodation!</p>
+        <div class="col">
+            <div class="eco-card h-100 p-4 text-center d-flex flex-column justify-content-between">
+                <div>
+                    <h4 class="font-semibold text-lg mb-2">
+                        <i class="bi bi-lightning-charge-fill text-warning me-2"></i> Energy Usage
+                    </h4>
+                    <p class="point-count">{{ electricity_units|int }} KWh</p>
+                    <p class="hint">Total energy usage of your accommodation!</p>
+                </div>
             </div>
         </div>
+    </div>
 
-        <!-- Chart Section -->
-        <div class="col-12">
-            <div class="chart-container">
-                <div class="row mb-4">
-                    <div class="col-md-6">
-                        <label class="font-semibold mb-2">Data Type:</label>
-                        <select id="dataSelection" onchange="updateGraph()" class="form-select">
-                            <option value="steps">Walking Steps</option>
-                            <option value="cycling">Cycling Distance</option>
-                        </select>
-                    </div>
-                    <div class="col-md-6">
-                        <label class="font-semibold mb-2">View Range:</label>
-                        <select id="rangeSelection" onchange="updateGraph()" class="form-select">
-                            <option value="all">All</option>
-                            <option value="7">Last 7 Days</option>
-                            <option value="30">Last 30 Days</option>
-                        </select>
-                    </div>
+    <!-- Chart Section -->
+    <div class="col-12">
+        <div class="chart-container">
+            <div class="row mb-4">
+                <div class="col-md-6">
+                    <label class="font-semibold mb-2">Data Type:</label>
+                    <select id="dataSelection" onchange="updateGraph()" class="form-select">
+                        <option value="steps">Walking Steps</option>
+                        <option value="cycling">Cycling Distance</option>
+                    </select>
                 </div>
-                <div style="height: 400px;">
-                    <canvas id="mainChart"></canvas>
+                <div class="col-md-6">
+                    <label class="font-semibold mb-2">View Range:</label>
+                    <select id="rangeSelection" onchange="updateGraph()" class="form-select">
+                        <option value="all">All</option>
+                        <option value="7">Last 7 Days</option>
+                        <option value="30">Last 30 Days</option>
+                    </select>
                 </div>
+            </div>
+            <div style="height: 400px;">
+                <canvas id="mainChart"></canvas>
             </div>
         </div>
     </div>

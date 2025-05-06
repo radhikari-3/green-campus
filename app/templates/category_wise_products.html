@@ -1,6 +1,14 @@
 {% extends "user_dashboard_base.html" %}
 
 {% block dashboard_content %}
+<br>
+<br>
+<div class="mb-4">
+    <a href="{{ url_for('smart_exp.view_expiring_products') }}" class="btn btn-outline-secondary">
+        ← Back to Expiring Products
+    </a>
+</div>
+
 <div class="container my-5">
     <div class="text-center mb-5">
         <img src="{{ url_for('static', filename='img/market-icon.png') }}" alt="Smart Food Expiry" width="100" class="mb-3">
