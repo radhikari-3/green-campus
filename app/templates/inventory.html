@@ -48,7 +48,7 @@
                         </form>
 
         </td>
-        <td> <form action="{{ url_for ('vendors.edit_product') }}" method="GET">
+        <td> <form action="{{ url_for('vendors.edit_product') }}" method="GET">
                     {{ edit_product_form.csrf_token() }}
                     {{ edit_product_form.product_id (value=product.id) }}
                     <input type="hidden" name="view" value="{{ view }}">

@@ -64,7 +64,7 @@ def reset_db():
                 steps=walk_steps,
                 distance=walk_distance,
                 eco_points=walk_points,
-                eco_last_updated=datetime.datetime.now(timezone.utc),
+                eco_last_updated=datetime.datetime.now(datetime.timezone.utc),
                 eco_last_redeemed=None
             ))
 

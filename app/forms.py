@@ -28,7 +28,7 @@ class LoginForm(FlaskForm):
 
 class AddProductForm(FlaskForm):
     name = StringField('Product Name', validators=[DataRequired()])
-    expiry_date = DateField('Expiry Date', validators=[DataRequired(), validate_expiry_date]) #TODO: show the format how to select the date
+    expiry_date = DateField('Expiry Date', validators=[DataRequired(), validate_expiry_date])
     units = IntegerField('Units', validators= [NumberRange(1,30, "You can only upload from 1 to 30 units.")])
     price = FloatField('Price', validators= [DataRequired()])
     category = SelectField('Product Category', validators=[DataRequired()],
