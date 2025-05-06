@@ -6,12 +6,11 @@ from io import BytesIO
 import qrcode
 from flask import Blueprint, render_template, request, redirect, flash, url_for
 from flask_login import login_required, current_user, logout_user
-from flask_mail import Message
 from sqlalchemy import func
 
-from app import db, mail
+from app import db
 from app.models import ActivityLog
-from .utils import send_email
+from app.utils import send_email
 
 dash_bp = Blueprint('dash', __name__)
 

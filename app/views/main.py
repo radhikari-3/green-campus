@@ -7,6 +7,11 @@ main_bp = Blueprint('main', __name__)
 def home():
     return render_template('home.html', title="Home")
 
+@main_bp.route("/new_dashboard")
+def _new_home():
+    return render_template('dashboard_base.html', title="Home")
+
+
 # Error handlers
 # See: https://en.wikipedia.org/wiki/List_of_HTTP_status_codes
 
