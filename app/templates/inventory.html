@@ -3,6 +3,12 @@
 
 {% block dashboard_content %}
 <div class="container py-5">
+    <div class="mb-3">
+    <a href="{{ url_for('vendors.smart_food_expiry') }}" class="btn btn-sm btn-outline-secondary">
+        ← Back to Dashboard
+        </a>
+    </div>
+
     <div class="text-center mb-4">
         <img src="{{ url_for('static', filename='images/market-icon.png') }}" alt="Smart Food Expiry" width="100" class="mb-3">
         <h1 class="display-5 my-4 text-center text-success">📦 Current Inventory</h1>
