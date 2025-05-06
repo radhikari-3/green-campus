@@ -15,9 +15,31 @@
     </p>
   </div>
 
-  <div class="row row-cols-1 row-cols-md-3 g-4 justify-content-center">
+  <!-- Filter Section -->
+  <div class="d-flex justify-content-center mb-4">
+    <select id="price-filter" class="form-select w-auto mx-2" onchange="applyFilters()">
+      <option value="all">Price: All</option>
+      <option value="low-to-high">Price: Low to High</option>
+      <option value="high-to-low">Price: High to Low</option>
+    </select>
+
+    <select id="expiry-filter" class="form-select w-auto mx-2" onchange="applyFilters()">
+      <option value="all">Expiry: All</option>
+      <option value="soon">Expiring Soon</option>
+      <option value="later">Expiring Later</option>
+    </select>
+
+    <select id="location-filter" class="form-select w-auto mx-2" onchange="applyFilters()">
+      <option value="all">Location: All</option>
+      {% for location in locations %}
+        <option value="{{ location }}">{{ location }}</option>
+      {% endfor %}
+    </select>
+  </div>
+
+  <div class="row row-cols-1 row-cols-md-3 g-4 justify-content-center" id="product-list">
     {% for product in relevant_products %}
-      <div class="col">
+      <div class="col product-card-container" data-price="{{ product.final_price }}" data-expiry="{{ product.expiry_date }}" data-location="{{ product.location }}">
         <div class="card h-100 border-0 shadow-lg {{ 'product-card-insufficient' if pounds < product.final_price else 'product-card' }}">
           <div class="card-body text-white">
             <h5 class="card-title fw-bold mb-3">{{ product.name|upper }}</h5>
@@ -50,10 +72,9 @@
         </div>
       </div>
     {% else %}
-     <div class="col-12 text-center d-flex">
-    <div class="alert alert-warning">No products available in this category.</div>
-</div>
-
+      <div class="col-12 text-center d-flex">
+        <div class="alert alert-warning">No products available in this category.</div>
+      </div>
     {% endfor %}
   </div>
 
@@ -122,4 +143,69 @@
   font-size: 0.95rem;
 }
 </style>
+
+<script>
+  // Store the original product list when the page loads
+  const originalProducts = Array.from(document.querySelectorAll('.product-card-container'));
+
+  // Function to apply all filters and sorting
+  function applyFilters() {
+    const priceFilter = document.getElementById('price-filter').value;
+    const expiryFilter = document.getElementById('expiry-filter').value;
+    const locationFilter = document.getElementById('location-filter').value;
+
+    // Start with a copy of the original list
+    let filteredProducts = [...originalProducts];
+
+    // Apply filters
+    filteredProducts = filteredProducts.filter(card => {
+      const price = parseFloat(card.getAttribute('data-price'));
+      const expiry = new Date(card.getAttribute('data-expiry'));
+      const location = card.getAttribute('data-location');
+
+      let showCard = true;
+
+      // Expiry filter logic
+      if (expiryFilter === 'soon' && expiry.getTime() > Date.now()) {
+        showCard = false;
+      }
+      if (expiryFilter === 'later' && expiry.getTime() < Date.now()) {
+        showCard = false;
+      }
+
+      // Location filter logic
+      if (locationFilter !== 'all' && location !== locationFilter) {
+        showCard = false;
+      }
+
+      return showCard;
+    });
+
+    // Sort by price if applicable
+    if (priceFilter === 'low-to-high') {
+      filteredProducts.sort((a, b) => {
+        const priceA = parseFloat(a.getAttribute('data-price'));
+        const priceB = parseFloat(b.getAttribute('data-price'));
+        return priceA - priceB; // Ascending order
+      });
+    } else if (priceFilter === 'high-to-low') {
+      filteredProducts.sort((a, b) => {
+        const priceA = parseFloat(a.getAttribute('data-price'));
+        const priceB = parseFloat(b.getAttribute('data-price'));
+        return priceB - priceA; // Descending order
+      });
+    }
+
+    // Clear the current product list and append the filtered and sorted products
+    const productList = document.getElementById('product-list');
+    productList.innerHTML = ''; // Clear existing products
+
+    filteredProducts.forEach(card => {
+      productList.appendChild(card); // Append the filtered and sorted cards
+    });
+  }
+</script>
+
+
+
 {% endblock %}

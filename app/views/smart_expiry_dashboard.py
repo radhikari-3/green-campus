@@ -31,11 +31,12 @@ def expiring_offers(category):
     }
     relevant_products = Inventory.query.filter(Inventory.category == category).all()
     relevant_title = "Best offers on " + category_map[category]
+    locations = db.session.execute(select(Inventory.location).distinct()).scalars().all()
     return render_template("category_wise_products.html",
                            title = relevant_title,
                            relevant_products = relevant_products,
                            total_points = total_points,
-                           pounds = pounds)
+                           pounds = pounds, locations = locations)
 
 
 def calculate_user_eco_points(email):

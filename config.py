@@ -11,7 +11,9 @@ class Config:
     MAX_CONTENT_LENGTH = 1 * 1024 * 1024
     SQLALCHEMY_TRACK_MODIFICATIONS = False
     SQLALCHEMY_ECHO = False
-    SQLALCHEMY_DATABASE_URI = f"postgresql://{os.environ.get('DB_USERNAME', 'default_user')}:{os.environ.get('DB_PASSWORD', 'default_password')}@localhost/{os.environ.get('DB_NAME', 'default_db')}"
+    # SQLALCHEMY_DATABASE_URI = f"postgresql://{os.environ.get('DB_USERNAME', 'default_user')}:{os.environ.get('DB_PASSWORD', 'default_password')}@localhost/{os.environ.get('DB_NAME', 'default_db')}"
+
+    SQLALCHEMY_DATABASE_URI = 'postgresql://postgres:password@localhost/postgres'
 
     MAIL_SERVER = 'smtp.sendgrid.net'
     MAIL_PORT = 587

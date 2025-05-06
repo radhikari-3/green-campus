@@ -137,7 +137,7 @@ def create_mock_inventory_data():
                     expiry_date=expiry_date,
                     units=random.randint(1, 50),
                     category=categories[name],
-                    marked_price=round(random.uniform(10.0, 100.0), 2),
+                    marked_price=round(random.uniform(0.0, 20.0), 2),
                     discount=round(random.uniform(0.1, 0.5), 2),
                     final_price=0.0,  # Will calculate below
                     location=random.choice(["Nisa Local", "Spar", "Campus Living"]),
