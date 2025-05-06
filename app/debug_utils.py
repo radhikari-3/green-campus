@@ -2,6 +2,7 @@ import datetime
 import random
 from typing import List
 
+
 from app import db
 from app.models import ActivityLog, User, Inventory
 

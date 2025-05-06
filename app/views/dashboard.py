@@ -11,6 +11,7 @@ from sqlalchemy import func
 
 from app import db, mail
 from app.models import ActivityLog
+from .utils import send_email
 
 dash_bp = Blueprint('dash', __name__)
 
@@ -175,6 +176,7 @@ def send_qr_email():
 
     # Compose a styled HTML email
     subject = "🎁 Your Eco Points Voucher is Here!"
+    body_text = f"Redeemed {redeemed_points} points. QR attached."
     html_body = f"""
     <div style="font-family:Arial, sans-serif; padding: 20px; background-color:#f9f9f9;">
       <h2 style="color: #2e7d32;">🌿 Eco Points Voucher</h2>
@@ -192,15 +194,14 @@ def send_qr_email():
     </div>
     """
 
-    # Send email with attachment
-    msg = Message(
+    # Use the generic email function
+    send_email(
         subject=subject,
         recipients=[current_user.email],
-        body=f"Redeemed {redeemed_points} points. QR attached.",
-        html=html_body
+        body=body_text,
+        html=html_body,
+        attachments=[("eco_voucher.png", "image/png", buffered.read())]
     )
-    msg.attach("eco_voucher.png", "image/png", buffered.read())
-    mail.send(msg)
 
     flash("QR voucher sent to your email 📩", "success")
     return redirect(url_for("dash.rewards"))
