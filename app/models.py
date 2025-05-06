@@ -2,7 +2,7 @@ from dataclasses import dataclass
 from datetime import date
 from datetime import datetime
 from typing import Optional
-
+from werkzeug.security import generate_password_hash, check_password_hash
 import sqlalchemy as sa
 import sqlalchemy.orm as so
 from flask_login import UserMixin
@@ -45,6 +45,8 @@ class User(db.Model):
 
         return f'User(id={self.id}, email={self.email}, role={self.role}, pwh={pwh})'
 
+    # def set_password(self, password: str):
+    #     self.password_hash = generate_password_hash(password)
 
 @login.user_loader
 def load_user(id):
