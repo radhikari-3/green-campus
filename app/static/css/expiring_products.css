@@ -1,0 +1,17 @@
+.consistent-image {
+    width: 150px; /* Set a consistent width */
+    height: 150px; /* Set a consistent height */
+    object-fit: cover; /* Ensure the image fits within the dimensions */
+    border-radius: 8px; /* Optional: Add rounded corners for a uniform look */
+}
+
+.card-title-box {
+    background-color: #f1f8e9; /* Light green background */
+    border: 1px solid #c5e1a5; /* Slightly darker green border */
+    border-radius: 8px; /* Rounded corners */
+    padding: 10px 15px; /* Padding inside the box */
+    text-align: center; /* Center the text */
+    margin-top: 10px; /* Space above the box */
+    font-weight: bold; /* Make the text bold */
+    color: #33691e; /* Dark green text color */
+}

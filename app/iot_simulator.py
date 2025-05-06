@@ -3,7 +3,7 @@ import json
 import os
 import random
 import time
-from datetime import datetime
+from datetime import datetime, timezone
 
 import paho.mqtt.client as mqtt
 
@@ -82,7 +82,7 @@ def publish_sensor_data(client):
 
 # Publish data for a building or flat
 def publish_data(client, building, sensor_type, flat_number):
-    timestamp = datetime.utcnow().isoformat()
+    timestamp = datetime.now(timezone.utc).isoformat()
     value = generate_reading(sensor_type)
     if building.get('is_accommodation') == True:
         zone = ''

@@ -106,6 +106,7 @@ def get_energy_usage_by_zone():
     gas_usage = {}
 
     for zone, category, total in results:
+        total = total or 0  # Handle None totals
         if category.lower() == 'electricity':
             electricity_usage[zone] = total
         elif category.lower() == 'gas':

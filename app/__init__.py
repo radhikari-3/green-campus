@@ -6,47 +6,19 @@ from apscheduler.triggers.cron import CronTrigger
 from flask import Flask
 from jinja2 import StrictUndefined
 
-import config
 from app.extensions import db, login, mail, scheduler
 from app.logger import logger
 from app.logger import logger
 from app.tasks import scheduled_send_discount_email
 from app.views.auth import auth_bp
-from app.views.dashboard import dash_bp
-from app.views.energy_dashboard import energy_bp
+from app.views.energy_analytics import energy_bp
+from app.views.food_expiry import smart_exp_bp
 from app.views.main import main_bp
-from app.views.smart_expiry_dashboard import smart_exp_bp
+from app.views.user_dashboard import dash_bp
 from app.views.vendor_dashboard import vendors_bp
 from config import Config
-first_request_handled = False
-
-
-app = Flask(__name__)
-app.jinja_env.undefined = StrictUndefined
-app.config.from_object(Config)
-
-db.init_app(app)
-login.login_view = 'auth.login'
-login.init_app(app)
-mail.init_app(app)
-
-#Register blueprints
-app.register_blueprint(auth_bp)
-app.register_blueprint(main_bp)
-
-app.register_blueprint(dash_bp)
-
-from app import views, models           # don't remove from here
-from app.debug_utils import reset_db    # don't remove from here
-
-@app.shell_context_processor
-def make_shell_context():
-    return dict(db=db, sa=sa, so=so, reset_db=reset_db)
-
-
 
 first_request_handled = False
-
 
 def create_app(config_class=Config, test_config=None):
     app = Flask(__name__)

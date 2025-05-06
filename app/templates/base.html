@@ -51,7 +51,11 @@
                         <a class="nav-link" href="{{ url_for('auth.signup') }}">Register</a>
                     </li>
                 {% else %}
-
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ url_for('dash.logout') }}">
+                            <i class="bi bi-box-arrow-right me-2"></i> Logout
+                        </a>
+                    </li>
                     <li class="nav-item">
                         <a class="nav-link" href="{{ url_for('dash.account')
                             if 'Normal' in current_user.role else url_for('vendors.smart_food_expiry') }}">
@@ -64,8 +68,8 @@
     </div>
 </nav>
 
-<div class="container">
-    <div class="mt-3">
+<div class="container mt-5">
+    <div>
         {% with messages = get_flashed_messages(with_categories=true) %}
         {% if messages %}
         {% for category, message in messages %}

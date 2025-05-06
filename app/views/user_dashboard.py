@@ -207,4 +207,3 @@ def send_qr_email():
     flash("QR voucher sent to your email 📩", "success")
     return redirect(url_for("dash.rewards"))
 
-

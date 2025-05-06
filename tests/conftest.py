@@ -1,3 +1,6 @@
+from datetime import datetime
+from unittest.mock import MagicMock
+
 print("Loading conftest.py")
 import pytest
 from app import create_app, db
@@ -51,18 +54,24 @@ def fake_user(app):
         db.session.delete(user)
         db.session.commit()
 
-@pytest.fixture
-def logged_in_client(app, fake_user):
-    """
-    Provide a test client logged in as the fake user.
-    """
-    client = app.test_client()
-    with app.app_context():
-        with client.session_transaction() as sess:
-            sess['user_id'] = fake_user.id  # Example session setup
-        yield client
-
-@pytest.fixture
+@pytest.fixture(scope="function")
 def db_session(app):
     with app.app_context():
-        yield db.session
+        connection = db.engine.connect()
+        transaction = connection.begin()
+        options = dict(bind=connection, binds={})
+        session = db.session
+        yield session
+        transaction.rollback()
+        connection.close()
+        session.remove()
+
+
+@pytest.fixture
+def mock_energy_readings():
+    """Fixture to mock energy readings."""
+    return [
+        MagicMock(building="Building A", category="electricity", value=100, timestamp=datetime(2023, 10, 1, 12, 0)),
+        MagicMock(building="Building A", category="electricity", value=200, timestamp=datetime(2023, 10, 2, 12, 0)),
+        MagicMock(building="Building B", category="gas", value=300, timestamp=datetime(2023, 10, 1, 12, 0)),
+    ]

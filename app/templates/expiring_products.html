@@ -7,34 +7,62 @@
         <div class="features-grid">
             <div class="feature-card">
                 <div class="expiring-product-image-container">
-                    <img src="/static/images/fnv.png" alt="Fruits and Vegetables">
+                    <img src="/static/images/fnv.png" alt="Fruits and Vegetables" class="consistent-image">
                 </div>
                 <a href="{{ url_for('smart_exp.expiring_offers', category='f') }}" class="btn-secondary">
-                    <h3>Fruits and Vegetables 🍓</h3>
+                    <div class="card-title-box">
+                        <h3>Fruits and Vegetables 🍓</h3>
+                    </div>
                 </a>
             </div>
             <div class="feature-card">
                 <div class="expiring-product-image-container">
-                    <img src="/static/images/grains.png" alt="Grains and Bread based products">
+                    <img src="/static/images/bakery.png" alt="Bakery" class="consistent-image">
                 </div>
-                <a href="{{ url_for('smart_exp.expiring_offers', category='g') }}" class="btn-secondary">
-                    <h3>Grains and Bread 🥖</h3>
+                <a href="{{ url_for('smart_exp.expiring_offers', category='b') }}" class="btn-secondary">
+                    <div class="card-title-box">
+                        <h3>Bakery 🥖</h3>
+                    </div>
                 </a>
             </div>
             <div class="feature-card">
                 <div class="expiring-product-image-container">
-                    <img src="/static/images/dp.png" alt="Dairy and related products">
+                    <img src="/static/images/dairy.png" alt="Dairy" class="consistent-image">
                 </div>
                 <a href="{{ url_for('smart_exp.expiring_offers', category='d') }}" class="btn-secondary">
-                    <h3>Dairy and related products 🧀</h3>
+                    <div class="card-title-box">
+                        <h3>Dairy 🧀</h3>
+                    </div>
                 </a>
             </div>
             <div class="feature-card">
                 <div class="expiring-product-image-container">
-                    <img src="/static/images/nuts.jpg" alt="Nuts and related products">
+                    <img src="/static/images/meat.png" alt="Meat" class="consistent-image">
                 </div>
-                <a href="{{ url_for('smart_exp.expiring_offers', category='n') }}" class="btn-secondary">
-                    <h3>Nuts and related products 🥜</h3>
+                <a href="{{ url_for('smart_exp.expiring_offers', category='m') }}" class="btn-secondary">
+                    <div class="card-title-box">
+                        <h3>Meat 🥜</h3>
+                    </div>
+                </a>
+            </div>
+            <div class="feature-card">
+                <div class="expiring-product-image-container">
+                    <img src="/static/images/sweets.png" alt="Sweets" class="consistent-image">
+                </div>
+                <a href="{{ url_for('smart_exp.expiring_offers', category='s') }}" class="btn-secondary">
+                    <div class="card-title-box">
+                        <h3>Sweets🥜</h3>
+                    </div>
+                </a>
+            </div>
+            <div class="feature-card">
+                <div class="expiring-product-image-container">
+                    <img src="/static/images/ready2eat.png" alt="Ready to eat" class="consistent-image">
+                </div>
+                <a href="{{ url_for('smart_exp.expiring_offers', category='r') }}" class="btn-secondary">
+                    <div class="card-title-box">
+                        <h3>Ready to Eat 🥜</h3>
+                    </div>
                 </a>
             </div>
         </div>

@@ -1,63 +1,131 @@
+# Green Campus
+
 ## 🌎 Project Overview
 
-**Green Campus** is an innovative sustainability management platform designed for university campuses, addressing major 
-challenges such as greenhouse gas emissions, resource waste, and inefficient energy use. Despite existing sustainability efforts, 
-many institutions lack comprehensive, real-time tools to monitor and promote eco-friendly initiatives.
-
-Green Campus fills this gap by providing a tech-driven solution that engages both students and staff through meaningful, actionable insights.
-
-The system leverages IoT sensors to monitor real-time energy consumption and waste management across the campus.
-
-### Key Features
-
-1. **Smart Campus Energy Dashboard**
-   - Displays real-time resource usage and calculates environmental impact metrics.
-   - Provides users with insights into their energy consumption patterns, enabling informed decisions about resource usage.
-
-2. **Gamified Eco-Points and Rewards System**
-   - Incentivizes sustainable actions like walking, recycling, and carpooling.
-   - Users can redeem their Eco-Points for QR code vouchers at campus establishments.
-   - Includes a gamified Eco-Points and Rewards System that incentivizes sustainable actions like walking, recycling, and carpooling.
-   - Users can redeem their Eco-Points for QR code vouchers at campus establishments.
-
-3. **Smart Expiring Food Discount System**
-   - Enables vendors to register items nearing expiration, helping to reduce food waste through dynamic discounting and real-time notifications.
-
-By combining real-time monitoring, gamification, and user engagement, Green Campus promotes sustainable behaviors and 
-drives long-term environmental impact, positioning itself as a model for universities worldwide striving for eco-friendly campus operations.
+**Green Campus** is a sustainability management platform for university
+campuses, tackling greenhouse gas emissions, resource waste, and
+inefficient energy use. It provides real-time tools to monitor and
+promote eco-friendly initiatives, engaging students and staff with
+actionable insights. Using IoT sensors, it tracks energy consumption and
+waste management, offering a smart energy dashboard, a gamified
+Eco-Points system, and a food waste reduction feature through dynamic
+discounts. By combining real-time monitoring, gamification, and user
+engagement, Green Campus fosters sustainable behaviors, positioning
+itself as a model for eco-friendly campus operations worldwide. (Word
+count: 94)
 
 ## Setup
 
-1. **Clone the Repository**  
-   Clone the project repository to your local machine:
-   ```bash
-   git clone https://github.com/radhikari-3/green-campus.git
-   cd green-campus
-   
-2. **Install Dependencies**
-   Install the required dependencies using pip:
-   ```bash
-   pip install -r requirements.txt
-   ```
+1.  **Clone the Repository**\
+    Clone the project repository to your local machine:
 
-3. **Setup Docker**
-   Ensure Docker is installed and running on your system. Run the docker compose file:
-   ```bash
-   docker compose up
+    ``` bash
+    git clone https://github.com/radhikari-3/green-campus.git
+    cd green-campus
     ```
 
-4. **Initialize the Database**
-   On terminal or command prompt, run the following commands to create the database:
-   flask shell
-   ```bash
-   >>> db.create_all()
-   ```
+2.  **Install Dependencies**\
+    Install the required dependencies using pip:
 
-5. **Run Tests**
-   Execute the test suite to ensure everything is working:
-   ```bash
-   pytest
-   ```
-   
-6. **Access the Application**
-Open your web browser and navigate to `http://localhost:5000` to access the application.
+    ``` bash
+    pip install -r requirements.txt
+    ```
+
+3.  **Setup Docker**\
+    Ensure Docker is installed and running. Run the Docker Compose file:
+
+    ``` bash
+    docker compose up
+    ```
+
+4.  **Initialize the Database**\
+    Run the following commands to create the database:
+
+    ``` bash
+    flask shell
+    >>> db.create_all()
+    ```
+
+5.  **Run Tests**\
+    Execute the test suite to ensure functionality:
+
+    ``` bash
+    pytest
+    ```
+
+6.  **Access the Application**\
+    Open your browser and navigate to `http://localhost:5000`.
+
+## Technologies Used
+
+-   **Programming Languages**: Python, JavaScript, HTML, CSS
+-   **Frameworks**: Flask (backend), Charts.js, Plotly (frontend)
+-   **Tools**: Docker, PostgreSQL, Ioiotron (IoT sensor integration),
+    Pytest (testing), Git (version control)
+-   **Libraries**: SQLAlchemy (ORM), Chart.js (data visualization),
+    qrcode (QR code generation)
+
+## Implemented Functionalities
+
+1.  **Smart Campus Energy Dashboard**
+    -   Displays real-time energy usage and environmental impact metrics
+        (e.g., CO2 emissions).\
+    -   Visualizes consumption patterns with interactive charts.
+2.  **Gamified Eco-Points and Rewards System**
+    -   Awards Eco-Points for sustainable actions (e.g., recycling,
+        walking).\
+    -   Allows point redemption for QR code vouchers at campus vendors.
+3.  **Smart Expiring Food Discount System**
+    -   Enables vendors to list near-expiry food items with dynamic
+        discounts.\
+    -   Sends real-time notifications to users about available
+        discounts.
+
+## System Architecture
+
+### Design Patterns
+-   **Model-View-Controller (MVC)**: Separates data, user interface,
+    and control logic for better organization and maintainability.
+-   **Publish-Subscribe**: pattern for real-time notifications and updates.
+-   **Singleton**: Ensures a single instance of the database connection
+    throughout the application.
+
+### Class Relationships
+
+### Simulated API/IoT Sensor Data
+-   **Energy Usage**: Simulated data from IoT sensors for real-time
+    energy consumption.
+-   **Eco-Points**: Points awarded based on user actions, stored in
+    the database.
+-   **Food Discounts**: Vendor-submitted data for near-expiry items
+    with dynamic discounts.
+
+### CI/CD Pipeline
+GitHub Actions automates the CI/CD pipeline, triggered on every push or pull request (PR) to the main branch. 
+The workflow includes:
+
+- **Linting**: Flake8 checks Python code for style and quality issues.
+- **Testing**: Pytest runs the test suite to verify functionality.
+- **Build Quality**: Docker builds the application container to ensure deployment readiness.
+- **Security Checks**: Dependabot scans for vulnerabilities in dependencies.
+- **PR Review Process**: Each PR undergoes peer review, requiring approval and passing CI checks (build status, tests, security scans) before merging.
+- **Pipeline Configuration**: Defined in `.github/workflows/ci.yml`, ensuring code quality, security, and reliable deployments.
+
+## Test Cases
+
+| **Feature**                        | **Test Case**                                | **Scenario**                                                                 | **Status**       |
+|------------------------------------|----------------------------------------------|-------------------------------------------------------------------------------|------------------|
+| **Smart Campus Energy Dashboard**  | `test_get_building_names`                    | Mock database query to fetch building names.                                 | ✅ Passed        |
+|                                    | `test_get_energy_usage_by_zone`              | Mock database query to fetch energy usage by zone.                           | ✅ Passed        |
+|                                    | `test_energy_dashboard_view`                 | Verify energy dashboard page loads successfully.                             | ✅ Passed        |
+|                                    | `test_get_line_chart_view_invalid_payload`   | Test invalid payload for line chart view.                                    | ✅ Passed        |
+|                                    | `test_get_energy_usage_by_zone_invalid_data` | Handle invalid energy usage data gracefully.                                 | ✅ Passed        |
+|                                    | `test_get_building_names_empty`              | Handle empty building names gracefully.                                      | ✅ Passed        |
+|                                    | `test_get_energy_usage_by_zone_empty`        | Handle empty energy usage data gracefully.                                   | ✅ Passed        |
+| **Gamified Eco-Points System**     | `test_calculate_total_eco_points`            | Calculate total eco-points for a user.                                       | ✅ Passed        |
+|                                    | `test_calculate_user_eco_points_valid_user`  | Calculate eco-points for a valid user.                                       | ✅ Passed        |
+|                                    | `test_calculate_user_eco_points_no_points`   | Handle scenario where user has no eco-points.                                | ✅ Passed        |
+| **Authentication**                 | `test_login_with_unverified_email`           | Test login with an unverified email.                                         | ✅ Passed        |
+| **Vendor Dashboard**               | `test_get_user_products_valid_user`          | Fetch products for a valid user.                                             | ✅ Passed        |
+|                                    | `test_get_user_products_no_products`         | Handle scenario where user has no products.                                  | ✅ Passed       |
+

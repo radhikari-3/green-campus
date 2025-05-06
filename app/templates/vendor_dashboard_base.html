@@ -2,39 +2,7 @@
 
 {% block head %}
 {{ super() }}
-<style>
-    .sidebar {
-        background-color: #212529;
-        color: #ffffff;
-        position: fixed;
-        top: 56px;
-        left: 0;
-        width: 250px;
-        min-height: calc(100vh - 56px);
-        z-index: 999;
-    }
-
-    .sidebar .nav-link {
-        color: #adb5bd;
-        transition: color 0.2s, background-color 0.2s;
-    }
-
-    .sidebar .nav-link:hover {
-        color: #ffffff;
-        background-color: #343a40;
-    }
-
-    .sidebar .nav-link.active {
-        color: #ffffff;
-        background-color: #495057;
-        font-weight: bold;
-    }
-
-    body > .container-fluid {
-        margin-left: 250px;
-        padding-top: 56px;
-    }
-</style>
+<link rel="stylesheet" href="{{ url_for('static', filename='css/dashboard.css') }}">
 {% endblock %}
 
 {% block content %}

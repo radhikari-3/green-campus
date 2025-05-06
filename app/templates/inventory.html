@@ -4,8 +4,8 @@
 {% block dashboard_content %}
 <div class="container py-5">
     <div class="mb-3">
-    <a href="{{ url_for('vendors.smart_food_expiry') }}" class="btn btn-sm btn-outline-secondary">
-        ← Back to Dashboard
+        <a href="{{ url_for('vendors.smart_food_expiry') }}" class="btn btn-sm btn-outline-secondary">
+            ← Back to Dashboard
         </a>
     </div>
 
@@ -121,21 +121,5 @@
     </div>
 </div>
 
-<script>
-    document.addEventListener("DOMContentLoaded", function () {
-        const toggle = document.getElementById("viewToggle");
-        const icon = document.getElementById("viewIcon");
-        const listView = document.querySelector('[view="table"]');
-        const cardView = document.querySelector('[view="card"]');
-
-        toggle.addEventListener("change", () => {
-            const isCardView = toggle.checked;
-            listView.classList.toggle("d-none", isCardView);
-            cardView.classList.toggle("d-none", !isCardView);
-
-            icon.classList.toggle("bi-list", !isCardView);
-            icon.classList.toggle("bi-grid", isCardView);
-        });
-    });
-</script>
+<script src="{{ url_for('static', filename='js/inventory.js') }}"></script>
 {% endblock %}

@@ -7,7 +7,8 @@ from sqlalchemy import select
 
 from app.extensions import db, mail
 from app.models import User
-from app.views.smart_expiry_dashboard import get_updated_daily_discounts
+from app.utils import send_email
+from app.views.food_expiry import get_updated_daily_discounts
 
 
 def scheduled_send_discount_email():
@@ -26,8 +27,19 @@ def scheduled_send_discount_email():
             return
 
         try:
-            msg = _compose_discount_email(recipients, products)
-            mail.send(msg)
+            subject = "Items with major discounts, expiring in 1 day! 🌱"
+            msg = _compose_discount_email(recipients, products, subject)
+            # Older function
+            # mail.send(msg)
+            # Use the generic email function
+            send_email(
+                subject=subject,
+                bcc = [recipients],
+                body=msg.body,
+                html=msg.html,
+            )
+
+
             logging.info(f"Discount email sent to {len(recipients)} recipients.")
         except SMTPRecipientsRefused as e:
             logging.error("Some recipients were refused: %s", e.recipients)
@@ -43,8 +55,7 @@ def _get_recipient_emails():
     ]
 
 
-def _compose_discount_email(recipients, products):
-    subject = "Items with major discounts, expiring in 1 day! 🌱"
+def _compose_discount_email(recipients, products, subject):
 
     html_body = _generate_html_table(products, subject)
     text_body = _generate_plain_text(products)
@@ -87,7 +98,6 @@ def _generate_html_table(products, subject):
         </p>
     </div>
     """
-
 
 def _generate_plain_text(products):
     lines = ["Name | Expiry | Units | Marked Price | Final Price | Location", "-" * 60]
