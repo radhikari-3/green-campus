@@ -1,0 +1,78 @@
+{% extends "base.html" %}
+
+{% block head %}
+{{ super() }}
+<style>
+    .sidebar {
+        background-color: #212529;
+        color: #ffffff;
+        min-height: calc(100vh - 56px);
+        position: fixed;
+        left: 0;
+        top: 56px;
+        width: 250px;
+    }
+    .sidebar .nav-link {
+        color: #adb5bd;
+        transition: color 0.2s, background-color 0.2s;
+    }
+    .sidebar .nav-link:hover {
+        color: #ffffff;
+        background-color: #343a40;
+    }
+    .sidebar .nav-link.active {
+        color: #ffffff;
+        background-color: #495057;
+        font-weight: bold;
+    }
+    .container-fluid {
+        margin-left: 250px;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="container-fluid">
+    <div class="row">
+        <!-- Sidebar -->
+        <nav id="sidebar" class="col-md-3 col-lg-2 d-md-block sidebar">
+            <div class="position-sticky pt-3">
+                <ul class="nav flex-column">
+                    <li class="nav-item">
+                        <a class="nav-link active" href="{{ url_for('dash.dashboard') }}">
+                            <i class="bi bi-house me-2"></i> Dashboard
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ url_for('dash.rewards') }}">
+                            <i class="bi bi-gift me-2"></i> Rewards
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ url_for('auth.reset_password') }}">
+                            <i class="bi bi-person me-2"></i> Reset Password
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ url_for('smart_exp.view_expiring_products') }}">
+                            <i class="bi bi-gift me-2"></i> Expiring Products
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ url_for('dash.logout') }}">
+                            <i class="bi bi-box-arrow-right me-2"></i> Logout
+                        </a>
+                    </li>
+                </ul>
+            </div>
+        </nav>
+
+        <!-- Main content -->
+        <main class="col-md-9 ms-sm-auto col-lg-10 px-md-4">
+            <div class="container">
+                {% block dashboard_content %}{% endblock dashboard_content %}
+            </div>
+        </main>
+    </div>
+</div>
+{% endblock content %}

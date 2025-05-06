@@ -25,10 +25,10 @@ def update_product_fields(product, form):
     """Update product fields from the form."""
     product.name = form.name.data
     product.expiry_date = form.expiry_date.data
-    product.units = form.units.data
+    product.units = form.units.data  # Ensure units are updated
     product.marked_price = form.price.data
     product.location = form.location.data
-    product.final_price = form.price.data
+    product.final_price = form.price.data  # Update final price if necessary
 
 @vendors_bp.route('/smart_food_expiry', methods=['GET', 'POST'])
 @login_required
@@ -126,8 +126,8 @@ def edit_product():
         product_id = edit_product_form.product_id.data
         product = db.session.get(Inventory, product_id)
         if product:
-            update_product_fields(product, edit_product_form)
-            db.session.commit()
+            update_product_fields(product, edit_product_form)  # Update all fields, including units
+            db.session.commit()  # Commit changes to the database
             flash("Product updated successfully!", "success")
             session['show_confetti'] = True
         else:
