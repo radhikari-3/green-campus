@@ -5,7 +5,6 @@ import sqlalchemy as sa
 from flask import Blueprint, render_template, redirect, flash, url_for, request, current_app
 from flask_login import login_user, current_user, login_required
 from flask_mail import Message
-from werkzeug.security import generate_password_hash, check_password_hash
 
 from app import db
 from app.forms import (

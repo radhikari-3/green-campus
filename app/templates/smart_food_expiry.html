@@ -1,45 +1,69 @@
-{% extends "vendor_dashboard_base.html" %}
+{% extends "base.html" %}
 {% import "bootstrap_wtf.html" as wtf %}
 
-{% block dashboard_content %}
-<div class="container py-5">
-    <div class="text-center mb-4">
-        <img src="{{ url_for('static', filename='images/market-icon.png') }}" alt="Smart Food Expiry" width="100" class="mb-3">
-        <h2 class="text-success">Welcome back, {{ current_user.email }}! 👋</h2>
-        <span class="badge bg-success">Sustainable Vendor <i class="bi bi-check-circle"></i></span>
-    </div>
+{% block head %}
+    {{ super() }}
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/dashboard.css') }}">
+{% endblock %}
 
-    <div class="text-center mb-4">
-        <p class="lead text-muted">
-            This is your <strong>Smart Food Expiry Dashboard</strong> — your personal space to manage expiring stock, automatically apply smart discounts based on product's freshness, and delight eco-conscious customers.
-        </p>
-        <p class="text-muted">
-            You reduce waste, make customers happy with great deals, and also contribute to a more sustainable food system. 🌍
-        </p>
-    </div>
-
-    <div class="d-flex flex-column flex-md-row justify-content-center align-items-center gap-4 mb-4">
-        <button class="btn btn-outline-success btn-lg px-5 py-3 rounded-pill shadow w-100" type="button"
-                data-bs-toggle="collapse" data-bs-target="#productForm"
-                aria-expanded="false" aria-controls="productForm">
-            Add Product
-        </button>
-
-        <a href="{{ url_for('vendors.inventory') }}" class="btn btn-outline-info btn-lg px-5 py-3 rounded-pill shadow w-100">
-            Inventory
-        </a>
-    </div>
-
-    <div class="collapse" id="productForm">
-        <div class="card card-body shadow-sm">
-            <h2 class="text-center text-success mb-4">Add a Product 🍕</h2>
-            {% if current_user.is_authenticated %}
-                {{ wtf.quick_form(add_product_form, action=url_for('vendors.add_product'), method="post", novalidate=True) }}
-            {% else %}
-                <p class="text-center">Please log in to access this feature</p>
-            {% endif %}
+{% block content %}
+<div class="d-flex flex-column flex-lg-row">
+    <!-- Sidebar -->
+    <nav class="sidebar">
+        <div class="px-4 mb-4">
+          <h3 class="text-xl font-semibold">🌱 Eco Dashboard</h3>
         </div>
-    </div>
+        <a href="{{ url_for('dash.dashboard') }}"><i class="bi bi-house me-2"></i> Dashboard</a>
+        <a href="{{ url_for('dash.rewards') }}"><i class="bi bi-gift me-2"></i> Rewards</a>
+        <a href="{{ url_for('auth.reset_password') }}" ><i class="bi bi-person me-2"></i> Reset Password</a>
+          <a href="{{ url_for('smart_exp.view_expiring_products') }}" ><i class="bi bi-person me-2"></i> Expiring Products</a>
+        <a href="{{ url_for('dash.logout') }}"><i class="bi bi-box-arrow-right me-2"></i> Logout</a>
+    </nav>
 
+    <div class="content flex-grow-1 p-4">
+        <div class="text-center mb-4">
+            <img src="{{ url_for('static', filename='images/market-icon.png') }}" alt="Smart Food Expiry" width="100" class="mb-3">
+            <h2 class="text-success">Welcome back, {{ current_user.email }}! 👋</h2>
+            <span class="badge bg-success">Sustainable Vendor <i class="bi bi-check-circle"></i></span>
+        </div>
+
+        <div class="text-center mb-4">
+            <p class="lead text-muted">
+                This is your <strong>Smart Food Expiry Dashboard</strong> — your personal space to manage expiring stock, automatically apply smart discounts based on product's freshness, and delight eco-conscious customers.
+            </p>
+            <p class="text-muted">
+                You reduce waste, make customers happy with great deals, and also contribute to a more sustainable food system. 🌍
+            </p>
+        </div>
+
+        <div class="d-flex flex-column flex-md-row justify-content-center align-items-center gap-4 mb-4">
+            <button class="btn btn-outline-success btn-lg px-5 py-3 rounded-pill shadow w-100" type="button"
+                    data-bs-toggle="collapse" data-bs-target="#productForm"
+                    aria-expanded="false" aria-controls="productForm">
+                Add Product
+            </button>
+
+            <a href="{{ url_for('vendors.inventory') }}" class="btn btn-outline-info btn-lg px-5 py-3 rounded-pill shadow w-100">
+                Inventory
+            </a>
+        </div>
+
+        <div class="collapse" id="productForm">
+            <div class="card card-body shadow-sm">
+                <h2 class="text-center text-success mb-4">Add a Product 🍕</h2>
+                {% if current_user.is_authenticated %}
+                    {{ wtf.quick_form(add_product_form, action=url_for('vendors.add_product'), method="post", novalidate=True) }}
+                {% else %}
+                    <p class="text-center">Please log in to access this feature</p>
+                {% endif %}
+            </div>
+        </div>
+
+        <footer class="footer text-center mt-4">
+            <p class="text-muted">© 2025 Green Campus Initiative. Empowering Sustainable Change.</p>
+        </footer>
+    </div>
 </div>
+
+
 {% endblock %}

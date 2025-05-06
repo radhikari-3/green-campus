@@ -47,7 +47,7 @@
   {%- endif %}
 {% endmacro %}
 
-{% macro quick_form(form, action="", method="post", id="", novalidate=False, autofocus=False, button_map=None) %}
+{% macro quick_form(form, action="", method="post", id="", novalidate=False, autofocus=False) %}
 <form
   {%- if action != None %} action="{{ action }}"{% endif -%}
   {%- if method %} method="{{ method }}"{% endif %}
@@ -64,17 +64,13 @@
       <div class="invalid-feedback">{{ error }}</div>
       {%- endfor %}
     {%- endif %}
+
   {%- endfor %}
 
   {% set ns = namespace(first_field=autofocus) %}
   {%- for field in form %}
-    {% if field.widget.input_type is undefined or field.widget.input_type != 'hidden' %}
-      {% if field.type == 'SubmitField' and button_map is not none and field.name in button_map %}
-        {# Apply custom class from button_map for SubmitField #}
-        {{ field(class=button_map[field.name]) }}
-      {% else %}
-        {{ form_field(field, ns.first_field) }}
-      {% endif %}
+    {% if field.widget.input_type is undefined or field.widget.input_type != 'hidden' -%}
+      {{ form_field(field, ns.first_field) }}
       {% set ns.first_field = false %}
     {%- endif %}
   {%- endfor %}

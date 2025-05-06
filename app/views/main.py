@@ -9,7 +9,7 @@ def home():
 
 @main_bp.route("/new_dashboard")
 def _new_home():
-    return render_template('user_dashboard_base.html', title="Home")
+    return render_template('dashboard_base.html', title="Home")
 
 
 # Error handlers

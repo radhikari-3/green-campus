@@ -1,6 +1,4 @@
 from flask import url_for
-from sqlalchemy import select
-from werkzeug.security import check_password_hash
 
 from app.models import User
 

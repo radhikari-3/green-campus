@@ -1,6 +1,6 @@
 import base64
 import random
-from datetime import datetime
+from datetime import datetime, timezone
 from io import BytesIO
 
 import qrcode
@@ -28,7 +28,7 @@ def logout():
 @dash_bp.route("/dashboard")
 @login_required
 def dashboard():
-    days_since = (datetime.utcnow() - current_user.signup_date).days
+    days_since = (datetime.now(timezone.utc) - current_user.signup_date).days
     email = current_user.email
 
     # Fetch walking activity
@@ -80,7 +80,7 @@ def dashboard():
     total_eco_points = db.session.query(func.sum(ActivityLog.eco_points)).filter(ActivityLog.email == email).scalar() or 0
 
     return render_template(
-        "user_dashboard.html",
+        "dashboard.html",
         title="Eco Points Dashboard",
         username=email.split('@')[0],
         walking_data=walking_data,

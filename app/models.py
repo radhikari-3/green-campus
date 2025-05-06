@@ -2,7 +2,7 @@ from dataclasses import dataclass
 from datetime import date
 from datetime import datetime
 from typing import Optional
-from werkzeug.security import generate_password_hash, check_password_hash
+
 import sqlalchemy as sa
 import sqlalchemy.orm as so
 from flask_login import UserMixin
@@ -31,7 +31,7 @@ class User(UserMixin, db.Model):
 
     # Relationship
     activity_logs: so.WriteOnlyMapped["ActivityLog"] = so.relationship(
-        "ActivityLog", back_populates="user", cascade="all, delete-orphan"
+        "ActivityLog", back_populates="user", cascade="all, delete-orphan", passive_deletes=True
     )
 
     def set_password(self, password):
@@ -77,7 +77,7 @@ class Inventory(db.Model):
     category: so.Mapped[str] = so.mapped_column(sa.String(100))
     marked_price: so.Mapped[float] = so.mapped_column(sa.Float())
     discount: so.Mapped[float] = so.mapped_column(sa.Float(), default=0.75)
-    final_price: so.Mapped[float] = so.mapped_column(sa.Float(), nullable=True)
+    final_price: so.Mapped[float] = so.mapped_column(sa.Float())
     location: so.Mapped[str] = so.mapped_column(sa.String(200))
     user_id: so.Mapped[int] = so.mapped_column(ForeignKey("users.id"))
     user: so.Mapped["User"] = relationship(back_populates="inventory")

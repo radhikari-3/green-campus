@@ -25,10 +25,10 @@ def update_product_fields(product, form):
     """Update product fields from the form."""
     product.name = form.name.data
     product.expiry_date = form.expiry_date.data
-    product.units = form.units.data  # Ensure units are updated
+    product.units = form.units.data
     product.marked_price = form.price.data
     product.location = form.location.data
-    product.final_price = form.price.data  # Update final price if necessary
+    product.final_price = form.price.data
 
 @vendors_bp.route('/smart_food_expiry', methods=['GET', 'POST'])
 @login_required
@@ -99,9 +99,18 @@ def delete_product():
         product_id = delete_product_form.delete_product.data
         product = db.session.get(Inventory, product_id)
         if product:
+            # Log product info for debugging
+            print(f"Deleting product: {product.name} (ID: {product.id})")
+
             db.session.delete(product)
             db.session.commit()
-            flash(f'{product.name} successfully deleted', 'success')
+
+            # Check if the product was successfully deleted
+            deleted_product = db.session.get(Inventory, product_id)
+            if deleted_product is None:
+                flash(f'{product.name} successfully deleted', 'success')
+            else:
+                flash('Failed to delete product.', 'danger')
         else:
             flash('Product not found.', 'danger')
     return redirect(url_for('vendors.inventory'))
@@ -126,8 +135,8 @@ def edit_product():
         product_id = edit_product_form.product_id.data
         product = db.session.get(Inventory, product_id)
         if product:
-            update_product_fields(product, edit_product_form)  # Update all fields, including units
-            db.session.commit()  # Commit changes to the database
+            update_product_fields(product, edit_product_form)
+            db.session.commit()
             flash("Product updated successfully!", "success")
             session['show_confetti'] = True
         else:

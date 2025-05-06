@@ -7,7 +7,7 @@ from sqlalchemy import select
 
 from app.extensions import db, mail
 from app.models import User
-from app.views.smart_expiry_dashboard import get_updated_daily_discounts
+from app.views.food_expiry import get_updated_daily_discounts
 
 
 def scheduled_send_discount_email():
