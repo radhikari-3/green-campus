@@ -13,6 +13,7 @@ from app.forms import (
     SignupForm, ResetPasswordForm
 )
 from app.models import User
+from app.utils import send_email
 
 # Blueprint setup
 auth_bp = Blueprint('auth', __name__, url_prefix='/auth')
@@ -26,31 +27,6 @@ def generate_otp(user):
     user.email_otp = otp
     user.email_otp_expires = datetime.utcnow() + timedelta(minutes=10)
     return otp
-
-
-def send_email(subject, recipients, body, html=None):
-    """
-    Helper function to send an email using Flask-Mail.
-
-    Args:
-        subject (str): The subject of the email.
-        recipients (list): List of recipient email addresses.
-        body (str): The plain text body of the email.
-        html (str, optional): The HTML content of the email. If None, a simple HTML version is generated.
-
-    Returns:
-        None
-    """
-    msg = Message(
-        subject=subject,
-        recipients=recipients,
-        body=body,
-        html=html if html else f"<h3>{subject}</h3><p>{body}</p>",
-        sender=current_app.config['MAIL_DEFAULT_SENDER']
-    )
-    from flask_mail import Mail
-    mail = Mail(current_app)
-    mail.send(msg)
 
 # ---------------------
 # Routes
@@ -176,8 +152,11 @@ def reset_password():
         flash('Your password has been changed.', 'success')
         return redirect(url_for('dash.account'))
 
-    return render_template('generic_form.html', title='Change Password', form=form)
-
+    # 👉 Role-aware template selection
+    if 'Vendor' in current_user.role:
+        return render_template('reset_password_vendor.html', title='Reset Your Password', form=form)
+    else:
+        return render_template('reset_password_user.html', title='Reset Your Password', form=form)
 
 @auth_bp.route('/login', methods=['GET', 'POST'])
 def login():
@@ -207,4 +186,4 @@ def login():
             next_page = url_for('vendors.smart_food_expiry' if 'Vendor' in user.role else 'dash.dashboard')
         return redirect(next_page)
 
-    return render_template('login.html', title='Sign In', form=form)
+    return render_template('generic_form.html', title='Sign In', form=form)

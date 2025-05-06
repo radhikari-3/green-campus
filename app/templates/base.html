@@ -8,41 +8,59 @@
         <meta name="keywords" content="Green Campus, Sustainability, University, Eco-friendly, Energy Saving, Waste Management">
         <meta name="author" content="University of Birmingham Green Campus Team">
         <title>{{ title }}</title>
-        <link
-                href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css"
-                rel="stylesheet"
-                integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH"
-                crossorigin="anonymous">
+        <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" crossorigin="anonymous">
         <link rel="icon" href="{{ url_for('static', filename='images/favicon.ico') }}" type="image/x-icon">
         <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
         <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+        <style>
+            .text-gradient {
+                background: linear-gradient(90deg, #10b981, #3b82f6);
+                -webkit-background-clip: text;
+                -webkit-text-fill-color: transparent;
+            }
+
+            .brand-text {
+                font-size: 1.25rem;
+                letter-spacing: 0.5px;
+            }
+        </style>
     {% endblock %}
 </head>
 
 <body>
 <nav class="navbar navbar-expand-sm bg-dark" data-bs-theme="dark">
     <div class="container-fluid">
-        <a class="navbar-brand" href="{{ url_for('main.home') }}">Green Campus</a>
-        <a class="nav-link text-light ms-3" href="{{ url_for('energy_dash.energy_dashboard') }}">Smart Energy Dashboard</a>
+        <a class="navbar-brand me-4 pe-2 fw-semibold d-flex align-items-center text-gradient" href="{{ url_for('main.home') }}">
+            <i class="bi bi-globe-americas me-2"></i>
+            <span class="brand-text">Green Campus</span>
+        </a>
+        <a class="nav-link text-light ms-5 ps-2" href="{{ url_for('energy_dash.energy_dashboard') }}">Smart Energy Dashboard</a>
+
         <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent"
                 aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
             <span class="navbar-toggler-icon"></span>
         </button>
+
         <div class="collapse navbar-collapse justify-content-end" id="navbarSupportedContent">
             <ul class="navbar-nav mb-2 mb-lg-0">
                 {% if current_user.is_anonymous %}
                     <li class="nav-item">
-                        <a class="nav-link" aria-current="page" href="{{ url_for('auth.login') }}">Login</a>
+                        <a class="nav-link" href="{{ url_for('auth.login') }}">Login</a>
                     </li>
                     <li class="nav-item">
                         <a class="nav-link" href="{{ url_for('auth.signup') }}">Register</a>
                     </li>
                 {% else %}
                     <li class="nav-item">
-                        <a class="nav-link" aria-current="page" href="{{ url_for('dash.logout') }}">Logout</a>
+                        <a class="nav-link" href="{{ url_for('dash.logout') }}">
+                            <i class="bi bi-box-arrow-right me-2"></i> Logout
+                        </a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" aria-current="page" href="{{ url_for('dash.account') }}">Account</a>
+                        <a class="nav-link" href="{{ url_for('dash.account')
+                            if 'Normal' in current_user.role else url_for('vendors.smart_food_expiry') }}">
+                            Account
+                        </a>
                     </li>
                 {% endif %}
             </ul>
@@ -50,8 +68,8 @@
     </div>
 </nav>
 
-<div class="container">
-    <div class="mt-3">
+<div class="container mt-5">
+    <div>
         {% with messages = get_flashed_messages(with_categories=true) %}
         {% if messages %}
         {% for category, message in messages %}
@@ -68,9 +86,7 @@
     </div>
 </div>
 
-{# this adds the confetti #}
 <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
-{# this is to make the toggle menu in the Expiring Food Discount App #}
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-" crossorigin="anonymous"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js" crossorigin="anonymous"></script>
 </body>
 </html>

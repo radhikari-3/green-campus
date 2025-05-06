@@ -113,19 +113,19 @@ The workflow includes:
 
 ## Test Cases
 
-| **Feature**                        | **Test Case**                                      | **Scenario**                                                                 | **Status**       |
-|------------------------------------|---------------------------------------------------|-------------------------------------------------------------------------------|------------------|
-| **Smart Campus Energy Dashboard**  | `test_get_building_names`                         | Mock database query to fetch building names.                                 | ✅ Passed        |
-|                                    | `test_get_energy_usage_by_zone`                   | Mock database query to fetch energy usage by zone.                           | ✅ Passed        |
-|                                    | `test_energy_dashboard_view`                      | Verify energy dashboard page loads successfully.                             | ✅ Passed        |
-|                                    | `test_get_line_chart_view_invalid_payload`        | Test invalid payload for line chart view.                                    | ✅ Passed        |
-|                                    | `test_get_energy_usage_by_zone_invalid_data`      | Handle invalid energy usage data gracefully.                                 | ✅ Passed        |
-|                                    | `test_get_building_names_empty`                   | Handle empty building names gracefully.                                      | ✅ Passed        |
-|                                    | `test_get_energy_usage_by_zone_empty`             | Handle empty energy usage data gracefully.                                   | ✅ Passed        |
-| **Gamified Eco-Points System**     | `test_calculate_total_eco_points`                 | Calculate total eco-points for a user.                                       | ✅ Passed        |
-|                                    | `test_calculate_user_eco_points_valid_user`       | Calculate eco-points for a valid user.                                       | ✅ Passed        |
-|                                    | `test_calculate_user_eco_points_no_points`        | Handle scenario where user has no eco-points.                                | ✅ Passed        |
-| **Authentication**                 | `test_login_with_unverified_email`               | Test login with an unverified email.                                         | ✅ Passed        |
-| **Vendor Dashboard**               | `test_get_user_products_valid_user`              | Fetch products for a valid user.                                             | ✅ Passed        |
-|                                    | `test_get_user_products_no_products` (commented) | Handle scenario where user has no products.                                  | 🚧 Pending       |
+| **Feature**                        | **Test Case**                                | **Scenario**                                                                 | **Status**       |
+|------------------------------------|----------------------------------------------|-------------------------------------------------------------------------------|------------------|
+| **Smart Campus Energy Dashboard**  | `test_get_building_names`                    | Mock database query to fetch building names.                                 | ✅ Passed        |
+|                                    | `test_get_energy_usage_by_zone`              | Mock database query to fetch energy usage by zone.                           | ✅ Passed        |
+|                                    | `test_energy_dashboard_view`                 | Verify energy dashboard page loads successfully.                             | ✅ Passed        |
+|                                    | `test_get_line_chart_view_invalid_payload`   | Test invalid payload for line chart view.                                    | ✅ Passed        |
+|                                    | `test_get_energy_usage_by_zone_invalid_data` | Handle invalid energy usage data gracefully.                                 | ✅ Passed        |
+|                                    | `test_get_building_names_empty`              | Handle empty building names gracefully.                                      | ✅ Passed        |
+|                                    | `test_get_energy_usage_by_zone_empty`        | Handle empty energy usage data gracefully.                                   | ✅ Passed        |
+| **Gamified Eco-Points System**     | `test_calculate_total_eco_points`            | Calculate total eco-points for a user.                                       | ✅ Passed        |
+|                                    | `test_calculate_user_eco_points_valid_user`  | Calculate eco-points for a valid user.                                       | ✅ Passed        |
+|                                    | `test_calculate_user_eco_points_no_points`   | Handle scenario where user has no eco-points.                                | ✅ Passed        |
+| **Authentication**                 | `test_login_with_unverified_email`           | Test login with an unverified email.                                         | ✅ Passed        |
+| **Vendor Dashboard**               | `test_get_user_products_valid_user`          | Fetch products for a valid user.                                             | ✅ Passed        |
+|                                    | `test_get_user_products_no_products`         | Handle scenario where user has no products.                                  | ✅ Passed       |
 

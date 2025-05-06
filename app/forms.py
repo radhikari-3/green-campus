@@ -28,7 +28,7 @@ class LoginForm(FlaskForm):
 
 class AddProductForm(FlaskForm):
     name = StringField('Product Name', validators=[DataRequired()])
-    expiry_date = DateField('Expiry Date', validators=[DataRequired(), validate_expiry_date])
+    expiry_date = DateField('Expiry Date (YYYY-MM-DD)', validators=[DataRequired(), validate_expiry_date])
     units = IntegerField('Units', validators= [NumberRange(1,30, "You can only upload from 1 to 30 units.")])
     price = FloatField('Price', validators= [DataRequired()])
     category = SelectField('Product Category', validators=[DataRequired()],
@@ -44,13 +44,13 @@ class DeleteForm(FlaskForm):
 class EditProductForm(FlaskForm):
     product_id = HiddenField('Product ID', default="-1")
     name = StringField('Product Name', validators=[DataRequired()])
-    expiry_date = DateField('Expiry Date', validators=[DataRequired(), validate_expiry_date])
+    expiry_date = DateField('Expiry Date (YYYY-MM-DD)', validators=[DataRequired(), validate_expiry_date])
     units = IntegerField('Units', validators=[NumberRange(1, 30, "You can only upload from 1 to 30 units.")])
     price = FloatField('Price', validators=[DataRequired()])
     category = SelectField('Product Category', validators=[DataRequired()],
                            choices=[("f","Fruits and Vegetables"),("g","Grains"),
                                     ("d","Dairy and Animal products"),("n","Nuts")])
-    discount = FloatField('Discount Rate', validators=[InputRequired()])
+    discount = FloatField('Discount Rate')
     location = StringField('Location', validators=[DataRequired()])
     submit = SubmitField('Update')
 

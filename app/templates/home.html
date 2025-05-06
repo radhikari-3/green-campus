@@ -19,18 +19,21 @@
     <section id="features" class="section">
         <h2>Our Key Features</h2>
         <div class="features-grid">
-            <a href="{{ url_for('energy_dash.energy_dashboard') }}" class="feature-card" style="text-decoration: none; color: inherit;">
+            <a href="{{ url_for('energy_dash.energy_dashboard') }}" class="feature-card"
+               style="text-decoration: none; color: inherit;">
                 <h3>Smart Energy Dashboard</h3>
                 <p>Monitor real-time energy usage and optimize campus-wide consumption.</p>
             </a>
 
-            <a href="{{ url_for('auth.login') if not current_user.is_authenticated else url_for('dash.dashboard') }}"
+            <a href="{{ url_for('auth.login') if not current_user.is_authenticated or 'Normal'
+            not in current_user.role else url_for('dash.dashboard') }}"
                class="feature-card" style="text-decoration: none; color: inherit;">
                 <h3>Eco-Points Rewards</h3>
                 <p>Earn Eco-Points for sustainable actions and redeem exciting rewards!</p>
             </a>
 
-             <a href="{{ url_for('auth.login') if not current_user.is_authenticated else url_for('vendors.smart_food_expiry') }}"
+            <a href="{{ url_for('auth.login') if not current_user.is_authenticated or 'Normal'
+            not in current_user.role else url_for('smart_exp.view_expiring_products') }}"
                class="feature-card" style="text-decoration: none; color: inherit;">
                 <h3>Expiring Food Discounts</h3>
                 <p>Save food and money with dynamic discounting of near-expiry items.</p>
@@ -49,7 +52,7 @@
     <section id="join-us" class="section">
         <h2>Join Our Sustainability Movement</h2>
         <p>Become part of a global model for green universities and make an impact today!</p>
-        <a href="{{ url_for('auth.signup')}}" class="btn-secondary">Get Started</a>
+        <a href="{{ url_for('auth.signup') }}" class="btn-secondary">Get Started</a>
     </section>
 
     <footer class="footer" style="width: 100vw; margin-left: calc(-50vw + 50%);">
