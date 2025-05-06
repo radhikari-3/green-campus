@@ -113,48 +113,19 @@ The workflow includes:
 
 ## Test Cases
 
-### 1. Smart Campus Energy Dashboard
-
--   **Positive Test Case**:
-    -   **Scenario**: User views real-time energy usage.
-    -   **Steps**: Log in, navigate to dashboard, verify energy usage
-        data (e.g., kWh) and CO2 metrics display correctly.
-    -   **Expected Result**: Data is accurate, charts render without
-        errors.
--   **Negative Test Case**:
-    -   **Scenario**: IoT sensor data is unavailable.
-    -   **Steps**: Simulate sensor failure, access dashboard.
-    -   **Expected Result**: Graceful error message displayed, dashboard
-        remains functional.
-
-### 2. Gamified Eco-Points and Rewards System
-
--   **Positive Test Case**:
-    -   **Scenario**: User earns and redeems Eco-Points.
-    -   **Steps**: Perform sustainable action (e.g., log recycling),
-        check points balance, redeem points for a QR voucher.
-    -   **Expected Result**: Points updated, QR code generated and
-        valid.
--   **Negative Test Case**:
-    -   **Scenario**: User attempts to redeem points with insufficient
-        balance.
-    -   **Steps**: Attempt redemption with 0 points.
-    -   **Expected Result**: Error message indicating insufficient
-        points.
-
-### 3. Smart Expiring Food Discount System
-
--   **Positive Test Case**:
-    -   **Scenario**: Vendor lists near-expiry item, user receives
-        notification.
-    -   **Steps**: Vendor adds item with discount, user checks
-        notifications.
-    -   **Expected Result**: Notification received, item listed with
-        correct discount.
--   **Negative Test Case**:
-    -   **Scenario**: Vendor submits invalid expiry date.
-    -   **Steps**: Vendor enters future date beyond threshold (e.g., 1
-        year).
-    -   **Expected Result**: Form validation fails, error message
-        displayed.
+| **Feature**                        | **Test Case**                                      | **Scenario**                                                                 | **Status**       |
+|------------------------------------|---------------------------------------------------|-------------------------------------------------------------------------------|------------------|
+| **Smart Campus Energy Dashboard**  | `test_get_building_names`                         | Mock database query to fetch building names.                                 | ✅ Passed        |
+|                                    | `test_get_energy_usage_by_zone`                   | Mock database query to fetch energy usage by zone.                           | ✅ Passed        |
+|                                    | `test_energy_dashboard_view`                      | Verify energy dashboard page loads successfully.                             | ✅ Passed        |
+|                                    | `test_get_line_chart_view_invalid_payload`        | Test invalid payload for line chart view.                                    | ✅ Passed        |
+|                                    | `test_get_energy_usage_by_zone_invalid_data`      | Handle invalid energy usage data gracefully.                                 | ✅ Passed        |
+|                                    | `test_get_building_names_empty`                   | Handle empty building names gracefully.                                      | ✅ Passed        |
+|                                    | `test_get_energy_usage_by_zone_empty`             | Handle empty energy usage data gracefully.                                   | ✅ Passed        |
+| **Gamified Eco-Points System**     | `test_calculate_total_eco_points`                 | Calculate total eco-points for a user.                                       | ✅ Passed        |
+|                                    | `test_calculate_user_eco_points_valid_user`       | Calculate eco-points for a valid user.                                       | ✅ Passed        |
+|                                    | `test_calculate_user_eco_points_no_points`        | Handle scenario where user has no eco-points.                                | ✅ Passed        |
+| **Authentication**                 | `test_login_with_unverified_email`               | Test login with an unverified email.                                         | ✅ Passed        |
+| **Vendor Dashboard**               | `test_get_user_products_valid_user`              | Fetch products for a valid user.                                             | ✅ Passed        |
+|                                    | `test_get_user_products_no_products` (commented) | Handle scenario where user has no products.                                  | 🚧 Pending       |
 
