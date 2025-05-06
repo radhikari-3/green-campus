@@ -1,10 +1,12 @@
-body {
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+html, body {
+    height: 100%;
     margin: 0;
-    padding: 0;
-    background-color: #f5f9f6;
-    color: #333;
-    scroll-behavior: smooth;
+}
+
+.container {
+    min-height: calc(100vh - 60px); /* Adjust 60px to match your footer height */
+    display: flex;
+    flex-direction: column;
 }
 
 .landing-page .hero {
@@ -12,6 +14,8 @@ body {
     color: white;
     text-align: center;
     padding: 120px 20px;
+    margin-left: calc(-50vw + 50%);
+    width: 100vw;
 }
 
 .landing-page .hero h1 {
@@ -55,8 +59,10 @@ body {
     color: white;
 }
 
+
 .section {
     padding: 60px 20px;
+    margin-bottom: 40px;
     text-align: center;
 }
 
@@ -98,6 +104,7 @@ body {
     text-align: center;
     padding: 20px;
     font-size: 0.9em;
+<<<<<<< Updated upstream
 }
 
 
@@ -155,3 +162,4 @@ input[type=number] {
         font-size: 1rem;
     }
 }
+

@@ -1,76 +1,85 @@
-<!doctype html>
-<html lang="en">
-<head>
-    {% block head %}
-        <meta charset="UTF-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <meta name="description" content="Green Campus Initiative - Building a sustainable university through smart technology and community engagement.">
-        <meta name="keywords" content="Green Campus, Sustainability, University, Eco-friendly, Energy Saving, Waste Management">
-        <meta name="author" content="University of Birmingham Green Campus Team">
-        <title>{{ title }}</title>
-        <link
-                href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css"
-                rel="stylesheet"
-                integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH"
-                crossorigin="anonymous">
-        <link rel="icon" href="{{ url_for('static', filename='images/favicon.ico') }}" type="image/x-icon">
-        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
-        <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
-    {% endblock %}
-</head>
+{% extends "base.html" %}
 
-<body>
-<nav class="navbar navbar-expand-sm bg-dark" data-bs-theme="dark">
-    <div class="container">
-        <a class="navbar-brand" href="{{ url_for('main.home') }}">Green Campus</a>
-        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent"
-                aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
-            <span class="navbar-toggler-icon"></span>
-        </button>
-        <div class="collapse navbar-collapse justify-content-end" id="navbarSupportedContent">
-            <ul class="navbar-nav mb-2 mb-lg-0">
-                <li class="nav-item">
-                    <a class="nav-link" href="{{ url_for('energy_dash.energy_dashboard') }}">Smart Energy Dashboard</a>
-                </li>
-                {% if current_user.is_anonymous %}
+{% block head %}
+{{ super() }}
+<style>
+    .sidebar {
+        background-color: #212529; /* Matches navbar bg-dark */
+        color: #ffffff; /* White text for contrast */
+        min-height: calc(100vh - 56px); /* Full height minus navbar height (Bootstrap default) */
+        margin-top: 0; /* Remove any top margin */
+        padding-top: 0; /* Remove top padding */
+        position: fixed; /* Fix sidebar to the left */
+        left: 0; /* Align to the left */
+        top: 56px; /* Below the navbar */
+        width: 250px; /* Fixed width for sidebar */
+    }
+    .sidebar .nav-link {
+        color: #adb5bd; /* Muted gray for inactive links, similar to navbar */
+        transition: color 0.2s, background-color 0.2s;
+    }
+    .sidebar .nav-link:hover {
+        color: #ffffff; /* Bright white on hover, matching navbar hover */
+        background-color: #343a40; /* Slightly lighter dark for hover effect */
+    }
+    .sidebar .nav-link.active {
+        color: #ffffff; /* White for active link */
+        background-color: #495057; /* Slightly lighter than bg-dark for distinction */
+        font-weight: bold;
+    }
+    .sidebar .bi {
+        color: #adb5bd; /* Icon color matches text */
+    }
+    .sidebar .nav-link:hover .bi {
+        color: #ffffff; /* Icon brightens on hover */
+    }
+    .container-fluid {
+        margin-left: 250px; /* Offset main content by sidebar width */
+        padding-top: 0; /* Ensure no top padding on container */
+    }
+    .row {
+        margin-top: 0; /* Remove any top margin on row */
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="container-fluid">
+    <div class="row">
+        <!-- Sidebar -->
+        <nav id="sidebar" class="col-md-3 col-lg-2 d-md-block sidebar">
+            <div class="position-sticky pt-3">
+                <ul class="nav flex-column">
                     <li class="nav-item">
-                        <a class="nav-link" aria-current="page" href="{{ url_for('auth.login') }}">Login</a>
+                        <a class="nav-link active" aria-current="page" href="{{ url_for('energy_dash.energy_dashboard') }}">
+                            <i class="bi bi-speedometer2 me-2"></i>Dashboard
+                        </a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="{{ url_for('auth.signup') }}">Register</a>
-                    </li>
-                {% else %}
-                    <li class="nav-item">
-                        <a class="nav-link" aria-current="page" href="{{ url_for('dash.logout') }}">Logout</a>
+                        <a class="nav-link" href="#">
+                            <i class="bi bi-lightning-charge-fill me-2"></i>Energy Usage
+                        </a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" aria-current="page" href="{{ url_for('dash.account') }}">Account</a>
+                        <a class="nav-link" href="#">
+                            <i class="bi bi-recycle me-2"></i>Waste Management
+                        </a>
                     </li>
-                {% endif %}
-            </ul>
-        </div>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#">
+                            <i class="bi bi-gear-fill me-2"></i>Settings
+                        </a>
+                    </li>
+                </ul>
+            </div>
+        </nav>
+
+        <!-- Main content -->
+        <main class="col-md-9 ms-sm-auto col-lg-10 px-md-4">
+            <div class="container">
+                {% block dashboard_content %}{% endblock dashboard_content %}
+            </div>
+        </main>
     </div>
-</nav>
-
-<div class="container mt-3">
-    {% with messages = get_flashed_messages(with_categories=true) %}
-    {% if messages %}
-    {% for category, message in messages %}
-    <div class="alert alert-{{ category }}" role="alert">
-        {{ message }}
-    </div>
-    {% endfor %}
-    {% endif %}
-    {% endwith %}
 </div>
-
-<div class="container">
-    {% block content %}{% endblock content %}
-</div>
-
-{# this adds the confetti #}
-<script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
-{# this is to make the toggle menu in the Expiring Food Discount App #}
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-" crossorigin="anonymous"></script>
-</body>
-</html>
+{% endblock content %}
