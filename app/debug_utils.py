@@ -115,14 +115,18 @@ def create_mock_inventory_data():
         """Generate random inventory data for all users."""
 
         categories = {
-            "pizza": "g",
-            "salad": "f",
-            "milk": "d",
-            "bread": "g",
-            "grapes": "f",
-            "oranges": "f",
-            "tomato": "f",
-            "nuts": "n"
+            "4 Cheese Pizza": "r",
+            "Milk": "d",
+            "Sour Dough Bread": "b",
+            "Brioche Bread": "b",
+            "Grape": "f",
+            "Orange": "f",
+            "Tomato": "f",
+            "Churros": "b",
+            "Gulab Jamun": "s",
+            "Green Salad": "r",
+            "Chicken Drumsticks": "m"
+            ""
         }
         expiry_date = datetime.date.today() + datetime.timedelta(days=random.choice([0, 1, 2, 3]))
         users = User.query.all()
@@ -136,7 +140,7 @@ def create_mock_inventory_data():
                     expiry_date=expiry_date,
                     units=random.randint(1, 50),
                     category=categories[name],
-                    marked_price=round(random.uniform(10.0, 100.0), 2),
+                    marked_price=round(random.uniform(0.0, 20.0), 2),
                     discount=round(random.uniform(0.1, 0.5), 2),
                     final_price=0.0,  # Will calculate below
                     location=random.choice(["Nisa Local", "Spar", "Campus Living"]),

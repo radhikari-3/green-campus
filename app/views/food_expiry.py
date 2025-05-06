@@ -23,18 +23,24 @@ def view_expiring_products():
 @login_required
 def expiring_offers(category):
     total_points, pounds = calculate_user_eco_points(current_user.email)
+
     category_map = {
-        "f": "Fruits & Vegetable related products",  # f: fruits and Vegetables
-        "g": "Grains & related products",  # g: grains
+        "f": "Fruits and Vegetables",  # f: fruits and Vegetables
+        "b": "Bakery",  # g: grains
         "d": "Dairy & dairy related products",  # d: dairy and related products
-        "n": "Nuts & related products",  # n: nuts
+        "m": "Nuts & related products",
+        "s": "Sweets",
+        "r": "Ready to Eat"
     }
     relevant_products = Inventory.query.filter(Inventory.category == category).all()
     relevant_title = "Best offers on " + category_map[category]
+    locations = db.session.execute(select(Inventory.location).distinct()).scalars().all()
+
     return render_template("category_wise_products.html",
                            title = relevant_title,
                            relevant_products = relevant_products,
                            total_points = total_points,
+                           locations = locations,
                            pounds = pounds)
 
 
@@ -46,17 +52,20 @@ def calculate_user_eco_points(email):
 
 def discount_applicator(product_instance):
     category_range = {
-        "f": [70, 30],  # f: fruits and Vegetables
-        "g": [90, 60],  # g: grains
-        "d": [80, 40],  # d: dairy and related products
-        "n": [90, 70],  # n: nuts
+    "f": [50, 20],  # f: fruits and Vegetables
+    "b": [80, 50],  # b: bakery
+    "d": [70, 40],  # d: dairy and related products
+    "m": [60, 30],  # m: meat
+    "s": [85, 60],  # s: sweets
+    "r": [75, 45],  # r: ready to eat
     }
     product_category = product_instance.category
     discount_range = category_range[product_category[0]]
     #logger.debug("discount rate is " + str(product_instance.discount))
     #logger.debug(type(product_instance.discount))
     # To ensure that if no discount rate is given a category based discount, contingent on the category can be used
-    discount_rate = (1 - product_instance.discount / 100) if product_instance.discount is not None  else (uniform(discount_range[0], discount_range[1])) / 100
+    discount_rate = (1 - product_instance.discount / 100) if (product_instance.discount is not
+                                                              None)  else (uniform(discount_range[0], discount_range[1])) / 100
     date_today = datetime.today()
 
     if product_instance.expiry_date <= (date_today + timedelta(days=1)).date():

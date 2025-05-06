@@ -32,8 +32,8 @@ class AddProductForm(FlaskForm):
     units = IntegerField('Units', validators= [NumberRange(1,30, "You can only upload from 1 to 30 units.")])
     price = FloatField('Price', validators= [DataRequired()])
     category = SelectField('Product Category', validators=[DataRequired()],
-                           choices=[("f", "Fruits and Vegetables"), ("g", "Grains"),
-                                    ("d", "Dairy and Animal products"), ("n", "Nuts")])
+                           choices=[("f", "Fruits and Vegetables"), ("b", "Bakery"),
+                                    ("d", "Dairy"), ("m", "Meat"), ("s", "Sweets"), ("r", "Ready to Eat")])
     discount = FloatField('Discount Rate', validators=[InputRequired()])
     location = StringField('Location', validators=[DataRequired()])
     submit = SubmitField('Submit')
@@ -48,8 +48,8 @@ class EditProductForm(FlaskForm):
     units = IntegerField('Units', validators=[NumberRange(1, 30, "You can only upload from 1 to 30 units.")])
     price = FloatField('Price', validators=[DataRequired()])
     category = SelectField('Product Category', validators=[DataRequired()],
-                           choices=[("f","Fruits and Vegetables"),("g","Grains"),
-                                    ("d","Dairy and Animal products"),("n","Nuts")])
+                           choices=[("f","Fruits and Vegetables"),("b","Bakery"),
+                                    ("d","Dairy"),("m","Meat"), ("s","Sweets"), ("r","Ready to Eat")])
     discount = FloatField('Discount Rate')
     location = StringField('Location', validators=[DataRequired()])
     submit = SubmitField('Update')

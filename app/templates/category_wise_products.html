@@ -23,9 +23,31 @@
         </p>
     </div>
 
-    <div class="row row-cols-1 row-cols-md-3 g-4 justify-content-center">
+      <!-- Filter Section -->
+      <div class="d-flex justify-content-center mb-4">
+        <select id="price-filter" class="form-select w-auto mx-2" onchange="applyFilters()">
+          <option value="all">Price: All</option>
+          <option value="low-to-high">Price: Low to High</option>
+          <option value="high-to-low">Price: High to Low</option>
+        </select>
+
+        <select id="expiry-filter" class="form-select w-auto mx-2" onchange="applyFilters()">
+          <option value="all">Expiry: All</option>
+          <option value="soon">Expiring Soon</option>
+          <option value="later">Expiring Later</option>
+        </select>
+
+        <select id="location-filter" class="form-select w-auto mx-2" onchange="applyFilters()">
+          <option value="all">Location: All</option>
+          {% for location in locations %}
+            <option value="{{ location }}">{{ location }}</option>
+          {% endfor %}
+        </select>
+      </div>
+
+    <div class="row row-cols-1 row-cols-md-3 g-4 justify-content-center" id="product-list">
         {% for product in relevant_products %}
-        <div class="col">
+        <div class="col product-card-container" data-price="{{ product.final_price }}" data-expiry="{{ product.expiry_date }}" data-location="{{ product.location }}">
             <div class="card h-100 border-0 shadow-lg {{ 'product-card-insufficient' if pounds < product.final_price else 'product-card' }}">
                 <div class="card-body text-white">
                     <h5 class="card-title fw-bold mb-3">{{ product.name|upper }}</h5>
@@ -66,4 +88,5 @@
 </div>
 
 <link rel="stylesheet" href="{{ url_for('static', filename='css/category_wise_products.css') }}">
+    <script src="{{ url_for('static', filename='js/product_filters.js') }}"></script>
 {% endblock %}
