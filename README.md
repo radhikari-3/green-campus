@@ -23,22 +23,66 @@ count: 94)
     git clone https://github.com/radhikari-3/green-campus.git
     cd green-campus
     ```
+    
 
-2.  **Install Dependencies**\
+2.  **Install Conda**\
+    If you don't have Conda installed, download and install it from 
+    the official website: [Anaconda](https://www.anaconda.com/products/distribution).
+
+
+3.  **Create a Conda Environment**\
+    Create a new Conda environment for the project:
+
+    ``` bash
+    conda create -n green-campus python=3.12
+    ```
+    Activate the environment:
+
+    ``` bash
+    conda activate green-campus
+    ```
+
+
+4.  **Install Dependencies**\
     Install the required dependencies using pip:
 
     ``` bash
     pip install -r requirements.txt
     ```
 
-3.  **Setup Docker**\
-    Ensure Docker is installed and running. Run the Docker Compose file:
+
+5.  **Setup Docker (Optional)**\
+    Ensure Docker is installed and running. Run the Docker Compose file
+    presented in the project directory, if you wish to use Docker for PostgreSQL and MQTT services.:
 
     ``` bash
     docker compose up
     ```
+    Note: Make sure to have Docker installed and running on your machine.
+    This command will start the PostgreSQL database and other services (MQTT) defined in the `green-campus/docker-compose.yml` file.
 
-4.  **Initialize the Database**\
+
+6.  **Setup Environment Variables**\
+    Change the `.flaskenv` file in the root directory of the project as needed.:
+
+    ```aiignore
+        #DB Connection
+        DB_USERNAME=<YOUR DB USERNAME>  # Database username for connecting to PostgreSQL.
+        DB_PASSWORD=<YOUR DB PASSWORD>  # Database password for the specified username.
+        DB_NAME=<YOUR DB NAME>  # Name of the PostgreSQL database.
+        
+        #Email Service
+        SENDGRID_API_KEY = "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"  # API key for SendGrid email service.
+        MAIL_DEFAULT_SENDER = 'testinggreencampus@outlook.com'  # Default sender email address for outgoing emails.
+        
+        #Scheduler and IoT Simulator
+        SCHEDULER_ENABLED = False  # Flag to enable or disable the task scheduler which runs at 7 AM daily.
+        SCHEDULER_TEST_NOW = False  # Flag to trigger immediate execution of scheduled tasks.
+        IOT_SIMULATOR_ACTIVE = False  # Flag to activate or deactivate the IoT simulator.
+    ```
+
+
+7.  **Initialize the Database**\
     Run the following commands to create the database:
 
     ``` bash
@@ -46,15 +90,37 @@ count: 94)
     >>> db.create_all()
     ```
 
-5.  **Run Tests**\
-    Execute the test suite to ensure functionality:
+
+8.  **Initialize the Database**\
+    Run the following commands to create the database:
 
     ``` bash
-    pytest
-    ```
+    flask shell
+    >>>    reset_db()
+       ```
+    Note: This command will create the database tables and populate them with initial data.
+    This might take a few minutes, depending on your system's performance.
+    
 
-6.  **Access the Application**\
-    Open your browser and navigate to `http://localhost:5000`.
+9.  **Create Run Configurations**\
+    Create a new run configuration in your IDE (e.g., PyCharm) to run the Flask application.
+
+    ```
+    Go to Run > Edit Configurations.  
+    Click on the "+" icon to add a new configuration.
+    Select "Flask Server" from the list.
+    Name the configuration (e.g., "Green Campus").
+    In the Run Configuration, set the following:
+    Select your Python interpreter (the one where you installed the dependencies).
+    Module path: `flask` 
+    command: `run`
+    Working directory: `<path_to_your_project_directory>`
+    Path to ".env" files: `<path_to_your_project_directory>/.flaskenv`
+    ```
+    
+
+10. **Access the Application**\
+    Open your browser and navigate to `http://127.0.0.1:5000`.
 
 ## Technologies Used
 
