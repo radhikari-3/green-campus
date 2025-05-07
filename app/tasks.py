@@ -10,16 +10,25 @@ from app.models import User
 from app.utils import send_email
 from app.views.food_expiry import get_updated_daily_discounts
 
-
+# === Scheduled Task: Send Daily Discount Email ===
 def scheduled_send_discount_email():
+    """
+    Main function executed by the APScheduler to:
+    - Fetch expiring products
+    - Generate discount offers
+    - Send a formatted email with the deals to all users
+    """
     with current_app.app_context():
         recipients = _get_recipient_emails()
+
         if not recipients:
             logging.info("No recipients found. Email not sent.")
             return
 
-        # Apply and fetch updated discounts
+        # Step 1: Update discounts in DB for the next 3 days
         get_updated_daily_discounts(3)
+
+        # Step 2: Fetch products expiring in the next 1 day
         products = get_updated_daily_discounts(1)
 
         if not products:
@@ -29,16 +38,15 @@ def scheduled_send_discount_email():
         try:
             subject = "Items with major discounts, expiring in 1 day! 🌱"
             msg = _compose_discount_email(recipients, products, subject)
-            # Older function
-            # mail.send(msg)
-            # Use the generic email function
+
+            # Use custom email function to send with optional formatting and attachment
             send_email(
                 subject=subject,
-                bcc = [recipients],
+                recipients=recipients,
+                bcc=[recipients],
                 body=msg.body,
                 html=msg.html,
             )
-
 
             logging.info(f"Discount email sent to {len(recipients)} recipients.")
         except SMTPRecipientsRefused as e:
@@ -47,7 +55,11 @@ def scheduled_send_discount_email():
             logging.error("SMTP error occurred: %s", str(e))
 
 
+# === Helper: Fetch All Verified Email Recipients ===
 def _get_recipient_emails():
+    """
+    Retrieves a list of all user email addresses for email dispatch.
+    """
     return [
         user.email.strip()
         for user in db.session.scalars(select(User)).all()
@@ -55,8 +67,11 @@ def _get_recipient_emails():
     ]
 
 
+# === Helper: Create Formatted Email Message ===
 def _compose_discount_email(recipients, products, subject):
-
+    """
+    Composes an email message with both HTML and plain text versions.
+    """
     html_body = _generate_html_table(products, subject)
     text_body = _generate_plain_text(products)
 
@@ -66,7 +81,11 @@ def _compose_discount_email(recipients, products, subject):
     return msg
 
 
+# === Helper: Generate HTML Table Body for Discount Email ===
 def _generate_html_table(products, subject):
+    """
+    Creates a styled HTML table showing product discount details.
+    """
     rows = "".join(f"""
         <tr>
             <td>{p.name}</td>
@@ -99,7 +118,12 @@ def _generate_html_table(products, subject):
     </div>
     """
 
+
+# === Helper: Generate Plain Text Body for Discount Email ===
 def _generate_plain_text(products):
+    """
+    Creates a text-only fallback version of the discount email.
+    """
     lines = ["Name | Expiry | Units | Marked Price | Final Price | Location", "-" * 60]
     for p in products:
         lines.append(f"{p.name} | {p.expiry_date:%Y-%m-%d} | {p.units} | £{p.marked_price:.2f} | £{p.final_price:.2f} | {p.location}")
