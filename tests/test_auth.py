@@ -1,5 +1,7 @@
 from flask import url_for
+
 from app.models import User
+
 
 # === Test: Login Attempt with Unverified Email ===
 def test_login_with_unverified_email(client, db_session):

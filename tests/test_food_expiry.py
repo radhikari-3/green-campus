@@ -1,5 +1,7 @@
 from unittest.mock import patch
+
 from app.views.food_expiry import calculate_user_eco_points
+
 
 # === Unit Test: Valid User with 100 Eco Points ===
 @patch('app.views.food_expiry.db.session.query')

@@ -25,6 +25,7 @@ class Config:
     SQLALCHEMY_ECHO = False
 
     # Database URI constructed from environment variables
+    #SQLALCHEMY_DATABASE_URI = f"sqlite:///{os.path.join(basedir, 'app.db')}"
     SQLALCHEMY_DATABASE_URI = (
         f"postgresql://{os.environ.get('DB_USERNAME', 'default_user')}:"
         f"{os.environ.get('DB_PASSWORD', 'default_password')}@localhost/"

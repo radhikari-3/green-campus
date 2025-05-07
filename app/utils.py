@@ -3,9 +3,10 @@ import os
 from datetime import datetime, timedelta
 from random import uniform
 
-from app import logger
 from flask import current_app
 from flask_mail import Message, Mail
+
+from app import logger
 
 # === Base Path Setup ===
 # Used to construct paths for accessing static files

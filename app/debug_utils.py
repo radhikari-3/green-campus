@@ -7,6 +7,7 @@ from app.iot_simulator import generate_reading
 from app.models import ActivityLog, User, Inventory, EnergyReading
 from app.utils import load_buildings_data
 
+
 # === Reset and Seed Database ===
 def reset_db():
     """

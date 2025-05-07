@@ -1,4 +1,5 @@
 from unittest.mock import patch
+
 from flask import url_for
 
 from app.views.energy_analytics import get_building_names, get_energy_usage_by_zone

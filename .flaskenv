@@ -6,32 +6,29 @@ FLASK_DEBUG=1
 
 # === Database Configuration ===
 
-DB_USERNAME=postgres
-# Username used to connect to the PostgreSQL database
+DB_USERNAME=local
 
 DB_PASSWORD=admin
-# Password used for the database connection
 
 DB_NAME=postgres
-# Name of the PostgreSQL database to connect to
 
 
 # === Email / SendGrid Configuration ===
 
-SENDGRID_API_KEY="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"
 # Secret API key used for authentication with SendGrid's SMTP service
+SENDGRID_API_KEY="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"
 
-MAIL_DEFAULT_SENDER=testinggreencampus@outlook.com
 # Default email address used in the "From" field for outgoing application emails
+MAIL_DEFAULT_SENDER=testinggreencampus@outlook.com
 
 
 # === Feature Flags / Background Tasks ===
-
-SCHEDULER_ENABLED=False
 # Enables or disables APScheduler background job execution
+SCHEDULER_ENABLED=False
 
-SCHEDULER_TEST_NOW=False
 # If True, the scheduled job (e.g. discount email) runs immediately on startup
+SCHEDULER_TEST_NOW=False
 
-IOT_SIMULATOR_ACTIVE=False
 # Enables or disables the background IoT data simulation thread
+IOT_SIMULATOR_ACTIVE=False
+
