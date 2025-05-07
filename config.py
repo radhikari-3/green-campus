@@ -19,7 +19,7 @@ class Config:
     MAIL_USERNAME = 'apikey'
     MAIL_PASSWORD = os.environ.get('SENDGRID_API_KEY')
     MAIL_DEFAULT_SENDER = os.environ.get('MAIL_DEFAULT_SENDER')
-    SCHEDULER_ENABLED = False
-    SCHEDULER_TEST_NOW = False
-    IOT_SIMULATOR_ACTIVE = False
+    SCHEDULER_ENABLED = os.environ.get('SCHEDULER_ENABLED')
+    SCHEDULER_TEST_NOW = os.environ.get('SCHEDULER_TEST_NOW')
+    IOT_SIMULATOR_ACTIVE = os.environ.get('IOT_SIMULATOR_ACTIVE')
 
