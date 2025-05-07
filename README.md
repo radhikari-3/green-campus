@@ -11,8 +11,7 @@ waste management, offering a smart energy dashboard, a gamified
 Eco-Points system, and a food waste reduction feature through dynamic
 discounts. By combining real-time monitoring, gamification, and user
 engagement, Green Campus fosters sustainable behaviors, positioning
-itself as a model for eco-friendly campus operations worldwide. (Word
-count: 94)
+itself as a model for eco-friendly campus operations worldwide.
 
 ## Setup
 
