@@ -64,6 +64,21 @@ count: 94)
 -   **Libraries**: SQLAlchemy (ORM), Chart.js (data visualization),
     qrcode (QR code generation), Bootstrap (UI components), Flask-Mail, Flask-Scheduler, Flask-Login
 
+## Application Configuration
+-  **Environment Variables**: Configuration settings stored in a `.flaskenv` file.
+    ```aiignore
+        DB_USERNAME=<YOUR DB USERNAME>  # Database username for connecting to PostgreSQL.
+        DB_PASSWORD=<YOUR DB PASSWORD>  # Database password for the specified username.
+        DB_NAME=<YOUR DB NAME>  # Name of the PostgreSQL database.
+        
+        SENDGRID_API_KEY = "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"  # API key for SendGrid email service.
+        MAIL_DEFAULT_SENDER = 'testinggreencampus@outlook.com'  # Default sender email address for outgoing emails.
+        
+        SCHEDULER_ENABLED = False  # Flag to enable or disable the task scheduler which runs at 7 AM daily.
+        SCHEDULER_TEST_NOW = False  # Flag to trigger immediate execution of scheduled tasks.
+        IOT_SIMULATOR_ACTIVE = False  # Flag to activate or deactivate the IoT simulator.
+    ```
+
 ## Implemented Functionalities
 1.  **Smart Campus Energy Dashboard**
     -   Displays [real-time energy usage](http://127.0.0.1:5000/energy_analytics) and environmental impact metrics 

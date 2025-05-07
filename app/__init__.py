@@ -21,7 +21,7 @@ from config import Config
 first_request_handled = False
 
 def create_app(config_class=Config, test_config=None):
-    app = Flask(__name__)
+    app = Flask(__name__, template_folder='static/templates')
     app.config.from_object(Config)
 
     if test_config:
@@ -45,7 +45,8 @@ def create_app(config_class=Config, test_config=None):
     app.register_blueprint(energy_bp)
 
     # Setup scheduler
-    if app.config.get('SCHEDULER_ENABLED', True):
+
+    if str(app.config.get('SCHEDULER_ENABLED', 'false')).lower() == 'true':
         scheduler.start()
         logger.info("Scheduler has started.")
         scheduler.add_job(
@@ -60,7 +61,7 @@ def create_app(config_class=Config, test_config=None):
 
 
     # Optional: trigger immediately on startup
-    if app.config.get('SCHEDULER_TEST_NOW', False):
+    if str(app.config.get('SCHEDULER_TEST_NOW', 'false')).lower() == 'true':
         with app.app_context():
             scheduled_send_discount_email()
 
@@ -77,9 +78,9 @@ def create_app(config_class=Config, test_config=None):
     @app.before_request
     def activate_simulator():
         global first_request_handled
-        if not first_request_handled and not app.config.get('TESTING', False):
+        if not first_request_handled and not str(app.config.get('IOT_SIMULATOR_ACTIVE', 'false')).lower() == 'true':
             first_request_handled = True
-            if app.config.get('IOT_SIMULATOR_ACTIVE', True):
+            if str(app.config.get('IOT_SIMULATOR_ACTIVE', 'false')).lower() == 'true':
                 thread = threading.Thread(target=simulator_thread, args=(app,))  # Pass app to simulator_thread
                 thread.daemon = True
                 thread.start()

@@ -34,6 +34,7 @@ def scheduled_send_discount_email():
             # Use the generic email function
             send_email(
                 subject=subject,
+                recipients=recipients,
                 bcc = [recipients],
                 body=msg.body,
                 html=msg.html,
