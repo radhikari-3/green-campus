@@ -14,12 +14,11 @@ from app.forms import (
 from app.models import User
 from app.utils import send_email
 
-# Blueprint setup
+# === Blueprint Setup ===
 auth_bp = Blueprint('auth', __name__, url_prefix='/auth')
 
-# ---------------------
-# Utility Functions
-# ---------------------
+
+# === Helper: Generate a 6-digit OTP with 10-minute expiry ===
 def generate_otp(user):
     import random
     otp = f"{random.randint(100000, 999999)}"
@@ -27,9 +26,8 @@ def generate_otp(user):
     user.email_otp_expires = datetime.utcnow() + timedelta(minutes=10)
     return otp
 
-# ---------------------
-# Routes
-# ---------------------
+
+# === Route: User Registration ===
 @auth_bp.route('/signup', methods=['GET', 'POST'])
 def signup():
     if current_user.is_authenticated:
@@ -37,17 +35,19 @@ def signup():
 
     form = SignupForm()
     if form.validate_on_submit():
+        # Check if email already registered
         if db.session.scalar(sa.select(User).where(User.email == form.email.data)):
             flash('Email already registered', 'danger')
             return redirect(url_for('auth.signup'))
 
+        # Create user and generate OTP
         user = User(email=form.email.data)
         user.set_password(form.password.data)
         otp = generate_otp(user)
-
         db.session.add(user)
         db.session.commit()
 
+        # Send OTP to user's email
         send_email(
             subject="Verify Your Email",
             recipients=[user.email],
@@ -61,6 +61,7 @@ def signup():
     return render_template('generic_form.html', title='Register', form=form)
 
 
+# === Route: Email Verification via OTP ===
 @auth_bp.route('/verify/<int:user_id>', methods=['GET', 'POST'])
 def verify_email(user_id):
     user = db.session.get(User, user_id)
@@ -79,6 +80,7 @@ def verify_email(user_id):
     return render_template('generic_form.html', title='Verify Email', form=form)
 
 
+# === Route: Request Password Reset (Sends OTP) ===
 @auth_bp.route('/forgot_password', methods=['GET', 'POST'])
 def forgot_password():
     if current_user.is_authenticated:
@@ -104,6 +106,7 @@ def forgot_password():
     return render_template('generic_form.html', title='Forgot Password', form=form)
 
 
+# === Route: Verify OTP for Password Reset ===
 @auth_bp.route('/forgot_password_verify/<int:user_id>', methods=['GET', 'POST'])
 def forgot_password_verify(user_id):
     form = ResetOTPForm()
@@ -120,6 +123,7 @@ def forgot_password_verify(user_id):
     return render_template('generic_form.html', title='Verify OTP', form=form)
 
 
+# === Route: Enter New Password after OTP ===
 @auth_bp.route('/forgot_password_reset/<int:user_id>', methods=['GET', 'POST'])
 def forgot_password_reset(user_id):
     form = ResetPasswordForm()
@@ -135,6 +139,7 @@ def forgot_password_reset(user_id):
     return render_template('generic_form.html', title='New Password', form=form)
 
 
+# === Route: Logged-in User Password Change ===
 @auth_bp.route('/reset_password', methods=['GET', 'POST'])
 @login_required
 def reset_password():
@@ -149,26 +154,27 @@ def reset_password():
         current_user.signup_date = datetime.utcnow()
         db.session.commit()
         flash('Your password has been changed.', 'success')
+
+        # Role-based redirect after password change
         if 'Vendor' in current_user.role:
             return redirect(url_for('vendors.smart_food_expiry'))
         else:
             return redirect(url_for('dash.dashboard'))
 
-    # 👉 Role-aware template selection
+    # Load role-specific template
     if 'Vendor' in current_user.role:
         return render_template('reset_password_vendor.html', title='Reset Your Password', form=form)
     else:
         return render_template('reset_password_user.html', title='Reset Your Password', form=form)
 
+
+# === Route: User Login ===
 @auth_bp.route('/login', methods=['GET', 'POST'])
 def login():
     if current_user.is_authenticated:
-        if 'Normal' not in current_user.role:  # Replace 'Normal' with the required role for the page
-            flash('You do not have permission to access this page.', 'danger')
-            return redirect(url_for('main.home'))
-        else:
-            flash('You do not have permission to access this page.', 'danger')
-            return redirect(url_for('main.home'))
+        # Prevent logged-in users from accessing login again
+        flash('You do not have permission to access this page.', 'danger')
+        return redirect(url_for('main.home'))
 
     form = LoginForm()
     if form.validate_on_submit():
@@ -183,9 +189,12 @@ def login():
             return redirect(url_for('auth.login'))
 
         login_user(user, remember=form.remember_me.data)
+
+        # Handle redirects after login
         next_page = request.args.get('next')
         if not next_page or urlsplit(next_page).netloc != '':
             next_page = url_for('vendors.smart_food_expiry' if 'Vendor' in user.role else 'dash.dashboard')
+
         return redirect(next_page)
 
     return render_template('generic_form.html', title='Login', form=form)
