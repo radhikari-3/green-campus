@@ -2,33 +2,11 @@ from flask import Blueprint, render_template, request, session, flash, redirect,
 from flask_login import login_required, current_user
 from sqlalchemy import select
 
-from app import db
+from app import db, logger
 from app.forms import AddProductForm, DeleteForm, EditProductForm
 from app.models import Inventory
 
 vendors_bp = Blueprint('vendors', __name__)
-
-def get_user_products(user_id):
-    """Fetch all products for the current user."""
-    return list(db.session.scalars(select(Inventory).filter_by(user_id=user_id)))
-
-def populate_edit_form(product, form):
-    """Populate the edit form with product data."""
-    form.product_id.data = product.id
-    form.name.data = product.name
-    form.expiry_date.data = product.expiry_date
-    form.units.data = product.units
-    form.price.data = product.marked_price
-    form.location.data = product.location
-
-def update_product_fields(product, form):
-    """Update product fields from the form."""
-    product.name = form.name.data
-    product.expiry_date = form.expiry_date.data
-    product.units = form.units.data
-    product.marked_price = form.price.data
-    product.location = form.location.data
-    product.final_price = form.price.data
 
 @vendors_bp.route('/smart_food_expiry', methods=['GET', 'POST'])
 @login_required
@@ -66,12 +44,9 @@ def add_product():
         product_price = add_product_form.price.data
         product_location = add_product_form.location.data
 
-        product_discount = db.session.scalar(select(Inventory.discount).filter_by(name=product_name))
-        final_price = product_price if product_discount is None else round(product_price * (1 - product_discount), 2)
-        existing_product = db.session.scalars(select(Inventory).filter_by(name=product_name)).first()
-
-        if existing_product is None:
-            db.session.add(Inventory(name=product_name,
+        product_discount = (add_product_form.discount.data or 0) / 100
+        final_price = round(product_price * (1 - product_discount), 2)
+        inventory_product = Inventory(name=product_name,
                                      expiry_date=product_expiry_date,
                                      units=product_units,
                                      category=product_category,
@@ -79,7 +54,12 @@ def add_product():
                                      discount=product_discount,
                                      final_price=final_price,
                                      location=product_location,
-                                     user_id=current_user.id))
+                                     user_id=current_user.id)
+
+        existing_product = db.session.scalars(select(Inventory).filter_by(name=product_name)).first()
+
+        if existing_product is None:
+            db.session.add(inventory_product)
         else:
             existing_product.units += product_units
 
@@ -100,7 +80,7 @@ def delete_product():
         product = db.session.get(Inventory, product_id)
         if product:
             # Log product info for debugging
-            print(f"Deleting product: {product.name} (ID: {product.id})")
+            logger.debug(f"Deleting product: {product.name} (ID: {product.id})")
 
             db.session.delete(product)
             db.session.commit()
@@ -153,3 +133,25 @@ def edit_product():
                            show_form=True,
                            confetti=session.pop('show_confetti', False),
                            view=view)
+
+def get_user_products(user_id):
+    """Fetch all products for the current user."""
+    return list(db.session.scalars(select(Inventory).filter_by(user_id=user_id)))
+
+def populate_edit_form(product, form):
+    """Populate the edit form with product data."""
+    form.product_id.data = product.id
+    form.name.data = product.name
+    form.expiry_date.data = product.expiry_date
+    form.units.data = product.units
+    form.price.data = product.marked_price
+    form.location.data = product.location
+
+def update_product_fields(product, form):
+    """Update product fields from the form."""
+    product.name = form.name.data
+    product.expiry_date = form.expiry_date.data
+    product.units = form.units.data
+    product.marked_price = form.price.data
+    product.location = form.location.data
+    product.final_price = form.price.data

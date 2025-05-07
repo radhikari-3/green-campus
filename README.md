@@ -58,28 +58,38 @@ count: 94)
 
 ## Technologies Used
 
--   **Programming Languages**: Python, JavaScript, HTML, CSS
+-   **Programming Languages**: Python, HTML
 -   **Frameworks**: Flask (backend), Charts.js, Plotly (frontend)
--   **Tools**: Docker, PostgreSQL, Ioiotron (IoT sensor integration),
-    Pytest (testing), Git (version control)
+-   **Tools**: Docker, PostgreSQL, Pytest (testing), Git (version control)
 -   **Libraries**: SQLAlchemy (ORM), Chart.js (data visualization),
-    qrcode (QR code generation)
+    qrcode (QR code generation), Bootstrap (UI components), Flask-Mail, Flask-Scheduler, Flask-Login
 
 ## Implemented Functionalities
-
 1.  **Smart Campus Energy Dashboard**
-    -   Displays real-time energy usage and environmental impact metrics
-        (e.g., CO2 emissions).\
+    -   Displays [real-time energy usage](http://127.0.0.1:5000/energy_analytics) and environmental impact metrics 
+    (e.g., Energy Use per Building, Zone wise Energy use per building, CO2 emissions).
     -   Visualizes consumption patterns with interactive charts.
 2.  **Gamified Eco-Points and Rewards System**
-    -   Awards Eco-Points for sustainable actions (e.g., recycling,
-        walking).\
-    -   Allows point redemption for QR code vouchers at campus vendors.
+    -   [Track Eco-Points](http://127.0.0.1:5000/dashboard) awarded for sustainable actions (e.g., cycling,
+        walking) to promote eco-friendly behavior.
+    -   Allows [point redemption](http://127.0.0.1:5000/rewards) using QR code vouchers at campus vendors to reduce food waste.
 3.  **Smart Expiring Food Discount System**
-    -   Enables vendors to list near-expiry food items with dynamic
-        discounts.\
-    -   Sends real-time notifications to users about available
-        discounts.
+    -   Enables students to [view and purchase near-expiry food items](http://127.0.0.1:5000/view_expiring_products) 
+    at discounted prices.
+    - [Filters products](http://127.0.0.1:5000/expiring-offers/f) based on user preferences (e.g., price, expiry, location).
+4. **Vendor Smart Expiry System**
+    -   Enables vendors to [list near-expiry food items](http://127.0.0.1:5000/smart_food_expiry) with dynamic
+        discounts so that students can purchase them at a lower price.
+    -   Sends daily email notifications to users about available
+       discounts on products, encouraging them to buy before expiry.
+5.  **User Authentication and Authorization**
+    -   Implements user authentication and authorization using Flask-Login, Flask-Mail.
+    -   Allows users to [register](http://127.0.0.1:5000/auth/signup), [log in](http://127.0.0.1:5000/auth/login) using email, password, and OTP.
+    -   Provides password reset functionality via email.
+
+    
+Note: The URLs provided in the functionalities section are local links and may not work outside the local environment. 
+Run the application locally to access them.
 
 ## System Architecture
 
@@ -91,6 +101,7 @@ count: 94)
     throughout the application.
 
 ### Class Relationships
+
 
 ### Simulated API/IoT Sensor Data
 -   **Energy Usage**: Simulated data from IoT sensors for real-time

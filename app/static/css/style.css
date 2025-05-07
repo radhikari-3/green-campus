@@ -79,56 +79,6 @@
     padding: 40px; /* Increased padding for better spacing */
 }
 
-.login-container {
-    background-color: #e8f5e9;
-    position: relative;
-    overflow: hidden;
-}
-
-.login-box {
-    width: 100%;
-    max-width: 400px;
-    border-radius: 10px;
-    padding: 2rem;
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-}
-
-.login-box input {
-    border: 1px solid #ccc;
-    border-radius: 5px;
-    padding: 0.5rem;
-}
-
-.login-box .btn-primary {
-    background-color: #4caf50;
-    border-color: #4caf50;
-    width: 100%;
-    padding: 0.5rem;
-    border-radius: 5px;
-}
-
-.login-box .btn-primary:hover {
-    background-color: #45a049;
-    border-color: #45a049;
-}
-
-.btn-sm {
-    width: 40px;
-    height: 40px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    padding: 0;
-}
-
-.btn-twitter { background-color: #1da1f2; border-color: #1da1f2; }
-.btn-facebook { background-color: #3b5998; border-color: #3b5998; }
-.btn-google { background-color: #db4437; border-color: #db4437; }
-
-.btn-twitter:hover { background-color: #1a91da; }
-.btn-facebook:hover { background-color: #344e86; }
-.btn-google:hover { background-color: #c23321; }
-
 
 
 

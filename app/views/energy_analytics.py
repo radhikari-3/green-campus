@@ -1,4 +1,3 @@
-import os
 from datetime import datetime, timedelta
 
 from flask import Blueprint, request, render_template, jsonify
@@ -14,7 +13,6 @@ energy_bp = Blueprint('energy_dash', __name__)
 def energy_dashboard():
     buildings = get_building_names()
     electricity_usage, gas_usage = get_energy_usage_by_zone()
-
     total_usage_by_zones = {
         'electricity_usage': {
             'labels': list(electricity_usage.keys()) if electricity_usage else [],
@@ -26,17 +24,9 @@ def energy_dashboard():
         }
     }
 
-    print("zonal data", total_usage_by_zones)
-
     return render_template('energy_dashboard.html', buildings=buildings,
                            total_usage_by_zones=total_usage_by_zones, title="Energy Analytics")
 
-basedir = os.path.abspath(os.path.dirname(__file__))
-
-# Get distinct building names from the database
-def get_building_names():
-    buildings = db.session.query(EnergyReading.building).filter(EnergyReading.building_code != "").distinct().all()
-    return [building[0] for building in buildings if building[0]]  # Filter out nulls if needed
 
 @energy_bp.route('/get_energy_data', methods=['POST'])
 def get_line_chart_view():
@@ -47,8 +37,69 @@ def get_line_chart_view():
     start_date = data.get('start_date')
     end_date = data.get('end_date')
 
+    traces = get_traces(buildings, energy_type, start_date, end_date)
+
+    return jsonify({'traces': traces})
+
+@energy_bp.route('/get_co2_energy_data', methods=['POST'])
+def get_emissions_line_chart_view():
+    data = request.get_json()
+    buildings = data.get('buildings', [])
+    energy_type = data.get('energy_type', 'both')
+    time_range = data.get('time_range', 'monthly')
+    start_date = data.get('start_date')
+    end_date = data.get('end_date')
+
+    CO2_FACTORS = {
+        'electricity': 0.233,  # kg CO2 per kWh
+        'gas': 0.184           # kg CO2 per kWh
+    }
+
     traces = []
 
+    if start_date and end_date:
+        start_date = datetime.strptime(start_date, '%Y-%m-%d')
+        end_date = datetime.strptime(end_date, '%Y-%m-%d')
+    else:
+        end_date = datetime.today()
+        start_date = end_date - timedelta(days=30)
+
+    for building in buildings:
+        emissions_by_time = {}
+
+        energy_types = ['electricity', 'gas'] if energy_type == 'both' else [energy_type]
+
+        for etype in energy_types:
+            readings = db.session.query(
+                func.date(EnergyReading.timestamp).label('date'),
+                func.sum(EnergyReading.value).label('value')
+            ).filter(
+                EnergyReading.building == building,
+                EnergyReading.category == etype,
+                EnergyReading.timestamp >= start_date,
+                EnergyReading.timestamp <= end_date
+            ).group_by(
+                func.date(EnergyReading.timestamp)
+            ).order_by(
+                func.date(EnergyReading.timestamp)
+            ).all()
+
+            for date, total_value in readings:
+                date_str = date.strftime('%Y-%m-%d')
+                emissions = total_value * CO2_FACTORS.get(etype, 0)
+                emissions_by_time[date_str] = emissions_by_time.get(date_str, 0) + emissions
+
+        traces.append({
+            'x': list(emissions_by_time.keys()),
+            'y': list(emissions_by_time.values()),
+            'type': 'scatter',
+            'mode': 'lines',
+            'name': f"{building} - Total CO₂ Emissions"
+        })
+
+    return jsonify({'traces': traces})
+
+def get_traces(buildings, energy_type, start_date, end_date):
     # Handle date range
     if start_date and end_date:
         start_date = datetime.strptime(start_date, '%Y-%m-%d')
@@ -56,6 +107,8 @@ def get_line_chart_view():
     else:
         end_date = datetime.today()
         start_date = end_date - timedelta(days=30)
+
+    traces = []
 
     for building in buildings:
         energy_types = ['electricity', 'gas'] if energy_type == 'both' else [energy_type]
@@ -85,7 +138,7 @@ def get_line_chart_view():
                     'name': f"{building} - {etype.capitalize()}"
                 })
 
-    return jsonify({'traces': traces})
+    return traces
 
 def get_energy_usage_by_zone():
     results = (
@@ -113,3 +166,10 @@ def get_energy_usage_by_zone():
             gas_usage[zone] = total
 
     return electricity_usage, gas_usage
+
+
+# Get distinct building names from the database
+def get_building_names():
+    buildings = db.session.query(EnergyReading.building).filter(EnergyReading.building_code != "").distinct().all()
+    return [building[0] for building in buildings if building[0]]  # Filter out nulls if needed
+

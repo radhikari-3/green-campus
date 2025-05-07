@@ -2,9 +2,8 @@ from datetime import datetime, timedelta
 from urllib.parse import urlsplit
 
 import sqlalchemy as sa
-from flask import Blueprint, render_template, redirect, flash, url_for, request, current_app
+from flask import Blueprint, render_template, redirect, flash, url_for, request
 from flask_login import login_user, current_user, login_required
-from flask_mail import Message
 
 from app import db
 from app.forms import (

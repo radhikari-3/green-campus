@@ -30,17 +30,11 @@
 <body>
 <nav class="navbar navbar-expand-sm bg-dark" data-bs-theme="dark">
     <div class="container-fluid">
-        <a class="navbar-brand me-4 pe-2 fw-semibold d-flex align-items-center text-gradient" href="{{ url_for('main.home') }}">
-            <i class="bi bi-globe-americas me-2"></i>
-            <span class="brand-text">Green Campus</span>
-        </a>
-        <a class="nav-link text-light ms-5 ps-2" href="{{ url_for('energy_dash.energy_dashboard') }}">Smart Energy Dashboard</a>
-
-        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent"
-                aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
-            <span class="navbar-toggler-icon"></span>
-        </button>
-
+       <a class="navbar-brand me-2 pe-1 fw-semibold d-flex align-items-center text-gradient" href="{{ url_for('main.home') }}">
+           <img src="{{ url_for('static', filename='images/logo.png') }}" alt="Logo" class="me-1" style="height: 40px;">
+           <span class="brand-text" style="font-size: 1.5rem; font-weight: bold; color: #10b981;">Green Campus</span>
+       </a>
+    <a class="nav-link text-light ms-5 ps-2 fw-bold" style="font-size: 1.2rem;" href="{{ url_for('energy_dash.energy_dashboard') }}">Smart Energy Dashboard</a>
         <div class="collapse navbar-collapse justify-content-end" id="navbarSupportedContent">
             <ul class="navbar-nav mb-2 mb-lg-0">
                 {% if current_user.is_anonymous %}

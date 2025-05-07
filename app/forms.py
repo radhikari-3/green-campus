@@ -5,9 +5,8 @@ from wtforms import SubmitField, HiddenField, StringField, PasswordField, Boolea
 from wtforms.fields import DateField
 from wtforms.fields import IntegerField, FloatField
 from wtforms.fields import SelectField
-from wtforms.validators import DataRequired, NumberRange
+from wtforms.validators import DataRequired, NumberRange, Optional
 from wtforms.validators import Email, EqualTo
-from wtforms.validators import InputRequired
 from wtforms.validators import ValidationError
 
 
@@ -29,12 +28,12 @@ class LoginForm(FlaskForm):
 class AddProductForm(FlaskForm):
     name = StringField('Product Name', validators=[DataRequired()])
     expiry_date = DateField('Expiry Date (YYYY-MM-DD)', validators=[DataRequired(), validate_expiry_date])
-    units = IntegerField('Units', validators= [NumberRange(1,30, "You can only upload from 1 to 30 units.")])
-    price = FloatField('Price', validators= [DataRequired()])
+    units = IntegerField('Units', validators=[NumberRange(1, 30, "You can only upload from 1 to 30 units.")])
+    price = FloatField('Price', validators=[DataRequired()])
     category = SelectField('Product Category', validators=[DataRequired()],
                            choices=[("f", "Fruits and Vegetables"), ("b", "Bakery"),
                                     ("d", "Dairy"), ("m", "Meat"), ("s", "Sweets"), ("r", "Ready to Eat")])
-    discount = FloatField('Discount Rate', validators=[InputRequired()])
+    discount = FloatField('Discount Rate', validators=[Optional()])  # Ensure no required validators
     location = StringField('Location', validators=[DataRequired()])
     submit = SubmitField('Submit')
 
@@ -48,9 +47,9 @@ class EditProductForm(FlaskForm):
     units = IntegerField('Units', validators=[NumberRange(1, 30, "You can only upload from 1 to 30 units.")])
     price = FloatField('Price', validators=[DataRequired()])
     category = SelectField('Product Category', validators=[DataRequired()],
-                           choices=[("f","Fruits and Vegetables"),("b","Bakery"),
-                                    ("d","Dairy"),("m","Meat"), ("s","Sweets"), ("r","Ready to Eat")])
-    discount = FloatField('Discount Rate')
+                           choices=[("f", "Fruits and Vegetables"), ("b", "Bakery"),
+                                    ("d", "Dairy"), ("m", "Meat"), ("s", "Sweets"), ("r", "Ready to Eat")])
+    discount = FloatField('Discount Rate', validators=[Optional()])  # Ensure no required validators
     location = StringField('Location', validators=[DataRequired()])
     submit = SubmitField('Update')
 
@@ -82,5 +81,6 @@ class PasswordChangeForm(FlaskForm):
     new_password = PasswordField('New Password',     validators=[DataRequired()])
     confirm_password = PasswordField('Confirm Password',validators=[DataRequired(), EqualTo('new_password')])
     submit = SubmitField('Change Password')
+
 
 

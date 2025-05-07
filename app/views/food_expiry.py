@@ -1,7 +1,6 @@
 # views.py
 from datetime import datetime
 from datetime import timedelta
-from random import uniform
 
 from dateutil.utils import today
 from flask import render_template, Blueprint
@@ -11,6 +10,7 @@ from sqlalchemy.sql.functions import func
 
 from app import db
 from app.models import Inventory, ActivityLog
+from app.utils import discount_applicator
 
 smart_exp_bp = Blueprint('smart_exp', __name__)
 
@@ -49,32 +49,6 @@ def calculate_user_eco_points(email):
     pounds = round(total_points * 0.02, 2)
     return [total_points, pounds]
 
-
-def discount_applicator(product_instance):
-    category_range = {
-    "f": [50, 20],  # f: fruits and Vegetables
-    "b": [80, 50],  # b: bakery
-    "d": [70, 40],  # d: dairy and related products
-    "m": [60, 30],  # m: meat
-    "s": [85, 60],  # s: sweets
-    "r": [75, 45],  # r: ready to eat
-    }
-    product_category = product_instance.category
-    discount_range = category_range[product_category[0]]
-    #logger.debug("discount rate is " + str(product_instance.discount))
-    #logger.debug(type(product_instance.discount))
-    # To ensure that if no discount rate is given a category based discount, contingent on the category can be used
-    discount_rate = (1 - product_instance.discount / 100) if (product_instance.discount is not
-                                                              None)  else (uniform(discount_range[0], discount_range[1])) / 100
-    date_today = datetime.today()
-
-    if product_instance.expiry_date <= (date_today + timedelta(days=1)).date():
-        product_instance.final_price = product_instance.marked_price * (discount_rate ** 3)
-    elif product_instance.expiry_date <= (date_today + timedelta(days=2)).date():
-        product_instance.final_price = product_instance.marked_price * (discount_rate ** 2)
-    elif product_instance.expiry_date <= (date_today + timedelta(days=3)).date():
-        product_instance.final_price = product_instance.marked_price * (discount_rate ** 1)
-    return product_instance
 
 def get_updated_daily_discounts(time_limit):
     time_limit = datetime.today() + timedelta(days=time_limit)

@@ -5,7 +5,7 @@ from flask import current_app
 from flask_mail import Message
 from sqlalchemy import select
 
-from app.extensions import db, mail
+from app.extensions import db
 from app.models import User
 from app.utils import send_email
 from app.views.food_expiry import get_updated_daily_discounts

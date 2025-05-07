@@ -45,7 +45,7 @@
                 <!-- Chart -->
                 <div class="col-md-8 col-12">
                     <h5 class="fw-semibold text-dark mb-3">Energy Use Per Building</h5>
-                    <div id="energy-chart"></div>
+                    <div id="energyChartDiv"></div>
                 </div>
                 <!-- Controls Section -->
                 <div class="col-md-4 col-12 controls-sidebar">
@@ -53,20 +53,20 @@
                     <div class="mb-3">
                         <h5 class="fw-semibold text-dark mb-3">Chart Controls</h5>
                         <label for="time-range" class="form-label">Time Range</label>
-                        <select id="time-range" onchange="updateChart()" class="form-select">
+                        <select id="time-range" onchange="updateEnergyChart()" class="form-select">
                             <option value="daily">Daily</option>
                             <option value="weekly">Weekly</option>
                             <option value="monthly">Monthly</option>
                             <option value="custom">Custom Range</option>
                         </select>
                         <div id="custom-date-range" class="mt-2" style="display: none;">
-                            <input type="date" id="start-date" onchange="updateChart()" class="form-control mb-2">
-                            <input type="date" id="end-date" onchange="updateChart()" class="form-control">
+                            <input type="date" id="start-date" onchange="updateEnergyChart()" class="form-control mb-2">
+                            <input type="date" id="end-date" onchange="updateEnergyChart()" class="form-control">
                         </div>
                     </div>
                     <div class="mb-3">
                         <label for="building-select" class="form-label">Select Building(s)</label>
-                        <select id="building-select" multiple onchange="updateChart()" class="form-select">
+                        <select id="building-select" multiple onchange="updateEnergyChart()" class="form-select">
                             {% for building in buildings %}
                                 <option value="{{ building }}">{{ building }}</option>
                             {% endfor %}
@@ -74,7 +74,56 @@
                     </div>
                     <div>
                         <label for="energy-type" class="form-label">Energy Type</label>
-                        <select id="energy-type" onchange="updateChart()" class="form-select">
+                        <select id="energy-type" onchange="updateEnergyChart()" class="form-select">
+                            <option value="electricity">Electricity</option>
+                            <option value="gas">Gas</option>
+                            <option value="both" selected>Both</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- CO2 Emissions -->
+    <div class="card shadow-sm mb-4">
+        <div class="card-body">
+            <div class="row g-3">
+                <!-- Chart -->
+                <div class="col-md-8 col-12">
+                    <h5 class="fw-semibold text-dark mb-3">CO2 Emissions</h5>
+                        <div id="co2ChartDiv">
+
+                    </div>
+                </div>
+                <!-- Controls Section -->
+                <div class="col-md-4 col-12 controls-sidebar">
+
+                    <div class="mb-3">
+                        <h5 class="fw-semibold text-dark mb-3">Chart Controls</h5>
+                        <label for="time-range-co2" class="form-label">Time Range</label>
+                        <select id="time-range-co2" onchange="updateCo2Chart()" class="form-select">
+                            <option value="weekly">Weekly</option>
+                            <option value="monthly">Monthly</option>
+                            <option value="daily">Daily</option>
+                            <option value="custom">Custom Range</option>
+                        </select>
+                        <div id="custom-date-range" class="mt-2" style="display: none;">
+                            <input type="date" id="start-date-co2" onchange="updateCo2Chart()" class="form-control mb-2">
+                            <input type="date" id="end-date-co2" onchange="updateCo2Chart()" class="form-control">
+                        </div>
+                    </div>
+                    <div class="mb-3">
+                        <label for="building-select-co2" class="form-label">Select Building(s)</label>
+                        <select id="building-select-co2" multiple onchange="updateCo2Chart()" class="form-select">
+                            {% for building in buildings %}
+                                <option value="{{ building }}">{{ building }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <div>
+                        <label for="co2-emission" class="form-label">Energy Type</label>
+                        <select id="co2-emission" onchange="updateCo2Chart()" class="form-select">
                             <option value="electricity">Electricity</option>
                             <option value="gas">Gas</option>
                             <option value="both" selected>Both</option>
@@ -96,7 +145,7 @@
 
 <!-- Pass Jinja2 data to JavaScript and load charts.js -->
 <script>
-    // Define global variable for total_usage_by_zones
+    // Define global variables for total_usage_by_zones and CO2 emissions
     window.totalUsageByZones = {{ total_usage_by_zones | tojson }};
 </script>
 <script src="{{ url_for('static', filename='js/charts.js') }}"></script>

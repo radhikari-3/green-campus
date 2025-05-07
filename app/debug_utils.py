@@ -1,10 +1,9 @@
 import datetime
-import json
 import random
 from typing import List
 
 from app import db, logger
-from app.iot_simulator import publish_sensor_data, generate_reading
+from app.iot_simulator import generate_reading
 from app.models import ActivityLog, User, Inventory, EnergyReading
 from app.utils import load_buildings_data
 
