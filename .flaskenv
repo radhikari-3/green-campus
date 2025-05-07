@@ -1,21 +1,37 @@
 # === Flask Configuration ===
-
-FLASK_APP=run.py               # Entry point for the Flask application
-FLASK_ENV=development          # Environment mode: use 'production' for deployment
-FLASK_DEBUG=1                  # Enables debug mode (auto-reload, detailed error pages)
+FLASK_APP=run.py
+FLASK_ENV=development
+FLASK_DEBUG=1
 
 
 # === Database Configuration ===
 
-DB_USERNAME=postgres           # Database username for connecting to PostgreSQL
-DB_PASSWORD=admin              # Password for the PostgreSQL user
-DB_NAME=postgres               # Name of the target PostgreSQL database
+DB_USERNAME=postgres
+# Username used to connect to the PostgreSQL database
+
+DB_PASSWORD=admin
+# Password used for the database connection
+
+DB_NAME=postgres
+# Name of the PostgreSQL database to connect to
 
 
 # === Email / SendGrid Configuration ===
 
 SENDGRID_API_KEY="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"
-# API key for authenticating with the SendGrid email delivery service
+# Secret API key used for authentication with SendGrid's SMTP service
 
 MAIL_DEFAULT_SENDER=testinggreencampus@outlook.com
-# Default sender address for all outgoing emails
+# Default email address used in the "From" field for outgoing application emails
+
+
+# === Feature Flags / Background Tasks ===
+
+SCHEDULER_ENABLED=False
+# Enables or disables APScheduler background job execution
+
+SCHEDULER_TEST_NOW=False
+# If True, the scheduled job (e.g. discount email) runs immediately on startup
+
+IOT_SIMULATOR_ACTIVE=False
+# Enables or disables the background IoT data simulation thread
