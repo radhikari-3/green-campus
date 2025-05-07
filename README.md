@@ -116,6 +116,61 @@ Run the application locally to access them.
     throughout the application.
 
 ### Class Relationships
+ 
+1. **Inheritance**
+    Inheritance allows a model to inherit properties and behaviors from parent classes.
+    ```python
+    class User(UserMixin, db.Model):
+        id = db.Column(db.Integer, primary_key=True)
+        email = db.Column(db.String(120), unique=True)
+    ```
+    Description: User inherits from db.Model (SQLAlchemy base for database models) and UserMixin (Flask-Login for authentication).
+
+
+2. **Association**
+    Association represents a loose connection between models, typically via a foreign key.
+
+    ```python
+    class ActivityLog(db.Model):
+        email = db.Column(db.String(120), db.ForeignKey('users.email'))
+        user = db.relationship("User", back_populates="activity_logs")
+    ```
+    Description: ActivityLog links to User via email. The relationship is loose, meaning ActivityLog can exist 
+    independently unless cascading deletes are configured.
+
+
+3.  **Composition**
+    Composition represents strong ownership where the child’s lifecycle is tied to the parent.
+    ```python
+    class User(UserMixin, db.Model):
+        inventory = db.relationship(
+            "Inventory", back_populates="user",
+            cascade="all, delete-orphan"
+        )
+    ```
+    Description: Deleting a User also deletes their Inventory items due to the cascade="all, delete-orphan" setting.
+   
+4. **Aggregation**
+    Aggregation represents a logical grouping where the child can exist independently.
+    ```python
+    class Building(db.Model):
+        id = db.Column(db.Integer, primary_key=True)
+        name = db.Column(db.String(100))
+        readings = db.relationship("EnergyReading", backref="building")
+    class EnergyReading(db.Model):
+        building_id = db.Column(db.Integer, db.ForeignKey("building.id"))
+    ```
+    Description: EnergyReading is associated with a Building, but can be reassigned or exist independently (no delete cascade).
+
+
+    A summary table that outlines the relationship types and their descriptions.
+
+   | **Relationship Type** | **Example (from project)** | **Description** |
+   |-----------------------|----------------------------|------------------|
+   | Inheritance           | User → UserMixin, db.Model | Adds authentication and model behavior |
+   | Association           | ActivityLog → User (email) | Loosely linked via foreign key |
+   | Composition           | User → Inventory           | Child bound to parent’s lifecycle |
+   | Aggregation           | Building → EnergyReading   | Logical grouping; child can exist independently |
 
 
 ### Simulated API/IoT Sensor Data
