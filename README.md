@@ -138,7 +138,7 @@ You can use the following test users to log in to the application:
 | **Email**                     | **Password** |  **Role**  |
 |-------------------------------|--------------|------------|
 |   tom.b12345@yopmail.com      | amy.pw       | Normal     |
-|   yin.b12345@yopmail.com      | amy.pw       | Normal     |
+|   yin.b12345@yopmail.com      | amy.pw       | Vendor     |
 |   jo.b12345@yopmail.com       | amy.pw       | Normal     |
 
 ## Implemented Functionalities
