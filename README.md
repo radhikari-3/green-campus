@@ -273,11 +273,11 @@ The workflow includes:
 |                                    | `test_get_user_products_no_products`         | Handle scenario where user has no products.                                  | ✅ Passed       |
 
 ## Contributing Members
-| **Name and Id**       | **Contribution(%)** | **Key Contributions**                                    | 
-|-----------------------|---------------------|----------------------------------------------------------|
-| Rohit Adhikari (100)  | 20%                 | Contributed extensively to core features <br/>(MQTT, CI pipeline, dashboards, UI, CO2 chart)    |
-| Viswanath Nair (101)  | 20%                 | Contributed to vendor management and email functionality |
-| Anupama Hasurkar(102) | 20%                 | Added Authentication of Users                            |
-| Yash Zore (104)       | 20%                 | Focused on gamification, eco points dashboard, <br/>and UI enhancements, with significant feature additions.                             |
-| Melissa Zulle (103)   | 20%                 | Contributed to the smart food expiry feature                    |
+| **Name and Id**           | **Contribution(%)** | **Key Contributions**                                    | 
+|---------------------------|---------------------|----------------------------------------------------------|
+| Rohit Adhikari (2662277)  | 20%                 | Contributed extensively to core features <br/>(MQTT, CI pipeline, dashboards, UI, CO2 chart)    |
+| Viswanath Nair (2784312)  | 20%                 | Contributed to vendor management and email functionality |
+| Anupama Hasurkar(2751907) | 20%                 | Added Authentication of Users                            |
+| Yash Zore (2768565)       | 20%                 | Focused on gamification, eco points dashboard, <br/>and UI enhancements, with significant feature additions.                             |
+| Melissa Zulle (2849974)   | 20%                 | Contributed to the smart food expiry feature             |
 
