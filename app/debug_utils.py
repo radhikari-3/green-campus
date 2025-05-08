@@ -195,16 +195,15 @@ def generate_sensor_data():
         # Readings for university buildings
         for building in university_buildings:
             for energy_type in energy_types:
-                for _ in range(random.randint(4, 5)):  # Multiple readings per interval
-                    reading = EnergyReading(
-                        timestamp=current_time,
-                        building=building.get("building"),
-                        building_code=building.get("building_code", ""),
-                        zone=building.get("zone", ""),
-                        value=generate_reading(energy_type),
-                        category=energy_type
-                    )
-                    batch.append(reading)
+                reading = EnergyReading(
+                    timestamp=current_time,
+                    building=building.get("building"),
+                    building_code=building.get("building_code", ""),
+                    zone=building.get("zone", ""),
+                    value=generate_reading(energy_type),
+                    category=energy_type
+                )
+                batch.append(reading)
 
         # Uncomment to simulate per-flat data for accommodations
         # for building in accommodation_buildings:
@@ -212,16 +211,15 @@ def generate_sensor_data():
         #     for flat_number in range(1, total_flats + 1):
         #         flat_building_name = f"{building['building']} Flat {flat_number}"
         #         for energy_type in energy_types:
-        #             for _ in range(random.randint(4, 5)):
-        #                 reading = EnergyReading(
-        #                     timestamp=current_time,
-        #                     building=flat_building_name,
-        #                     building_code=building.get("building_code", ""),
-        #                     zone=building.get("zone", ""),
-        #                     value=generate_reading(energy_type),
-        #                     category=energy_type
-        #                 )
-        #                 batch.append(reading)
+        #             reading = EnergyReading(
+        #                 timestamp=current_time,
+        #                 building=flat_building_name,
+        #                 building_code=building.get("building_code", ""),
+        #                 zone=building.get("zone", ""),
+        #                 value=generate_reading(energy_type),
+        #                 category=energy_type
+        #             )
+        #             batch.append(reading)
 
         current_time += interval
 

@@ -126,8 +126,20 @@ itself as a model for eco-friendly campus operations worldwide.
 -   **Programming Languages**: Python, HTML
 -   **Frameworks**: Flask (backend), Charts.js, Plotly (frontend)
 -   **Tools**: Docker, PostgreSQL, Pytest (testing), Git (version control)
--   **Libraries**: SQLAlchemy (ORM), Chart.js (data visualization),
-    qrcode (QR code generation), Bootstrap (UI components), Flask-Mail, Flask-Scheduler, Flask-Login
+-   **Libraries**: SQLAlchemy (ORM), qrcode (QR code generation), Bootstrap (UI components), 
+      Flask-Mail, Flask-Scheduler, Flask-Login
+
+## Test Users
+Note : The test users are pre-populated in the database. New users can be created using the signup page, 
+but they will not have any eco-points or rewards.
+
+You can use the following test users to log in to the application:
+
+| **Email**                     | **Password** |  **Role**  |
+|-------------------------------|--------------|------------|
+|   tom.b12345@yopmail.com      | amy.pw       | Normal     |
+|   yin.b12345@yopmail.com      | amy.pw       | Vendor     |
+|   jo.b12345@yopmail.com       | amy.pw       | Normal     |
 
 ## Implemented Functionalities
 1.  **Smart Campus Energy Dashboard**
@@ -161,8 +173,8 @@ Run the application locally to access them.
 ### Design Patterns
 -   **Model-View-Controller (MVC)**: Separates data, user interface,
     and control logic for better organization and maintainability.
--   **Publish-Subscribe**: pattern for real-time notifications and updates.
--   **Singleton**: Ensures a single instance of the database connection
+-   **Publish-Subscribe**: Pattern for real-time notifications of IoT sensor data and updates.
+-   **Singleton**: Ensures a single instance of the database session
     throughout the application.
 
 ### Class Relationships
@@ -259,4 +271,13 @@ The workflow includes:
 | **Authentication**                 | `test_login_with_unverified_email`           | Test login with an unverified email.                                         | ✅ Passed        |
 | **Vendor Dashboard**               | `test_get_user_products_valid_user`          | Fetch products for a valid user.                                             | ✅ Passed        |
 |                                    | `test_get_user_products_no_products`         | Handle scenario where user has no products.                                  | ✅ Passed       |
+
+## Contributing Members
+| **Name and Id**           | **Contribution(%)** | **Key Contributions**                                    | 
+|---------------------------|---------------------|----------------------------------------------------------|
+| Rohit Adhikari (2662277)  | 20%                 | Contributed extensively to core features <br/>(MQTT, CI pipeline, dashboards, UI, CO2 chart)    |
+| Viswanath Nair (2784312)  | 20%                 | Contributed to vendor management and email functionality |
+| Anupama Hasurkar(2751907) | 20%                 | Added Authentication of Users                            |
+| Yash Zore (2768565)       | 20%                 | Focused on gamification, eco points dashboard, <br/>and UI enhancements, with significant feature additions.                             |
+| Melissa Zulle (2849974)   | 20%                 | Contributed to the smart food expiry feature             |
 
