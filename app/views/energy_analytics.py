@@ -4,7 +4,7 @@ from flask import Blueprint, request, render_template, jsonify
 from sqlalchemy import func
 
 from app import db
-from app.models import EnergyReading
+from app.models import EnergyReading, Building
 
 # === Blueprint Setup ===
 energy_bp = Blueprint('energy_dash', __name__)
@@ -87,11 +87,12 @@ def get_emissions_line_chart_view():
         energy_types = ['electricity', 'gas'] if energy_type == 'both' else [energy_type]
 
         for etype in energy_types:
+            building = get_building_id_by_name(building)
             readings = db.session.query(
                 func.date(EnergyReading.timestamp).label('date'),
                 func.sum(EnergyReading.value).label('value')
-            ).filter(
-                EnergyReading.building == building,
+            ).join(Building, EnergyReading.building_id == Building.id).filter(
+                Building.id == building,  # Use building.id to filter by building
                 EnergyReading.category == etype,
                 EnergyReading.timestamp >= start_date,
                 EnergyReading.timestamp <= end_date
@@ -122,6 +123,7 @@ def get_traces(buildings, energy_type, start_date, end_date):
     """
     Returns line chart data for energy usage per building.
     """
+    
     if start_date and end_date:
         start_date = datetime.strptime(start_date, '%Y-%m-%d')
         end_date = datetime.strptime(end_date, '%Y-%m-%d')
@@ -130,15 +132,18 @@ def get_traces(buildings, energy_type, start_date, end_date):
         start_date = end_date - timedelta(days=30)
 
     traces = []
-
+    
     for building in buildings:
         energy_types = ['electricity', 'gas'] if energy_type == 'both' else [energy_type]
-
+        building = get_building_id_by_name(building)
         for etype in energy_types:
             readings = (
                 db.session.query(EnergyReading)
+                .join(Building,
+                      EnergyReading.building_id == Building.id)  # Correctly join with Building table using building_id
                 .filter(
-                    EnergyReading.building == building,
+                    Building.id == building,
+                    # Use building.id for comparison, assuming 'building' is a Building instance
                     EnergyReading.category == etype,
                     EnergyReading.timestamp >= start_date,
                     EnergyReading.timestamp <= end_date
@@ -167,14 +172,17 @@ def get_energy_usage_by_zone():
     """
     Returns total electricity and gas usage grouped by zone.
     """
+    building_ids = get_building_ids()
+
     results = (
         db.session.query(
-            EnergyReading.zone,
+            Building.zone,
             EnergyReading.category,
             func.sum(EnergyReading.value).label('total_usage')
         )
-        .filter(EnergyReading.building_code != "")
-        .group_by(EnergyReading.zone, EnergyReading.category)
+        .join(Building, EnergyReading.building_id == Building.id)
+        .filter(Building.code != "", Building.id.in_(building_ids))
+        .group_by(Building.zone, EnergyReading.category)
         .all()
     )
 
@@ -196,8 +204,29 @@ def get_building_names():
     """
     Returns a list of distinct building names from the EnergyReading table.
     """
-    buildings = db.session.query(EnergyReading.building)\
-        .filter(EnergyReading.building_code != "")\
+    buildings = db.session.query(Building.name)\
+        .filter(Building.code != "")\
         .distinct().all()
 
     return [building[0] for building in buildings if building[0]]
+
+def get_building_ids():
+    """
+    Returns a list of distinct building IDs from the EnergyReading table.
+    """
+    buildings = db.session.query(Building.id)\
+        .filter(Building.code != "")\
+        .distinct().all()
+
+    return [building[0] for building in buildings if building[0]]
+
+
+def get_building_id_by_name(building_name):
+    """
+    Returns the building ID for a given building name.
+    """
+    building = db.session.query(Building.id) \
+        .filter(Building.name == building_name) \
+        .first()
+
+    return building[0] if building else None

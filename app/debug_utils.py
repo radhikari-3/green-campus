@@ -5,7 +5,7 @@ from typing import List
 from app import db, logger
 from app.iot_simulator import generate_reading
 from app.models import ActivityLog, User, Inventory, EnergyReading
-from app.utils import load_buildings_data
+from app.utils import load_and_insert_buildings
 
 
 # === Reset and Seed Database ===
@@ -181,12 +181,19 @@ def generate_sensor_data():
     Generate mock energy readings every 5 minutes for the past 7 days
     for university buildings (and optionally accommodation flats).
     """
-    university_buildings, accommodation_buildings = load_buildings_data()
+
+    university_buildings, accommodation_buildings = load_and_insert_buildings()
+    logger.info("Mock building data generated successfully.")
+
+    # Create a lookup map of building name to Building ID from the DB
+    from app.models import Building
+    building_name_to_id = {b.name: b.id for b in Building.query.all()}
+
 
     energy_types = ["electricity", "gas"]
     start_time = datetime.datetime.now() - datetime.timedelta(days=7)
     end_time = datetime.datetime.now()
-    interval = datetime.timedelta(minutes=5)
+    interval = datetime.timedelta(minutes=15)
 
     current_time = start_time
     batch = []
@@ -194,36 +201,37 @@ def generate_sensor_data():
     while current_time <= end_time:
         # Readings for university buildings
         for building in university_buildings:
+            building_name = building.get("building")
+            building_id = building_name_to_id.get(building_name)
+            if not building_id:
+                continue
             for energy_type in energy_types:
-                for _ in range(random.randint(4, 5)):  # Multiple readings per interval
-                    reading = EnergyReading(
-                        timestamp=current_time,
-                        building=building.get("building"),
-                        building_code=building.get("building_code", ""),
-                        zone=building.get("zone", ""),
-                        value=generate_reading(energy_type),
-                        category=energy_type
-                    )
-                    batch.append(reading)
+                reading = EnergyReading(
+                    timestamp=current_time,
+                    building_id=building_id,
+                    value=generate_reading(energy_type),
+                    category=energy_type
+                )
+                batch.append(reading)
 
-        # Uncomment to simulate per-flat data for accommodations
+        # Per-flat accommodation readings
         # for building in accommodation_buildings:
         #     total_flats = building.get("total_flats", 0)
         #     for flat_number in range(1, total_flats + 1):
-        #         flat_building_name = f"{building['building']} Flat {flat_number}"
+        #         flat_name = f"{building['building']} Flat {flat_number}"
+        #         building_id = building_name_to_id.get(flat_name)
+        #         if not building_id:
+        #             continue
         #         for energy_type in energy_types:
-        #             for _ in range(random.randint(4, 5)):
-        #                 reading = EnergyReading(
-        #                     timestamp=current_time,
-        #                     building=flat_building_name,
-        #                     building_code=building.get("building_code", ""),
-        #                     zone=building.get("zone", ""),
-        #                     value=generate_reading(energy_type),
-        #                     category=energy_type
-        #                 )
-        #                 batch.append(reading)
+        #             reading = EnergyReading(
+        #                 timestamp=current_time,
+        #                 building_id=building_id,
+        #                 value=generate_reading(energy_type),
+        #                 category=energy_type
+        #             )
+        #             batch.append(reading)
 
-        current_time += interval
+        current_time += interval # every 10 minutes
 
         # Commit in batches to improve performance
         if len(batch) >= 1000:

@@ -6,7 +6,8 @@ from random import uniform
 from flask import current_app
 from flask_mail import Message, Mail
 
-from app import logger
+from app import logger, db
+from app.models import Building
 
 # === Base Path Setup ===
 # Used to construct paths for accessing static files
@@ -60,28 +61,42 @@ def send_email(
 
 # === Load Building Metadata for Sensors & Analytics ===
 
-def load_buildings_data():
+def load_and_insert_buildings():
     """
-    Loads building metadata from a JSON file (typically used for:
-    - Sensor simulation
-    - Energy analytics visualizations
-
-    Returns:
-        Two lists: university_buildings, accommodation_buildings
+    Loads building metadata from JSON and inserts all buildings (including flats)
+    into the Building table. Returns lists of university and accommodation buildings.
     """
     file_path = os.path.join(basedir, 'static', 'buildings_data.json')
 
     try:
         with open(file_path, 'r') as file:
             data = json.load(file)
-            university_buildings = data.get('university_buildings', [])
-            accommodation_buildings = data.get('accommodation_buildings', [])
+            university = data.get('university_buildings', [])
+            accommodation = data.get('accommodation_buildings', [])
+
+            for b in university:
+                db.session.add(Building(
+                    name=b.get('building'),
+                    code=b.get('building_code', ''),
+                    zone=b.get('zone', '')
+                ))
+
+            for b in accommodation:
+                total_flats = b.get("total_flats", 0)
+                base_name = b.get("building")
+                for flat_num in range(1, total_flats + 1):
+                    db.session.add(Building(
+                        name=f"{base_name} Flat {flat_num}",
+                        code=b.get('building_code', ''),
+                        zone=b.get('zone', '')
+                    ))
+
+            db.session.commit()
+            return university, accommodation
+
     except FileNotFoundError:
         logger.error(f"File not found: {file_path}")
-        university_buildings = []
-        accommodation_buildings = []
-
-    return university_buildings, accommodation_buildings
+        return [], []
 
 
 # === Discount Engine for Expiring Products ===

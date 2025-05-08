@@ -66,16 +66,37 @@ class EnergyReading(db.Model):
 
     id: so.Mapped[int] = so.mapped_column(primary_key=True)
     timestamp: so.Mapped[datetime] = so.mapped_column(sa.DateTime)
-    building: so.Mapped[str] = so.mapped_column(sa.String(100))
-    building_code: so.Mapped[str] = so.mapped_column(sa.String(10))
-    zone: so.Mapped[str] = so.mapped_column(sa.String(50))
     value: so.Mapped[float] = so.mapped_column(sa.Float)
     category: so.Mapped[str] = so.mapped_column(sa.String(50))  # e.g., "electricity" or "gas"
-
+    building_id = db.Column(db.Integer, db.ForeignKey('building.id'), nullable=False)
+    building: so.Mapped["Building"] = so.relationship("Building", back_populates="energy_readings")
     def __repr__(self):
         return (
             f'EnergyReading(id={self.id}, timestamp={self.timestamp}, building={self.building}, '
             f'building_code={self.building_code}, zone={self.zone}, value={self.value}, category={self.category})'
+        )
+
+# === Building Model ===
+class Building(db.Model):
+    """
+    Represents campus buildings with their energy usage tracking.
+    """
+    __tablename__ = 'building'
+
+    id: so.Mapped[int] = so.mapped_column(primary_key=True)
+    name: so.Mapped[str] = so.mapped_column(sa.String(100))
+    code: so.Mapped[str] = so.mapped_column(sa.String(10), nullable=True)
+    zone: so.Mapped[str] = so.mapped_column(sa.String(10))
+
+    # Relationships
+    energy_readings: so.WriteOnlyMapped["EnergyReading"] = relationship(
+        back_populates="building", cascade="all, delete-orphan"
+    )
+
+    def __repr__(self):
+        return (
+            f'Building(id={self.id}, name={self.name}, code={self.code}, '
+            f'floors={self.floors}, energy_rating={self.energy_rating})'
         )
 
 
