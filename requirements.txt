@@ -16,7 +16,7 @@ idna
 iniconfig
 itsdangerous~=2.2.0
 Jinja2~=3.1.6
-Mako==1.3.8
+Mako==1.3.10
 MarkupSafe
 packaging
 pluggy
