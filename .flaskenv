@@ -6,20 +6,20 @@ FLASK_DEBUG=1
 
 # === Database Configuration ===
 
-DB_USERNAME=local
+DB_USERNAME=<REPLACE_ME>
 
-DB_PASSWORD=admin
+DB_PASSWORD=<REPLACE_ME>
 
-DB_NAME=postgres
+DB_NAME=<REPLACE_ME>
 
 
 # === Email / SendGrid Configuration ===
 
 # Secret API key used for authentication with SendGrid's SMTP service
-SENDGRID_API_KEY="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"
+SENDGRID_API_KEY=<REPLACE_ME>
 
 # Default email address used in the "From" field for outgoing application emails
-MAIL_DEFAULT_SENDER=testinggreencampus@outlook.com
+MAIL_DEFAULT_SENDER=<REPLACE_ME>
 
 
 # === Feature Flags / Background Tasks ===
