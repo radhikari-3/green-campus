@@ -22,7 +22,7 @@ packaging
 pluggy
 psycopg2-binary==2.9.10
 pycparser
-pytest~=8.3.5
+pytest~=8.4.0
 python-dateutil
 setuptools==80.9.0
 six
